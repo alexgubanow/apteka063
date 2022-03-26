@@ -62,12 +62,22 @@ namespace apteka063.Services
                 Console.WriteLine(ex.Message);
             }
         }
+        public readonly static Dictionary<string, dbc.PillCategories> pillCategoriesMap = new()
+        {
+            { "Сердце", dbc.PillCategories.Heart },
+            { "Желудок", dbc.PillCategories.Stomach },
+            { "Обезболивающее", dbc.PillCategories.Painkiller },
+            { "Температура", dbc.PillCategories.Fever },
+            { "Детское", dbc.PillCategories.Child },
+            { "Женское", dbc.PillCategories.Women },
+            { "Другое", dbc.PillCategories.Other }
+        };
         public static async Task<int> SyncPills(dbc.Apteka063Context db)
         {
             SheetsService service = GetSheets();
             try
             {
-                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Pills!A2:B");
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Pills!A2:C");
                 var response = await request.ExecuteAsync();
                 if (response.Values != null)
                 {
@@ -77,13 +87,14 @@ namespace apteka063.Services
                         var pill = db.Pills.Where(x => x.Id == pillID).FirstOrDefault();
                         if (pill == null)
                         {
-                            pill = new() { Id = pillID, Name = sheetRow[1].ToString() };
+                            pill = new() { Id = pillID, Name = sheetRow[1].ToString(), PillCategory = pillCategoriesMap[sheetRow[2].ToString()] };
                             await db.Pills.AddAsync(pill);
                         }
                         else
                         {
                             pill.Id = pillID;
                             pill.Name = sheetRow[1].ToString();
+                            pill.PillCategory = pillCategoriesMap[sheetRow[2].ToString()];
                             db.Pills.Update(pill);
                         }
                         await db.SaveChangesAsync();

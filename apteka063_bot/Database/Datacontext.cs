@@ -47,10 +47,14 @@ public class Location : Telegram.Bot.Types.Location
     [Key]
     public long Id { get; set; }
 }
+public enum PillCategories
+{
+    Heart, Stomach, Painkiller, Fever, Child, Women, Other
+}
 public class Pill
 {
     [Key]
     public int Id { get; set; }
     public string Name { get; set; }
+    public PillCategories PillCategory { get; set; }
 }
-

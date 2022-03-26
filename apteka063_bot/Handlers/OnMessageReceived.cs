@@ -13,7 +13,7 @@ public partial class UpdateHandlers
 {
     private static async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(message.From.LanguageCode);
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(message.From.LanguageCode??"ru");
 
         //Console.WriteLine($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
@@ -25,8 +25,14 @@ public partial class UpdateHandlers
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
-            await Services.Gsheet.SyncPills(_db);
-            header += "\n" + Resources.Translation.DBUpdateFinished;
+            if (await Services.Gsheet.SyncPills(_db) == 0)
+            {
+                header += "\n" + Resources.Translation.DBUpdateFinished;
+            }
+            else
+            {
+                header += "\n" + Resources.Translation.DBUpdateFailed;
+            }
         }
         await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: header, replyMarkup: inlineKeyboard);
     }

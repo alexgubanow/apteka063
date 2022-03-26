@@ -19,9 +19,13 @@ public partial class UpdateHandlers
         {
             await OnMessageReceived(botClient, callbackQuery.Message!);
         }
-        else if (callbackQuery.Data == "pills")
+        else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
         {
             await OnPillsReplyReceived(botClient, callbackQuery);
+        }
+        else if (callbackQuery.Data.Contains("pillsCategory_") == true)
+        {
+            await OnPillsCategoryReplyReceived(botClient, callbackQuery);
         }
         else if (callbackQuery.Data.Contains("pill_") == true)
         {
@@ -51,12 +55,38 @@ public partial class UpdateHandlers
         var orderPills = order.Pills?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.BackToMainMenu, "backtoMain") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoMain") }
         };
-        foreach (var pillDB in _db.Pills.ToList())
+        foreach (var pillCategory in Services.Gsheet.pillCategoriesMap)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
-                pillDB.Name + (orderPills != null && orderPills.Contains(pillDB.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""), 
+                pillCategory.Key,
+                $"pillsCategory_{pillCategory.Value}") });
+        }
+        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: "Pick category:", replyMarkup: new InlineKeyboardMarkup(buttons));
+    }
+    private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
+    {
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
+
+        await botClient.DeleteMessageAsync(callbackQuery.Message.Chat.Id, callbackQuery.Message.MessageId);
+        order ??= _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
+        if (order == null)
+        {
+            order = new() { UserId = callbackQuery.From.Id };
+            await _db.Orders.AddAsync(order);
+            await _db.SaveChangesAsync();
+        }
+        var orderPills = order.Pills?.Split(',');
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoPills") }
+        };
+        var pillsDB = _db.Pills.Where(x => x.PillCategory == (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), callbackQuery.Data.ToString().Substring(14))).ToList();
+        foreach (var pillDB in pillsDB)
+        {
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
+                pillDB.Name + (orderPills != null && orderPills.Contains(pillDB.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
                 $"pill_{pillDB.Id}") });
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("Order", "order") });
