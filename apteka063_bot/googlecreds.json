@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "apteka063",
+  "private_key_id": "f54d0595bc783eb503e60221578095954a3b2c6c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCKdEY+yaGffss6\nkt3TiPGFrQiJPDP2n/1pIgEftrTiW3jy1dwqFZNy78UJoAwMigB1eLqEpZiLcZh6\nrMPNQfibY1ADQ6LSheG75TgccdO5Ikhfpi4daTxAwA191rtZJD74hLL/P+MCtEPM\n30SzMX4/bWacItHPa9d5a4cRNSJYygW4H6N9sJ2yMjwsZfE5lhP/G07Eto0UoMha\nQDMC2qJHSz95AsxiPnbGw2aEVbCuruaKA7fUcnSkCH9E9rUCOgMSZ2mXGlwV1zvx\n2kAWAxj86Tj68YAjl946SZtggVXmzOQRGb0P++kuuutLAYCxfWK8teJw9vtT+F3L\nwL7hRfepAgMBAAECggEABZTeaBWU0Gs6IihdjPOOWQc6ut2UcrLMcnqOdQrWi/GI\nFLIOaBvqj82esd6j3bWKgzHUwxgx6B0yOm/QjOvF6+27Agat/7KqAPsiofLsyB/b\nrw9x+HmPlkSnxpTrhJJzf21KEgQvUKKXwSCXEmpCXqg4ZL76mlQMobZ2AXmU4uNi\n3T0S7S5gWSosQmUNbK7RC1B9QuWh+Tm/sGnO/YJcrNXbKTs8Iv5vqyE8PqidfPpe\nGuJkDFfYge4ui55jCkXAtP08UYq7SGQQrDVk5qNEKqvDGmI2pGrt17ClytB1LQNd\nStGF29XTQFZPfZbpBHhNc/ePGEFPOdBZ9zBSqb3tAQKBgQC/MJx24Ng8x5aFZ2vu\nIybHafat2BkbsrKKp+f/d1PmV7zVgiwX36xTxK01NkB4Fpmmpm74hrSPNIledE4P\nFrAYFCRHn1KGZBfDW2SBZ3UMSN7v3fBAxoddT3OpDAV/wY1BPJpqf1Y/DXcoE01B\nTESMGuom/yOJzR9lm7co1MyEeQKBgQC5Y0d4XGE94msguA8nKKC+IeG24d6qqXeN\nIsr7/h7X629oTvnXwhRNGmq/K+RfASHvWACZcWjuwl9+b6wSkuYRfG1AtKBqOXdG\n80e1YHC1gLEptGxQvmPPJkhVmpzIPmOm4cpBL5Zxhtq+Yel7Vl2qnW8wtQhmLYzU\nkwmZuXlgsQKBgQClmXhcq4IAmyuwHxVoLcBAB3Mnvr54tD5bRPX426WrJSGlmVuR\nziYYZIlWRshue7zYkN4bm6m3RF0bmAeooBEkugV2l/RF/Vpr1rRmNXM3kcKv5v9b\nS9oho1jd+lClCMPN1q01Q1gzwvkLmDRZM7NH22QnJOTmTeo8+zQZRMBkmQKBgHwO\nw7T3nNscuTOb+AfsWCTj53fKjocGAMqhjdQzqdAz7MmQkACiD5PJKcXkSV6KE3tn\nGH+WNPIRgHXLpQqI4wywhyvVs8Nh0T/ZbRMjBklvZR7Tbehaf9APfjhKzr/xgB4c\n2ovknHg8FgVw4B15HhUeZVniy0wVDzjxbGtCgscBAoGAH0JARHaIhwIVE5ir6EyX\nPgDLILexpgLtWmV/zfJvTS0DmtHWRf6uZm5gYmW9NWjPPhC4GOjU/mav1QpZX9bF\nvjM+ZBViolxIbuMg2Go1VW2PEirvq5THT4IUOHDABJCWogOWnv9+jBPkcXXgCVym\nBW4gJkDMapsm4wiLXGjQGpg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "apteka063-bot@apteka063.iam.gserviceaccount.com",
+  "client_id": "117318819381409579720",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/apteka063-bot%40apteka063.iam.gserviceaccount.com"
+}
