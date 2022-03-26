@@ -2,17 +2,19 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using apteka063.dbc;
 
 #nullable disable
 
-namespace apteka063.Migrations
+namespace apteka063_bot.Migrations
 {
     [DbContext(typeof(Apteka063Context))]
-    partial class Apteka063ContextModelSnapshot : ModelSnapshot
+    [Migration("20220326153501_AddPills")]
+    partial class AddPills
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
@@ -42,7 +44,7 @@ namespace apteka063.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contacts", (string)null);
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("apteka063.dbc.Location", b =>
@@ -71,7 +73,7 @@ namespace apteka063.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations", (string)null);
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("apteka063.dbc.Order", b =>
@@ -91,7 +93,7 @@ namespace apteka063.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("apteka063.dbc.Pill", b =>
@@ -106,7 +108,7 @@ namespace apteka063.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pills", (string)null);
+                    b.ToTable("Pills");
                 });
 
             modelBuilder.Entity("apteka063.dbc.User", b =>
@@ -151,7 +153,7 @@ namespace apteka063.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
