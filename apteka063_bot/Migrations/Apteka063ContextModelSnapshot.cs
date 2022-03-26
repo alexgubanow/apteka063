@@ -7,7 +7,7 @@ using apteka063.dbc;
 
 #nullable disable
 
-namespace apteka063_bot.Migrations
+namespace apteka063.Migrations
 {
     [DbContext(typeof(Apteka063Context))]
     partial class Apteka063ContextModelSnapshot : ModelSnapshot

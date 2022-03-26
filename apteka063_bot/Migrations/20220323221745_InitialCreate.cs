@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace apteka063_bot.Migrations
+namespace apteka063.Migrations
 {
     public partial class InitialCreate : Migration
     {
