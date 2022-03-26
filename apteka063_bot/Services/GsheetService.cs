@@ -62,15 +62,14 @@ namespace apteka063.Services
                 Console.WriteLine(ex.Message);
             }
         }
-        //Сердце,Желудок,Обезболивающее,Температура,Детское,Женщинское,Другое
-        static Dictionary<string, dbc.PillCategories> pillCategoriesMap = new()
+        public readonly static Dictionary<string, dbc.PillCategories> pillCategoriesMap = new()
         {
             { "Сердце", dbc.PillCategories.Heart },
             { "Желудок", dbc.PillCategories.Stomach },
             { "Обезболивающее", dbc.PillCategories.Painkiller },
             { "Температура", dbc.PillCategories.Fever },
             { "Детское", dbc.PillCategories.Child },
-            { "Женщинское", dbc.PillCategories.Women },
+            { "Женское", dbc.PillCategories.Women },
             { "Другое", dbc.PillCategories.Other }
         };
         public static async Task<int> SyncPills(dbc.Apteka063Context db)
