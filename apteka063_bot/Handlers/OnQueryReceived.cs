@@ -103,7 +103,19 @@ public partial class UpdateHandlers
         {
             await OnPillsReplyReceived(botClient, callbackQuery, order);
         }
-        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName, order.Pills ?? "");
+        var pillsList = "";
+        try
+        {
+            foreach (var pill in order.Pills.Split(','))
+            {
+                pillsList += _db.Pills.Where(x => x.Id == int.Parse(pill)).FirstOrDefault()?.Name + ", ";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, pillsList);
         await OnPillsReplyReceived(botClient, callbackQuery, order);
     }
 }
