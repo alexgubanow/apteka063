@@ -120,6 +120,9 @@
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>База данних оновлена</value>
   </data>
+  <data name="GoBack" xml:space="preserve">
+    <value>Повернутись назад</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Головне меню:</value>
   </data>

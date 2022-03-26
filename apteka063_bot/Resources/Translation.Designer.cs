@@ -61,15 +61,6 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Back to main menu.
-        /// </summary>
-        internal static string BackToMainMenu {
-            get {
-                return ResourceManager.GetString("BackToMainMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to database update failed.
         /// </summary>
         internal static string DBUpdateFailed {
@@ -84,6 +75,15 @@ namespace apteka063.Resources {
         internal static string DBUpdateFinished {
             get {
                 return ResourceManager.GetString("DBUpdateFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return back.
+        /// </summary>
+        internal static string GoBack {
+            get {
+                return ResourceManager.GetString("GoBack", resourceCulture);
             }
         }
         

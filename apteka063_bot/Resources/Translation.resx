@@ -117,14 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BackToMainMenu" xml:space="preserve">
-    <value>Back to main menu</value>
-  </data>
   <data name="DBUpdateFailed" xml:space="preserve">
     <value>database update failed</value>
   </data>
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>database update finished</value>
+  </data>
+  <data name="GoBack" xml:space="preserve">
+    <value>Return back</value>
   </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Main menu:</value>

@@ -13,7 +13,7 @@ public partial class UpdateHandlers
 {
     private static async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(message.From.LanguageCode);
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(message.From.LanguageCode??"ru");
 
         //Console.WriteLine($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
