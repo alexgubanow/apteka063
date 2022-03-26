@@ -42,7 +42,7 @@ namespace apteka063_bot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contacts");
+                    b.ToTable("Contacts", (string)null);
                 });
 
             modelBuilder.Entity("apteka063.dbc.Location", b =>
@@ -71,7 +71,7 @@ namespace apteka063_bot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("apteka063.dbc.Order", b =>
@@ -91,7 +91,7 @@ namespace apteka063_bot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("apteka063.dbc.Pill", b =>
@@ -106,7 +106,7 @@ namespace apteka063_bot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pills");
+                    b.ToTable("Pills", (string)null);
                 });
 
             modelBuilder.Entity("apteka063.dbc.User", b =>
@@ -151,7 +151,7 @@ namespace apteka063_bot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }
