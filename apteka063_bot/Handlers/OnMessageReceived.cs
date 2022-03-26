@@ -19,7 +19,12 @@ public partial class UpdateHandlers
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData("Pills", "pills"), },
             new [] { InlineKeyboardButton.WithCallbackData("Transport", "transport"), }, });
-
-        await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: "Main menu:", replyMarkup: inlineKeyboard);
+        var header = "Main menu:";
+        if (message.Text == "updb")
+        {
+            await Services.Gsheet.SyncPills(_db);
+            header += "\ndatabase update finished";
+        }
+        await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: header, replyMarkup: inlineKeyboard);
     }
 }
