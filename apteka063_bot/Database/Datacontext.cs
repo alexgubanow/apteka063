@@ -2,12 +2,16 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace apteka063.dbc;
+//after update of any class below need to run:
+//Add-Migration DESCRIPTION_OF_CHANGE
+//Update-Database
 public class Apteka063Context : DbContext
 {
     public DbSet<Contact>? Contacts { get; set; }
     public DbSet<Location>? Locations { get; set; }
     public DbSet<Order>? Orders { get; set; }
     public DbSet<User>? Users { get; set; }
+    public DbSet<Pill>? Pills { get; set; }
 
     public string DbPath { get; }
 
@@ -43,5 +47,10 @@ public class Location : Telegram.Bot.Types.Location
     [Key]
     public long Id { get; set; }
 }
-
+public class Pill
+{
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
 
