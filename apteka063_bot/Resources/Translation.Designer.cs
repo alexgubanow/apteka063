@@ -61,6 +61,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Available now:.
+        /// </summary>
+        internal static string AvailableNow {
+            get {
+                return ResourceManager.GetString("AvailableNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to database update failed.
         /// </summary>
         internal static string DBUpdateFailed {
@@ -93,6 +102,15 @@ namespace apteka063.Resources {
         internal static string MainMenu {
             get {
                 return ResourceManager.GetString("MainMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pick category:.
+        /// </summary>
+        internal static string PickСategory {
+            get {
+                return ResourceManager.GetString("PickСategory", resourceCulture);
             }
         }
         

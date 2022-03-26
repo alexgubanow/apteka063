@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AvailableNow" xml:space="preserve">
+    <value>Доступно зараз:</value>
+  </data>
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>База данних оновлена</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Головне меню:</value>
+  </data>
+  <data name="PickСategory" xml:space="preserve">
+    <value>Вибери категорію:</value>
   </data>
   <data name="Pills" xml:space="preserve">
     <value>Медикаменти</value>

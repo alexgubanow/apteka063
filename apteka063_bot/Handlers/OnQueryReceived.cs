@@ -63,7 +63,7 @@ public partial class UpdateHandlers
                 pillCategory.Key,
                 $"pillsCategory_{pillCategory.Value}") });
         }
-        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: "Pick category:", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: Resources.Translation.Pick—ategory, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
     private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
     {
@@ -90,7 +90,7 @@ public partial class UpdateHandlers
                 $"pill_{pillDB.Id}") });
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("Order", "order") });
-        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: "Here is what we have:", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: Resources.Translation.AvailableNow, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
     private static async Task OnPillsItemReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
