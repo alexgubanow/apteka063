@@ -8,7 +8,7 @@ using apteka063.dbc;
 
 #nullable disable
 
-namespace apteka063_bot.Migrations
+namespace apteka063.Migrations
 {
     [DbContext(typeof(Apteka063Context))]
     [Migration("20220323221745_InitialCreate")]

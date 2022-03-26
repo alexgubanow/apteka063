@@ -21,6 +21,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Translation.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Translation.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Translation.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Translation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="apteka063-b1c869e99bc4.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
