@@ -120,6 +120,9 @@
   <data name="BackToMainMenu" xml:space="preserve">
     <value>Back to main menu</value>
   </data>
+  <data name="DBUpdateFailed" xml:space="preserve">
+    <value>database update failed</value>
+  </data>
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>database update finished</value>
   </data>

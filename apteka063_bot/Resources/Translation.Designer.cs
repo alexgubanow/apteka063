@@ -70,6 +70,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to database update failed.
+        /// </summary>
+        internal static string DBUpdateFailed {
+            get {
+                return ResourceManager.GetString("DBUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to database update finished.
         /// </summary>
         internal static string DBUpdateFinished {
