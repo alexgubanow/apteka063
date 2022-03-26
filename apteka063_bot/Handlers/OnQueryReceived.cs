@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -16,7 +17,7 @@ public partial class UpdateHandlers
         var user = await dbc.User.GetUserAsync(_db, callbackQuery.From);
         if (callbackQuery.Data == "backtoMain")
         {
-            await OnMessageReceived(botClient, callbackQuery.Message);
+            await OnMessageReceived(botClient, callbackQuery.Message!);
         }
         else if (callbackQuery.Data == "pills")
         {
@@ -32,11 +33,13 @@ public partial class UpdateHandlers
         }
         else
         {
-            await OnMessageReceived(botClient, callbackQuery.Message);
+            await OnMessageReceived(botClient, callbackQuery.Message!);
         }
     }
     private static async Task OnPillsReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
     {
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
+
         await botClient.DeleteMessageAsync(callbackQuery.Message.Chat.Id, callbackQuery.Message.MessageId);
         order ??= _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
         if (order == null)
@@ -48,7 +51,7 @@ public partial class UpdateHandlers
         var orderPills = order.Pills?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("Back to main menu", "backtoMain") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.BackToMainMenu, "backtoMain") }
         };
         foreach (var pillDB in _db.Pills.ToList())
         {
