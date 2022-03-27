@@ -75,7 +75,7 @@ public class Worker : BackgroundService
         }
         if (_db.Database.EnsureCreated() == true)
         {
-            if (await _gsheet.SyncPillsAsync() == 0)
+            if (await _gsheet.SyncPillsAsync() != 0)
             {
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
