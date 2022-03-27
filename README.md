@@ -1,6 +1,10 @@
 # apteka063
 tg bot for local pharmacy service
 
+## Development
+
+Add your telegram API token to the `App.config`
+
 ## Localization
 
 The translated text should be added as ID to the `Resources/Translation.resx` via the Microsoft Visual Studio ... do not forget to save.
