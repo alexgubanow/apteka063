@@ -25,8 +25,8 @@ public static class Program
             {
                 Console.WriteLine(Resources.Translation.DBUpdateFailed);
             }
-        _db.Database.EnsureCreated();
-        TelegramBotClient Bot = null;
+        }
+        TelegramBotClient? Bot = null;
         var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         if (config == null)
         {
@@ -73,10 +73,7 @@ public static class Program
                 Console.WriteLine($"original error message:\n{ex.Message}");
             }
         }
-
-        TelegramBotClient Bot = new(token);
-
-        User me = await Bot.GetMeAsync();
+        User me = await Bot!.GetMeAsync();
         Console.Title = me.Username ?? "apteka063";
 
         using var cts = new CancellationTokenSource();
