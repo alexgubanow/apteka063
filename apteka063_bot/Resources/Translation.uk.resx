@@ -129,7 +129,7 @@
   <data name="MainMenu" xml:space="preserve">
     <value>Головне меню:</value>
   </data>
-  <data name="PickСategory" xml:space="preserve">
+  <data name="PickCategory" xml:space="preserve">
     <value>Вибери категорію:</value>
   </data>
   <data name="Pills" xml:space="preserve">

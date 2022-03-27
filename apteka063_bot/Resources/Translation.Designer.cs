@@ -108,9 +108,9 @@ namespace apteka063.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Pick category:.
         /// </summary>
-        internal static string PickСategory {
+        internal static string PickCategory {
             get {
-                return ResourceManager.GetString("PickСategory", resourceCulture);
+                return ResourceManager.GetString("PickCategory", resourceCulture);
             }
         }
         
