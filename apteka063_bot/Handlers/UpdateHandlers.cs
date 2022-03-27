@@ -11,10 +11,12 @@ public partial class UpdateHandlers
 {
     private readonly ILogger<UpdateHandlers> _logger;
     private readonly dbc.Apteka063Context _db;
-    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db)
+    private readonly Services.Gsheet _gsheet;
+    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db, Services.Gsheet gsheet)
     {
         _logger = logger;
         _db = db;
+        _gsheet = gsheet;
     }
     public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
@@ -23,8 +25,7 @@ public partial class UpdateHandlers
             ApiRequestException apiRequestException => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
             _ => exception.ToString()
         };
-
-        Console.WriteLine(ErrorMessage);
+        _logger.LogError(ErrorMessage);
         return Task.CompletedTask;
     }
 

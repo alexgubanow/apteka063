@@ -2,6 +2,7 @@
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,20 @@ namespace apteka063.Services
 {
     public class Gsheet
     {
+        private readonly ILogger<Gsheet> _logger;
+        private readonly dbc.Apteka063Context _db;
+        public Gsheet(ILogger<Gsheet> logger, dbc.Apteka063Context db)
+        {
+            _logger = logger;
+            _db = db;
+        }
         static string serviceAccountEmail = "apteka063-bot@apteka063.iam.gserviceaccount.com";
         static string jsonfile = "googlecreds.json";
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
         public static async Task PostOrder(string orderID, string person, string personID, string pills)
         {
-            SheetsService service = GetSheets();
+            var service = GetSheetsSevice();
             try
             {
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Orders!A2:A");
@@ -44,15 +52,16 @@ namespace apteka063.Services
                 }
 
                 ValueRange valueRange = new ValueRange() { MajorDimension = "COLUMNS" };
-                valueRange.Values = new List<IList<object>> {   new List<object>() { orderID },
-                                                                new List<object>() { person },
-                                                                new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
-                                                                new List<object>() { pills },
-                                                                new List<object>() { "not supported" },
-                                                                new List<object>() { "not supported" },
-                                                                new List<object>() { "not supported" },
-                                                                new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") }, // Format depend on Google sheet
-                                                                };
+                valueRange.Values = new List<IList<object>> {
+                    new List<object>() { orderID },
+                    new List<object>() { person },
+                    new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
+                    new List<object>() { pills },
+                    new List<object>() { "not supported" },
+                    new List<object>() { "not supported" },
+                    new List<object>() { "not supported" },
+                    new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") }, // Format depend on Google sheet
+                };
                 if (writePosition != -1)
                 {
                     var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Orders!A{writePosition}:H{writePosition}");
@@ -81,9 +90,9 @@ namespace apteka063.Services
             { "Женское", dbc.PillCategories.Women },
             { "Другое", dbc.PillCategories.Other }
         };
-        public static async Task<int> SyncPillsAsync(dbc.Apteka063Context db)
+        public async Task<int> SyncPillsAsync()
         {
-            SheetsService service = GetSheets();
+            var service = GetSheetsSevice();
             try
             {
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Pills!A2:C");
@@ -92,21 +101,21 @@ namespace apteka063.Services
                 {
                     foreach (var sheetRow in response.Values)
                     {
-                        int pillID = int.Parse(sheetRow[0].ToString());
-                        var pill = db.Pills.Where(x => x.Id == pillID).FirstOrDefault();
+                        int pillID = int.Parse(sheetRow[0].ToString()!);
+                        var pill = _db.Pills!.Where(x => x.Id == pillID).FirstOrDefault();
                         if (pill == null)
                         {
-                            pill = new() { Id = pillID, Name = sheetRow[1].ToString(), PillCategory = pillCategoriesMap[sheetRow[2].ToString()] };
-                            await db.Pills.AddAsync(pill);
+                            pill = new() { Id = pillID, Name = sheetRow[1].ToString()!, PillCategory = pillCategoriesMap[sheetRow[2].ToString()!] };
+                            await _db.Pills!.AddAsync(pill);
                         }
                         else
                         {
                             pill.Id = pillID;
-                            pill.Name = sheetRow[1].ToString();
-                            pill.PillCategory = pillCategoriesMap[sheetRow[2].ToString()];
-                            db.Pills.Update(pill);
+                            pill.Name = sheetRow[1].ToString()!;
+                            pill.PillCategory = pillCategoriesMap[sheetRow[2].ToString()!];
+                            _db.Pills!.Update(pill);
                         }
-                        await db.SaveChangesAsync();
+                        await _db.SaveChangesAsync();
                     }
                 }
             }

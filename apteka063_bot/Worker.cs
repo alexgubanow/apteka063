@@ -18,12 +18,14 @@ public class Worker : BackgroundService
     private readonly IHostApplicationLifetime _lifetime;
     private readonly bot.UpdateHandlers _handlers;
     readonly dbc.Apteka063Context _db;
-    public Worker(ILogger<Worker> logger, bot.UpdateHandlers handlers, dbc.Apteka063Context db, IHostApplicationLifetime lifetime)
+    readonly Services.Gsheet _gsheet;
+    public Worker(ILogger<Worker> logger, bot.UpdateHandlers handlers, dbc.Apteka063Context db, Services.Gsheet gsheet, IHostApplicationLifetime lifetime)
     {
         _handlers = handlers;
         _lifetime = lifetime;
         _logger = logger;
         _db = db;
+        _gsheet = gsheet;
     }
 
     protected override async Task<int> ExecuteAsync(CancellationToken stoppingToken)
@@ -71,13 +73,9 @@ public class Worker : BackgroundService
             _lifetime.StopApplication();
             return -2;
         }
-        User me = await Bot!.GetMeAsync();
-        Console.Title = me.Username ?? "apteka063";
-        using var cts = new CancellationTokenSource();
-        ReceiverOptions receiverOptions = new() { AllowedUpdates = { } };
-        if (_db.Database.EnsureCreated())
+        if (_db.Database.EnsureCreated() == true)
         {
-            if (await Services.Gsheet.SyncPillsAsync(_db) != 0)
+            if (await _gsheet.SyncPillsAsync() == 0)
             {
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
@@ -89,16 +87,16 @@ public class Worker : BackgroundService
 
             _logger.LogInformation(Resources.Translation.DBUpdateFinished);
         }
-        Bot!.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, receiverOptions, cts.Token);
+        Bot!.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, new ReceiverOptions() { AllowedUpdates = { } }, stoppingToken);
 
-        _logger.LogInformation($"Start listening for @{me.Username}");
+        User me = await Bot!.GetMeAsync(cancellationToken: stoppingToken);
+        _logger.LogInformation($"Started listening for @{me.Username}");
 
         while (!stoppingToken.IsCancellationRequested)
         {
             //_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
             //await Task.Delay(1000, stoppingToken);
         }
-        cts.Cancel();
         return 0;
     }
 }
