@@ -17,134 +17,27 @@ public partial class UpdateHandlers
         var user = await dbc.User.GetUserAsync(_db, callbackQuery.From);
         if (callbackQuery.Data == "backtoMain")
         {
-            await ShowMainMenu(botClient, callbackQuery.Message.Chat.Id, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
+            await ShowMainMenu(botClient, callbackQuery.Message!.Chat.Id, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
         }
         else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
         {
-            await OnPillsReplyReceived(botClient, callbackQuery);
+            await PillsMenu.OnReplyReceived(_db, botClient, callbackQuery);
         }
-        else if (callbackQuery.Data.Contains("pillsCategory_") == true)
+        else if (callbackQuery.Data!.Contains("pillsCategory_") == true)
         {
-            await OnPillsCategoryReplyReceived(botClient, callbackQuery, callbackQuery.Data.ToString().Substring(14));
+            await PillsMenu.OnCategoryReplyReceived(_db, botClient, callbackQuery, callbackQuery.Data.ToString().Substring(14));
         }
-        else if (callbackQuery.Data.Contains("pill_") == true)
+        else if (callbackQuery.Data!.Contains("pill_") == true)
         {
-            await OnPillsItemReplyReceived(botClient, callbackQuery);
+            await PillsMenu.OnItemReplyReceived(_db, botClient, callbackQuery);
         }
-        else if (callbackQuery.Data == "order")
+        else if (callbackQuery.Data == "orderPills")
         {
-            await OnOrderReplyReceived(botClient, callbackQuery);
-        }
-        else
-        {
-            await OnMessageReceived(botClient, callbackQuery.Message!);
-        }
-    }
-    private static async Task OnPillsReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
-    {
-
-        order ??= _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
-        if (order == null)
-        {
-            order = new() { UserId = callbackQuery.From.Id };
-            await _db.Orders.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
-        var orderPills = order.Pills?.Split(',');
-        var buttons = new List<List<InlineKeyboardButton>>
-        {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoMain") }
-        };
-        foreach (var pillCategory in Services.Gsheet.pillCategoriesMap)
-        {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
-                pillCategory.Key,
-                $"pillsCategory_{pillCategory.Value}") });
-        }
-        await botClient.EditMessageTextAsync(chatId: callbackQuery.Message.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
-    }
-    private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, string pillCategory, dbc.Order? order = null)
-    {
-        order ??= _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
-        if (order == null)
-        {
-            order = new() { UserId = callbackQuery.From.Id };
-            await _db.Orders.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
-        var orderPills = order.Pills?.Split(',');
-        var buttons = new List<List<InlineKeyboardButton>>
-        {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoPills") }
-        };
-        var pillsDB = _db.Pills.Where(x => x.PillCategory == (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), pillCategory)).ToList();
-        foreach (var pillDB in pillsDB)
-        {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
-                pillDB.Name + (orderPills != null && orderPills.Contains(pillDB.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
-                $"pill_{pillDB.Id}") });
-        }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("Order", "order") });
-        await botClient.EditMessageTextAsync(chatId: callbackQuery.Message.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
-    }
-    private static async Task OnPillsItemReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
-    {
-        var order = _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
-        if (order == null)
-        {
-            order = new() { UserId = callbackQuery.From.Id };
-            await _db.Orders.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
-        var pillID = callbackQuery.Data.ToString().Substring(5);
-        var orderPillsList = order.Pills?.Split(',').ToList();
-        if (orderPillsList != null)
-        {
-            if (orderPillsList.Contains(pillID))
-            {
-                orderPillsList.Remove(pillID);
-            }
-            else
-            {
-                orderPillsList.Add(pillID);
-            }
+            await PillsMenu.OnOrderReplyReceived(_db, botClient, callbackQuery);
         }
         else
         {
-            orderPillsList = new() { pillID };
+            await ShowMainMenu(botClient, callbackQuery.Message!.Chat.Id, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
         }
-        order.Pills = string.Join(',', orderPillsList);
-        _db.Orders.Update(order);
-        await _db.SaveChangesAsync();
-        var pillCategory = _db.Pills.Where(x => x.Id == int.Parse(pillID)).FirstOrDefault().PillCategory;
-        await OnPillsCategoryReplyReceived(botClient, callbackQuery, pillCategory.ToString(), order);
-    }
-    private static async Task OnOrderReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
-    {
-        var order = _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
-        if (order == null)
-        {
-            order = new() { UserId = callbackQuery.From.Id };
-            await _db.Orders.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
-        if (order.Pills == null)
-        {
-            await OnPillsReplyReceived(botClient, callbackQuery, order);
-        }
-        var pillsList = "";
-        try
-        {
-            foreach (var pill in order.Pills.Split(','))
-            {
-                pillsList += _db.Pills.Where(x => x.Id == int.Parse(pill)).FirstOrDefault()?.Name + ", ";
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, pillsList);
-        await OnPillsReplyReceived(botClient, callbackQuery, order);
     }
 }
