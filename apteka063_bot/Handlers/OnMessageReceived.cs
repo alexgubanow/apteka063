@@ -13,7 +13,7 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private async Task OnMessageReceived(ITelegramBotClient botClient, CallbackQuery? callbackQuery, Message message)
+    private async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
@@ -31,22 +31,10 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        await ShowMainMenu(botClient, callbackQuery, message, header);
+        await ShowMainMenu(botClient, message, header);
     }
-    private async Task ShowMainMenu(ITelegramBotClient botClient, CallbackQuery? callbackQuery, Message message, string headerText, int? messageId = null)
+    private async Task ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, int? messageId = null)
     {
-        // Reset items as we only allow one category of items in an order
-        if (callbackQuery != null)
-        {
-            var activeOrder = await _db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
-            if (activeOrder != null)
-            {
-                activeOrder.Items = null;
-                _db.Update(activeOrder);
-                await _db.SaveChangesAsync();
-            }
-        }
-
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Food, "food"), },

@@ -40,8 +40,8 @@ public partial class UpdateHandlers
             // UpdateType.ShippingQuery:
             // UpdateType.PreCheckoutQuery:
             // UpdateType.Poll:
-            UpdateType.Message            => OnMessageReceived(botClient, update.CallbackQuery, update.Message!),
-            UpdateType.EditedMessage      => OnMessageReceived(botClient, update.CallbackQuery, update.EditedMessage!),
+            UpdateType.Message            => OnMessageReceived(botClient, update.Message!),
+            UpdateType.EditedMessage      => OnMessageReceived(botClient, update.EditedMessage!),
             UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!),
             //UpdateType.InlineQuery        => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),

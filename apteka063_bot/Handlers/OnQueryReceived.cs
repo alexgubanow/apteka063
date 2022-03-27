@@ -11,7 +11,7 @@ public partial class UpdateHandlers
         var user = await dbc.User.GetUserAsync(_db, callbackQuery.From);
         if (callbackQuery.Data == "backtoMain")
         {
-            await ShowMainMenu(botClient, callbackQuery, callbackQuery.Message, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
+            await ShowMainMenu(botClient, callbackQuery.Message, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
         }
         else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
         {
@@ -43,7 +43,7 @@ public partial class UpdateHandlers
         }
         else
         {
-            await ShowMainMenu(botClient, callbackQuery, callbackQuery.Message, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
+            await ShowMainMenu(botClient, callbackQuery.Message, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
         }
     }
 }

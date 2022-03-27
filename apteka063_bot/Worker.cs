@@ -75,18 +75,16 @@ public class Worker : BackgroundService
         Console.Title = me.Username ?? "apteka063";
         using var cts = new CancellationTokenSource();
         ReceiverOptions receiverOptions = new() { AllowedUpdates = { } };
-        if (_db.Database.EnsureCreated() == true)
+        if (_db.Database.EnsureCreated())
         {
             if (await Services.Gsheet.SyncPillsAsync(_db) != 0)
             {
-                _logger.LogError(Resources.Translation.DBUpdateFailed);
-                throw new Exception("DB SyncPills Failed");
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
 
             if (await Services.Gsheet.SyncFoodAsync(_db) != 0)
             {
-                _logger.LogError(Resources.Translation.DBUpdateFailed);
-                throw new Exception("DB SyncFoods Failed");
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
 
             _logger.LogInformation(Resources.Translation.DBUpdateFinished);
