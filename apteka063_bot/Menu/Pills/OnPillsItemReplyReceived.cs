@@ -22,7 +22,7 @@ public partial class PillsMenu
             await db.SaveChangesAsync();
         }
         var pillID = callbackQuery.Data!.ToString().Substring(5);
-        var orderPillsList = order.Pills?.Split(',').ToList();
+        var orderPillsList = order.Items?.Split(',').ToList();
         if (orderPillsList != null)
         {
             if (orderPillsList.Contains(pillID))
@@ -38,7 +38,7 @@ public partial class PillsMenu
         {
             orderPillsList = new() { pillID };
         }
-        order.Pills = string.Join(',', orderPillsList);
+        order.Items = string.Join(',', orderPillsList);
         db.Orders!.Update(order);
         await db.SaveChangesAsync();
         var pillCategory = db.Pills!.Where(x => x.Id == int.Parse(pillID)).FirstOrDefault()!.PillCategory;

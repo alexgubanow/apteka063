@@ -21,14 +21,14 @@ public partial class FoodMenu
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
-        if (order.Pills == null)
+        if (order.Items == null)
         {
             await OnReplyReceived(db, botClient, callbackQuery, order);
         }
         var foodList = "";
         try
         {
-            foreach (var food in order.Pills!.Split(','))
+            foreach (var food in order.Items!.Split(','))
             {
                 foodList += db.Foods!.Where(x => x.Id == int.Parse(food)).FirstOrDefault()?.Name + ", ";
             }
@@ -38,6 +38,6 @@ public partial class FoodMenu
             Console.WriteLine(ex.Message);
         }
         await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username, foodList);
-        await OnReplyReceived(db, botClient, callbackQuery, order);
+        await OnOrderPosted(db, botClient, callbackQuery, order, foodList);
     }
 }

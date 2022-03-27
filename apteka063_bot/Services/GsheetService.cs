@@ -81,11 +81,6 @@ namespace apteka063.Services
             { "Женское", dbc.PillCategories.Women },
             { "Другое", dbc.PillCategories.Other }
         };
-        public readonly static Dictionary<string, dbc.FoodCategories> foodCategoriesMap = new()
-        {
-            { "Еда", dbc.FoodCategories.AdultFood },
-            { "Детская еда", dbc.FoodCategories.BabyFood }
-        };
         public static async Task<int> SyncPillsAsync(dbc.Apteka063Context db)
         {
             SheetsService service = GetSheets();
@@ -122,6 +117,7 @@ namespace apteka063.Services
             }
             return 0;
         }
+
         public static async Task<int> SyncFoodAsync(dbc.Apteka063Context db)
         {
             SheetsService service = GetSheets();
@@ -137,14 +133,13 @@ namespace apteka063.Services
                         var food = db.Foods.Where(x => x.Id == foodID).FirstOrDefault();
                         if (food == null)
                         {
-                            food = new() { Id = foodID, Name = sheetRow[1].ToString(), FoodCategory = foodCategoriesMap[sheetRow[2].ToString()] };
+                            food = new() { Id = foodID, Name = sheetRow[1].ToString() };
                             await db.Foods.AddAsync(food);
                         }
                         else
                         {
                             food.Id = foodID;
                             food.Name = sheetRow[1].ToString();
-                            food.FoodCategory = foodCategoriesMap[sheetRow[2].ToString()];
                             db.Foods.Update(food);
                         }
                         await db.SaveChangesAsync();

@@ -22,7 +22,7 @@ public partial class FoodMenu
             await db.SaveChangesAsync();
         }
         var foodID = callbackQuery.Data!.ToString().Substring(5);
-        var orderFoodList = order.Pills?.Split(',').ToList();
+        var orderFoodList = order.Items?.Split(',').ToList();
         if (orderFoodList != null)
         {
             if (orderFoodList.Contains(foodID))
@@ -38,10 +38,9 @@ public partial class FoodMenu
         {
             orderFoodList = new() { foodID };
         }
-        order.Pills = string.Join(',', orderFoodList);
+        order.Items = string.Join(',', orderFoodList);
         db.Orders!.Update(order);
         await db.SaveChangesAsync();
-        var foodCategory = db.Foods!.Where(x => x.Id == int.Parse(foodID)).FirstOrDefault()!.FoodCategory;
-        await OnCategoryReplyReceived(db, botClient, callbackQuery, foodCategory.ToString(), order);
+        await OnReplyReceived(db, botClient, callbackQuery, order);
     }
 }

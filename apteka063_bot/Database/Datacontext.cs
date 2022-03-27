@@ -26,7 +26,7 @@ public class Order
     [Key]
     public int Id { get; set; }
     public long UserId { get; set; }
-    public string? Pills { get; set; }
+    public string? Items { get; set; }
     public OrderStatus Status { get; set; }
 }
 public class Contact : Telegram.Bot.Types.Contact
@@ -43,10 +43,6 @@ public enum PillCategories
 {
     Heart, Stomach, Painkiller, Fever, Child, Women, Other
 }
-public enum FoodCategories
-{
-    AdultFood, BabyFood
-}
 public class Pill
 {
     [Key]
@@ -59,5 +55,4 @@ public class Food
     [Key]
     public int Id { get; set; }
     public string Name { get; set; }
-    public FoodCategories FoodCategory { get; set; }
 }

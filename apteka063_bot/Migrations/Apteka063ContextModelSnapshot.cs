@@ -51,9 +51,6 @@ namespace apteka063.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("FoodCategory")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -98,10 +95,7 @@ namespace apteka063.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Foods")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Pills")
+                    b.Property<string>("Items")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")

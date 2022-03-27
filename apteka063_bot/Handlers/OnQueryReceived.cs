@@ -39,10 +39,6 @@ public partial class UpdateHandlers
         {
             await FoodMenu.OnReplyReceived(_db, botClient, callbackQuery);
         }
-        else if (callbackQuery.Data!.Contains("foodCategory_") == true)
-        {
-            await FoodMenu.OnCategoryReplyReceived(_db, botClient, callbackQuery, callbackQuery.Data.ToString().Substring(14));
-        }
         else if (callbackQuery.Data!.Contains("food_") == true)
         {
             await FoodMenu.OnItemReplyReceived(_db, botClient, callbackQuery);

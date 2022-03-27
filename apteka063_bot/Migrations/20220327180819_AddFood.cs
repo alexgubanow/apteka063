@@ -4,15 +4,14 @@
 
 namespace apteka063.Migrations
 {
-    public partial class AddFoods : Migration
+    public partial class AddFood : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Foods",
+            migrationBuilder.RenameColumn(
+                name: "Pills",
                 table: "Orders",
-                type: "TEXT",
-                nullable: true);
+                newName: "Items");
 
             migrationBuilder.CreateTable(
                 name: "Foods",
@@ -20,8 +19,7 @@ namespace apteka063.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    FoodCategory = table.Column<int>(type: "INTEGER", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,9 +32,10 @@ namespace apteka063.Migrations
             migrationBuilder.DropTable(
                 name: "Foods");
 
-            migrationBuilder.DropColumn(
-                name: "Foods",
-                table: "Orders");
+            migrationBuilder.RenameColumn(
+                name: "Items",
+                table: "Orders",
+                newName: "Pills");
         }
     }
 }

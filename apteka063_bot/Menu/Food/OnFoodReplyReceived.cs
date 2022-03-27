@@ -22,17 +22,19 @@ public partial class FoodMenu
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
-        var orderFood = order.Pills?.Split(',');
+        var orderFood = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoMain") }
         };
-        foreach (var foodCategory in Services.Gsheet.foodCategoriesMap)
+        var foodsDB = db.Foods!.ToList();
+        foreach (var foodDB in foodsDB)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
-                foodCategory.Key,
-                $"foodCategory_{foodCategory.Value}") });
+                foodDB.Name + (orderFood != null && orderFood.Contains(foodDB.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
+                $"food_{foodDB.Id}") });
         }
-        await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("Order", "order") });
+        await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.Food, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

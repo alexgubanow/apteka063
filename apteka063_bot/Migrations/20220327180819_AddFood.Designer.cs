@@ -11,8 +11,8 @@ using apteka063.dbc;
 namespace apteka063.Migrations
 {
     [DbContext(typeof(Apteka063Context))]
-    [Migration("20220327154031_AddFoods")]
-    partial class AddFoods
+    [Migration("20220327180819_AddFood")]
+    partial class AddFood
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,9 +51,6 @@ namespace apteka063.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("FoodCategory")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -100,10 +97,7 @@ namespace apteka063.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Foods")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Pills")
+                    b.Property<string>("Items")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")

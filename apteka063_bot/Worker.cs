@@ -28,14 +28,19 @@ public class Worker : BackgroundService
         using dbc.Apteka063Context _db = new();
         if (_db.Database.EnsureCreated() == true)
         {
-            if (await Services.Gsheet.SyncPillsAsync(_db) == 0)
+            if (await Services.Gsheet.SyncPillsAsync(_db) != 0)
             {
-                _logger.LogInformation(Resources.Translation.DBUpdateFinished);
+                _logger.LogError(Resources.Translation.DBUpdateFailed);
+                throw new Exception("DB SyncPills Failed");    
             }
-            else
+
+            if (await Services.Gsheet.SyncFoodAsync(_db) != 0)
             {
-                _logger.LogInformation(Resources.Translation.DBUpdateFailed);
+                _logger.LogError(Resources.Translation.DBUpdateFailed);
+                throw new Exception("DB SyncFoods Failed");
             }
+
+            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
         }
         TelegramBotClient? Bot = null;
         var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);

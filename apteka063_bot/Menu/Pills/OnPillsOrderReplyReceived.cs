@@ -21,14 +21,14 @@ public partial class PillsMenu
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
-        if (order.Pills == null)
+        if (order.Items == null)
         {
             await OnReplyReceived(db, botClient, callbackQuery, order);
         }
         var pillsList = "";
         try
         {
-            foreach (var pill in order.Pills!.Split(','))
+            foreach (var pill in order.Items!.Split(','))
             {
                 pillsList += db.Pills!.Where(x => x.Id == int.Parse(pill)).FirstOrDefault()?.Name + ", ";
             }
