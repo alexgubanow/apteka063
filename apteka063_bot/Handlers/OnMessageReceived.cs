@@ -13,9 +13,6 @@ public partial class UpdateHandlers
 {
     private static async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
     {
-        string locale = message.From.LanguageCode ?? "ru";
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
-
         //Console.WriteLine($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
             return;
@@ -32,12 +29,10 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        await ShowMainMenu(botClient, locale, message.Chat.Id, header);
+        await ShowMainMenu(botClient, message.Chat.Id, header);
     }
-    private static async Task ShowMainMenu(ITelegramBotClient botClient, string locale, long chatId, string headerText, int? messageId = null)
+    private static async Task ShowMainMenu(ITelegramBotClient botClient, long chatId, string headerText, int? messageId = null)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
-
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });

@@ -14,11 +14,10 @@ public partial class UpdateHandlers
 {
     private static async Task OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
         var user = await dbc.User.GetUserAsync(_db, callbackQuery.From);
         if (callbackQuery.Data == "backtoMain")
         {
-            await ShowMainMenu(botClient, callbackQuery.From.LanguageCode, callbackQuery.Message.Chat.Id, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
+            await ShowMainMenu(botClient, callbackQuery.Message.Chat.Id, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
         }
         else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
         {
@@ -66,8 +65,6 @@ public partial class UpdateHandlers
     }
     private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, string pillCategory, dbc.Order? order = null)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
-
         order ??= _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
         if (order == null)
         {

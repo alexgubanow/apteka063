@@ -1,3 +1,4 @@
+using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -25,6 +26,8 @@ public partial class UpdateHandlers
 
     public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(GetLangaugeCodeFromUpdate(update));
+
         var handler = update.Type switch
         {
             // UpdateType.Unknown:
@@ -54,5 +57,40 @@ public partial class UpdateHandlers
     {
         //Console.WriteLine($"Unknown update type: {update.Type}");
         return Task.CompletedTask;
+    }
+
+    private static string GetLangaugeCodeFromUpdate(Update update)
+    {
+        string locale = "ru";
+        bool localeFound = false;
+        try
+        {
+            locale = update.CallbackQuery.From.LanguageCode;
+            localeFound = true;
+        }
+        catch { }
+
+        if (!localeFound)
+        {
+            try
+            {
+                locale = update.Message.From.LanguageCode;
+                localeFound = true;
+            }
+            catch { }
+        }
+
+        if (!localeFound)
+        {
+            try
+            {
+                locale = update.EditedMessage.From.LanguageCode;
+                localeFound = true;
+            }
+            catch { }
+        }
+
+        // Console.WriteLine("New update with " + locale);
+        return locale;
     }
 }
