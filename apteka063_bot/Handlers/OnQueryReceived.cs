@@ -25,7 +25,7 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data.Contains("pillsCategory_") == true)
         {
-            await OnPillsCategoryReplyReceived(botClient, callbackQuery);
+            await OnPillsCategoryReplyReceived(botClient, callbackQuery, callbackQuery.Data.ToString().Substring(14));
         }
         else if (callbackQuery.Data.Contains("pill_") == true)
         {
@@ -65,7 +65,7 @@ public partial class UpdateHandlers
         }
         await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: Resources.Translation.Pick—ategory, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
-    private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
+    private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, string pillCategory, dbc.Order? order = null)
     {
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
 
@@ -82,7 +82,7 @@ public partial class UpdateHandlers
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoPills") }
         };
-        var pillsDB = _db.Pills.Where(x => x.PillCategory == (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), callbackQuery.Data.ToString().Substring(14))).ToList();
+        var pillsDB = _db.Pills.Where(x => x.PillCategory == (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), pillCategory)).ToList();
         foreach (var pillDB in pillsDB)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
@@ -121,7 +121,8 @@ public partial class UpdateHandlers
         order.Pills = string.Join(',', orderPillsList);
         _db.Orders.Update(order);
         await _db.SaveChangesAsync();
-        await OnPillsReplyReceived(botClient, callbackQuery, order);
+        var pillCategory = _db.Pills.Where(x => x.Id == int.Parse(pillID)).FirstOrDefault().PillCategory;
+        await OnPillsCategoryReplyReceived(botClient, callbackQuery, pillCategory.ToString(), order);
     }
     private static async Task OnOrderReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
