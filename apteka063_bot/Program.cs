@@ -14,7 +14,17 @@ public static class Program
     public static async Task<int> Main(string[] args)
     {
         using dbc.Apteka063Context _db = new();
-        _db.Database.EnsureCreated();
+        if (_db.Database.EnsureCreated() == true)
+        {
+            if (await Services.Gsheet.SyncPillsAsync(_db) == 0)
+            {
+                Console.WriteLine(Resources.Translation.DBUpdateFinished);
+            }
+            else
+            {
+                Console.WriteLine(Resources.Translation.DBUpdateFailed);
+            }
+        }
         string token = "5254732281:AAF76_UiH2dpF6AU40JvOzb06TSCMO8Qw-4";
         //if (args.Length > 0)
         //{

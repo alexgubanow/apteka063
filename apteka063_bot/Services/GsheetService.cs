@@ -72,7 +72,7 @@ namespace apteka063.Services
             { "Женское", dbc.PillCategories.Women },
             { "Другое", dbc.PillCategories.Other }
         };
-        public static async Task<int> SyncPills(dbc.Apteka063Context db)
+        public static async Task<int> SyncPillsAsync(dbc.Apteka063Context db)
         {
             SheetsService service = GetSheets();
             try
