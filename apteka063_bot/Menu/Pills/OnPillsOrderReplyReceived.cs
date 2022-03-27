@@ -38,6 +38,6 @@ public partial class PillsMenu
             Console.WriteLine(ex.Message);
         }
         await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username, pillsList);
-        await OnReplyReceived(db, botClient, callbackQuery, order);
+        await OnOrderPosted(db, botClient, callbackQuery, order, pillsList);
     }
 }

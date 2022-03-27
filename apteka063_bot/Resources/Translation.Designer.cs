@@ -106,11 +106,29 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to the Main menu.
+        /// </summary>
+        internal static string GoToMenu {
+            get {
+                return ResourceManager.GetString("GoToMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main menu:.
         /// </summary>
         internal static string MainMenu {
             get {
                 return ResourceManager.GetString("MainMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your order #{0,0} has been recieved!.
+        /// </summary>
+        internal static string OrderPosted {
+            get {
+                return ResourceManager.GetString("OrderPosted", resourceCulture);
             }
         }
         
@@ -129,6 +147,15 @@ namespace apteka063.Resources {
         internal static string Pills {
             get {
                 return ResourceManager.GetString("Pills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Take care about yourself and loved ones.
+        /// </summary>
+        internal static string TakeCare {
+            get {
+                return ResourceManager.GetString("TakeCare", resourceCulture);
             }
         }
         
