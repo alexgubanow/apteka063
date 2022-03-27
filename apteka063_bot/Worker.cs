@@ -16,32 +16,18 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
 
     private readonly IHostApplicationLifetime _lifetime;
-    public Worker(ILogger<Worker> logger, IHostApplicationLifetime lifetime)
+    private readonly bot.UpdateHandlers _handlers;
+    readonly dbc.Apteka063Context _db;
+    public Worker(ILogger<Worker> logger, bot.UpdateHandlers handlers, dbc.Apteka063Context db, IHostApplicationLifetime lifetime)
     {
+        _handlers = handlers;
         _lifetime = lifetime;
         _logger = logger;
+        _db = db;
     }
 
     protected override async Task<int> ExecuteAsync(CancellationToken stoppingToken)
     {
-
-        using dbc.Apteka063Context _db = new();
-        if (_db.Database.EnsureCreated() == true)
-        {
-            if (await Services.Gsheet.SyncPillsAsync(_db) != 0)
-            {
-                _logger.LogError(Resources.Translation.DBUpdateFailed);
-                throw new Exception("DB SyncPills Failed");    
-            }
-
-            if (await Services.Gsheet.SyncFoodAsync(_db) != 0)
-            {
-                _logger.LogError(Resources.Translation.DBUpdateFailed);
-                throw new Exception("DB SyncFoods Failed");
-            }
-
-            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
-        }
         TelegramBotClient? Bot = null;
         var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         if (config == null)
@@ -89,7 +75,23 @@ public class Worker : BackgroundService
         Console.Title = me.Username ?? "apteka063";
         using var cts = new CancellationTokenSource();
         ReceiverOptions receiverOptions = new() { AllowedUpdates = { } };
-        Bot!.StartReceiving(bot.UpdateHandlers.HandleUpdateAsync, bot.UpdateHandlers.HandleErrorAsync, receiverOptions, cts.Token);
+        if (_db.Database.EnsureCreated() == true)
+        {
+            if (await Services.Gsheet.SyncPillsAsync(_db) != 0)
+            {
+                _logger.LogError(Resources.Translation.DBUpdateFailed);
+                throw new Exception("DB SyncPills Failed");
+            }
+
+            if (await Services.Gsheet.SyncFoodAsync(_db) != 0)
+            {
+                _logger.LogError(Resources.Translation.DBUpdateFailed);
+                throw new Exception("DB SyncFoods Failed");
+            }
+
+            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
+        }
+        Bot!.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, receiverOptions, cts.Token);
 
         _logger.LogInformation($"Start listening for @{me.Username}");
 

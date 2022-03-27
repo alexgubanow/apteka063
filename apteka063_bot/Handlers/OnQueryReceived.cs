@@ -12,7 +12,7 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private static async Task OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
+    private async Task OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
         var user = await dbc.User.GetUserAsync(_db, callbackQuery.From);
         if (callbackQuery.Data == "backtoMain")
