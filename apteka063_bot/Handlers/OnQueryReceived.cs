@@ -14,10 +14,11 @@ public partial class UpdateHandlers
 {
     private static async Task OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
         var user = await dbc.User.GetUserAsync(_db, callbackQuery.From);
         if (callbackQuery.Data == "backtoMain")
         {
-            await OnMessageReceived(botClient, callbackQuery.Message!);
+            await ShowMainMenu(botClient, callbackQuery.From.LanguageCode, callbackQuery.Message.Chat.Id, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);
         }
         else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
         {
@@ -42,9 +43,7 @@ public partial class UpdateHandlers
     }
     private static async Task OnPillsReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
 
-        await botClient.DeleteMessageAsync(callbackQuery.Message.Chat.Id, callbackQuery.Message.MessageId);
         order ??= _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
         if (order == null)
         {
@@ -63,13 +62,12 @@ public partial class UpdateHandlers
                 pillCategory.Key,
                 $"pillsCategory_{pillCategory.Value}") });
         }
-        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
+        await botClient.EditMessageTextAsync(chatId: callbackQuery.Message.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
     private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, string pillCategory, dbc.Order? order = null)
     {
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(callbackQuery.From.LanguageCode);
 
-        await botClient.DeleteMessageAsync(callbackQuery.Message.Chat.Id, callbackQuery.Message.MessageId);
         order ??= _db.Orders.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
         if (order == null)
         {
@@ -90,7 +88,7 @@ public partial class UpdateHandlers
                 $"pill_{pillDB.Id}") });
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("Order", "order") });
-        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: Resources.Translation.AvailableNow, replyMarkup: new InlineKeyboardMarkup(buttons));
+        await botClient.EditMessageTextAsync(chatId: callbackQuery.Message.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
     private static async Task OnPillsItemReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
