@@ -129,14 +129,23 @@
   <data name="GoBack" xml:space="preserve">
     <value>Вернуться назад</value>
   </data>
+  <data name="GoToMenu" xml:space="preserve">
+    <value>Вернуть в Главное меню</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
+  </data>
+  <data name="OrderPosted" xml:space="preserve">
+    <value>Ваш заказ #{0,0} был отправлен!</value>
   </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Выбери категорию:</value>
   </data>
   <data name="Pills" xml:space="preserve">
     <value>Медикаменты</value>
+  </data>
+  <data name="TakeCare" xml:space="preserve">
+    <value>Позаботьтесь о себе и о своих близких</value>
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Транспорт</value>

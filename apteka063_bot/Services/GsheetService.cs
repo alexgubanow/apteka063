@@ -18,7 +18,6 @@ namespace apteka063.Services
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
         public static async Task PostOrder(string orderID, string person, string personID, string pills)
         {
-            Console.WriteLine("PostOrder");
             SheetsService service = GetSheets();
             try
             {
