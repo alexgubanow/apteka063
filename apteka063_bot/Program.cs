@@ -17,6 +17,11 @@ public static class Program
         using dbc.Apteka063Context _db = new();
         _db.Database.EnsureCreated();
         string token = ConfigurationManager.AppSettings["Token"]!;
+        if (token == "")
+        {
+            Console.WriteLine("Please add your token to the App.config file");
+            return 0;
+        }
 
         TelegramBotClient Bot = new(token);
 
