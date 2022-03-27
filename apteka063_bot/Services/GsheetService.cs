@@ -49,6 +49,7 @@ namespace apteka063.Services
                 ValueRange valueRange = new ValueRange() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {
                     new List<object>() { orderID },
+                    new List<object>() { "not supported" },
                     new List<object>() { person },
                     new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
                     new List<object>() { pills },
@@ -60,13 +61,13 @@ namespace apteka063.Services
                 };
                 if (writePosition != -1)
                 {
-                    var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:I{writePosition}");
+                    var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:J{writePosition}");
                     update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
                     UpdateValuesResponse result2 = await update.ExecuteAsync();
                 }
                 else
                 {
-                    var request1 = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, $"Заказы!A{writePosition}:I{writePosition}");
+                    var request1 = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, $"Заказы!A{writePosition}:J{writePosition}");
                     request1.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                     var result2 = await request1.ExecuteAsync();
                 }
