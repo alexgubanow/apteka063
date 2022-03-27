@@ -22,7 +22,7 @@ public partial class UpdateHandlers
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
-            if (await Services.Gsheet.SyncPillsAsync(_db) == 0)
+            if (await _gsheet.SyncPillsAsync() == 0)
             {
                 header += "\n" + Resources.Translation.DBUpdateFinished;
             }

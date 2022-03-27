@@ -6,6 +6,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddHostedService<apteka063.Worker>();
+        services.AddTransient<apteka063.Services.Gsheet>();
         services.AddTransient<apteka063.bot.UpdateHandlers>();
         services.AddTransient<apteka063.dbc.Apteka063Context>();
     })

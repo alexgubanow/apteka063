@@ -27,10 +27,10 @@ public partial class PillsMenu
         }
         
         var pillIds = order.Items!.Split(',').Select(x => int.Parse(x));
-        var pillsNames = db.Pills.Where(p => pillIds.Contains(p.Id)).Select(x => x.Name);
+        var pillsNames = db.Pills!.Where(p => pillIds.Contains(p.Id)).Select(x => x.Name);
         var pillsList = string.Join(", " , pillsNames);
         
-        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username, pillsList);
+        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username!, pillsList);
         await OnOrderPosted(db, botClient, callbackQuery, order, pillsList);
     }
 }

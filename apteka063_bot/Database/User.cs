@@ -22,10 +22,10 @@ public class User : Telegram.Bot.Types.User
     }
     public static async Task<User> GetUserAsync(Apteka063Context db, Telegram.Bot.Types.User tgUser)
     {
-        var user = await db.Users.FindAsync(tgUser?.Id);
+        var user = await db.Users!.FindAsync(tgUser?.Id);
         if (user == null)
         {
-            user = new(tgUser);
+            user = new(tgUser!);
             await db.Users.AddAsync(user);
             await db.SaveChangesAsync();
         }
