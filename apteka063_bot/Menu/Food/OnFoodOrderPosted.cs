@@ -1,14 +1,8 @@
-﻿using System.Globalization;
-using System.Linq;
-using Telegram.Bot;
-using Telegram.Bot.Exceptions;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace apteka063.bot;
+namespace apteka063.Menu.Food;
 
 public partial class FoodMenu
 {
@@ -18,8 +12,8 @@ public partial class FoodMenu
         // Details: .....
         // If nobody contacted you in 4 hours please use the follwing contacts
         // <list of contacts>
-        string resultTranslatedText = "";
-        resultTranslatedText += String.Format(Resources.Translation.OrderPosted, order.Id.ToString()) + "\n";
+        var resultTranslatedText = "";
+        resultTranslatedText += string.Format(Resources.Translation.OrderPosted, order.Id.ToString()) + "\n";
         resultTranslatedText += foodList + "\n";
         resultTranslatedText += Resources.Translation.TakeCare;
 

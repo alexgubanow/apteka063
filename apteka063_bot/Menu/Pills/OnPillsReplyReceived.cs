@@ -1,11 +1,6 @@
-using System.Globalization;
-using System.Linq;
+using apteka063.Extensions;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.bot;
@@ -14,8 +9,7 @@ public partial class PillsMenu
 {
     public static async Task OnReplyReceived(dbc.Apteka063Context db, ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
     {
-
-        order ??= db.Orders!.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
+        order ??= await db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
             order = new() { UserId = callbackQuery.From.Id };

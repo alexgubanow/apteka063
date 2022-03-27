@@ -139,7 +139,7 @@
     <value>Main menu:</value>
   </data>
   <data name="OrderPosted" xml:space="preserve">
-    <value>Your order #{0,0} has been recieved!</value>
+    <value>Your order #{0,0} has been received!</value>
   </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Pick category:</value>
@@ -148,7 +148,7 @@
     <value>Pills</value>
   </data>
   <data name="TakeCare" xml:space="preserve">
-    <value>Take care about yourself and loved ones</value>
+    <value>Take care of yourself and loved ones</value>
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Transport</value>

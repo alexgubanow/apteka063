@@ -1,42 +1,37 @@
-using System.Globalization;
-using System.Linq;
+using apteka063.Extensions;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
-using Telegram.Bot.Types.ReplyMarkups;
 
-namespace apteka063.bot;
+namespace apteka063.Menu.Food;
 
 public partial class FoodMenu
 {
     public static async Task OnItemReplyReceived(dbc.Apteka063Context db, ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        var order = db.Orders!.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
+        var order = await db.Orders.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
             order = new() { UserId = callbackQuery.From.Id };
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
-        var foodID = callbackQuery.Data!.ToString().Substring(5);
+
+        var foodId = callbackQuery.Data!.Split('_', 2).Last();
         var orderFoodList = order.Items?.Split(',').ToList();
         if (orderFoodList != null)
         {
-            if (orderFoodList.Contains(foodID))
+            if (orderFoodList.Contains(foodId))
             {
-                orderFoodList.Remove(foodID);
+                orderFoodList.Remove(foodId);
             }
             else
             {
-                orderFoodList.Add(foodID);
+                orderFoodList.Add(foodId);
             }
         }
         else
         {
-            orderFoodList = new() { foodID };
+            orderFoodList = new() { foodId };
         }
         order.Items = string.Join(',', orderFoodList);
         db.Orders!.Update(order);

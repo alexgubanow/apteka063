@@ -124,7 +124,7 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your order #{0,0} has been recieved!.
+        ///   Looks up a localized string similar to Your order #{0,0} has been received!.
         /// </summary>
         internal static string OrderPosted {
             get {
@@ -151,7 +151,7 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Take care about yourself and loved ones.
+        ///   Looks up a localized string similar to Take care of yourself and loved ones.
         /// </summary>
         internal static string TakeCare {
             get {
