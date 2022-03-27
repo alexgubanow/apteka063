@@ -151,7 +151,7 @@ namespace apteka063.Services
                             food.Name = sheetRow[1].ToString();
                             db.Foods.Update(food);
                         }
-                        await db.SaveChangesAsync();
+                        await _db.SaveChangesAsync();
                     }
                 }
             }
@@ -163,7 +163,7 @@ namespace apteka063.Services
             return 0;
         }
 
-        private static SheetsService GetSheets()
+        private static SheetsService GetSheetsSevice()
         {
             ServiceAccountCredential credential;
             using (Stream stream = new FileStream(@jsonfile, FileMode.Open, FileAccess.Read, FileShare.Read))
