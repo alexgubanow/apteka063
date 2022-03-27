@@ -24,7 +24,7 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Orders!A2:A");
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Заказы!A2:A");
                 var response = await request.ExecuteAsync();
                 var writePosition = -1;
                 if (response.Values != null)
@@ -60,13 +60,13 @@ namespace apteka063.Services
                 };
                 if (writePosition != -1)
                 {
-                    var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Orders!A{writePosition}:I{writePosition}");
+                    var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:I{writePosition}");
                     update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
                     UpdateValuesResponse result2 = await update.ExecuteAsync();
                 }
                 else
                 {
-                    var request1 = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, $"Orders!A{writePosition}:I{writePosition}");
+                    var request1 = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, $"Заказы!A{writePosition}:I{writePosition}");
                     request1.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                     var result2 = await request1.ExecuteAsync();
                 }
@@ -91,7 +91,7 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Pills!A2:C");
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:C");
                 var response = await request.ExecuteAsync();
                 if (response.Values != null)
                 {
@@ -128,7 +128,7 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Food!A2:C");
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Еда!A2:C");
                 var response = await request.ExecuteAsync();
                 if (response.Values != null)
                 {
