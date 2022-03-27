@@ -63,7 +63,7 @@ public partial class UpdateHandlers
                 pillCategory.Key,
                 $"pillsCategory_{pillCategory.Value}") });
         }
-        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: Resources.Translation.Pick—ategory, replyMarkup: new InlineKeyboardMarkup(buttons));
+        await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
     private static async Task OnPillsCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, string pillCategory, dbc.Order? order = null)
     {
