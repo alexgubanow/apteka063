@@ -85,7 +85,7 @@ public static class Program
         Bot!.StartReceiving(bot.UpdateHandlers.HandleUpdateAsync, bot.UpdateHandlers.HandleErrorAsync, receiverOptions, cts.Token);
 
         Console.WriteLine($"Start listening for @{me.Username}");
-        Console.ReadKey(true);
+        Console.Read();
         // Send cancellation request to stop bot
         cts.Cancel();
         return 0;
