@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using System.Configuration;
+using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Google.Apis.Auth.OAuth2;
@@ -15,16 +16,8 @@ public static class Program
     {
         using dbc.Apteka063Context _db = new();
         _db.Database.EnsureCreated();
-        string token = "5254732281:AAF76_UiH2dpF6AU40JvOzb06TSCMO8Qw-4";
-        //if (args.Length > 0)
-        //{
-        //    token = args[0];
-        //}
-        //else
-        //{
-        //    Console.WriteLine("Please enter token");
-        //    token = Console.ReadLine() ?? "";
-        //}
+        string token = ConfigurationManager.AppSettings["Token"]!;
+
         TelegramBotClient Bot = new(token);
 
         User me = await Bot.GetMeAsync();
