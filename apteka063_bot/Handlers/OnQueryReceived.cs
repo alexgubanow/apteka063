@@ -35,6 +35,22 @@ public partial class UpdateHandlers
         {
             await PillsMenu.OnOrderReplyReceived(_db, botClient, callbackQuery);
         }
+        else if (callbackQuery.Data == "backtoFood" || callbackQuery.Data == "food")
+        {
+            await FoodMenu.OnReplyReceived(_db, botClient, callbackQuery);
+        }
+        else if (callbackQuery.Data!.Contains("foodCategory_") == true)
+        {
+            await FoodMenu.OnCategoryReplyReceived(_db, botClient, callbackQuery, callbackQuery.Data.ToString().Substring(14));
+        }
+        else if (callbackQuery.Data!.Contains("food_") == true)
+        {
+            await FoodMenu.OnItemReplyReceived(_db, botClient, callbackQuery);
+        }
+        else if (callbackQuery.Data == "orderFood")
+        {
+            await FoodMenu.OnOrderReplyReceived(_db, botClient, callbackQuery);
+        }
         else
         {
             await ShowMainMenu(botClient, callbackQuery.Message!.Chat.Id, Resources.Translation.MainMenu, callbackQuery.Message.MessageId);

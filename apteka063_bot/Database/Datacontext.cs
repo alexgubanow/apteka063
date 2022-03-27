@@ -12,6 +12,7 @@ public class Apteka063Context : DbContext
     public DbSet<Order>? Orders { get; set; }
     public DbSet<User>? Users { get; set; }
     public DbSet<Pill>? Pills { get; set; }
+    public DbSet<Food>? Foods { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}");
 }
 
@@ -42,10 +43,21 @@ public enum PillCategories
 {
     Heart, Stomach, Painkiller, Fever, Child, Women, Other
 }
+public enum FoodCategories
+{
+    AdultFood, BabyFood
+}
 public class Pill
 {
     [Key]
     public int Id { get; set; }
     public string Name { get; set; }
     public PillCategories PillCategory { get; set; }
+}
+public class Food
+{
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public FoodCategories FoodCategory { get; set; }
 }

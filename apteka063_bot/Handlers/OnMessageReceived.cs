@@ -35,6 +35,7 @@ public partial class UpdateHandlers
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
+            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Food, "food"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });
         if (messageId != null)
         {

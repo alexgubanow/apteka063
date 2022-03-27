@@ -126,6 +126,9 @@
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>database update finished</value>
   </data>
+  <data name="Food" xml:space="preserve">
+    <value>Food</value>
+  </data>
   <data name="GoBack" xml:space="preserve">
     <value>Return back</value>
   </data>

@@ -46,7 +46,7 @@ namespace apteka063.Services
                 ValueRange valueRange = new ValueRange() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {   new List<object>() { orderID },
                                                                 new List<object>() { person },
-                                                                new List<object>() { pills },
+                                                                new List<object>() { pills }, // todo: rename to "items"
                                                                 new List<object>() { "not supported" },
                                                                 new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
                                                                 new List<object>() { DateTime.Now.ToString("dd/MM/yyyy h:mm") },
@@ -79,6 +79,11 @@ namespace apteka063.Services
             { "Женское", dbc.PillCategories.Women },
             { "Другое", dbc.PillCategories.Other }
         };
+        public readonly static Dictionary<string, dbc.FoodCategories> foodCategoriesMap = new()
+        {
+            { "Еда", dbc.FoodCategories.AdultFood },
+            { "Детская еда", dbc.FoodCategories.BabyFood }
+        };
         public static async Task<int> SyncPillsAsync(dbc.Apteka063Context db)
         {
             SheetsService service = GetSheets();
@@ -103,6 +108,42 @@ namespace apteka063.Services
                             pill.Name = sheetRow[1].ToString();
                             pill.PillCategory = pillCategoriesMap[sheetRow[2].ToString()];
                             db.Pills.Update(pill);
+                        }
+                        await db.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return -1;
+            }
+            return 0;
+        }
+        public static async Task<int> SyncFoodAsync(dbc.Apteka063Context db)
+        {
+            SheetsService service = GetSheets();
+            try
+            {
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Food!A2:C");
+                var response = await request.ExecuteAsync();
+                if (response.Values != null)
+                {
+                    foreach (var sheetRow in response.Values)
+                    {
+                        int foodID = int.Parse(sheetRow[0].ToString());
+                        var food = db.Foods.Where(x => x.Id == foodID).FirstOrDefault();
+                        if (food == null)
+                        {
+                            food = new() { Id = foodID, Name = sheetRow[1].ToString(), FoodCategory = foodCategoriesMap[sheetRow[2].ToString()] };
+                            await db.Foods.AddAsync(food);
+                        }
+                        else
+                        {
+                            food.Id = foodID;
+                            food.Name = sheetRow[1].ToString();
+                            food.FoodCategory = foodCategoriesMap[sheetRow[2].ToString()];
+                            db.Foods.Update(food);
                         }
                         await db.SaveChangesAsync();
                     }
