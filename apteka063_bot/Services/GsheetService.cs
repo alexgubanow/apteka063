@@ -18,6 +18,7 @@ namespace apteka063.Services
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
         public static async Task PostOrder(string orderID, string person, string personID, string pills)
         {
+            Console.WriteLine("PostOrder");
             SheetsService service = GetSheets();
             try
             {
@@ -46,20 +47,22 @@ namespace apteka063.Services
                 ValueRange valueRange = new ValueRange() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {   new List<object>() { orderID },
                                                                 new List<object>() { person },
+                                                                new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
                                                                 new List<object>() { pills },
                                                                 new List<object>() { "not supported" },
-                                                                new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
-                                                                new List<object>() { DateTime.Now.ToString("dd/MM/yyyy h:mm") },
+                                                                new List<object>() { "not supported" },
+                                                                new List<object>() { "not supported" },
+                                                                new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") }, // Format depend on Google sheet
                                                                 };
                 if (writePosition != -1)
                 {
-                    var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Orders!A{writePosition}:F{writePosition}");
+                    var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Orders!A{writePosition}:H{writePosition}");
                     update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
                     UpdateValuesResponse result2 = await update.ExecuteAsync();
                 }
                 else
                 {
-                    var request1 = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, $"Orders!A{writePosition}:F{writePosition}");
+                    var request1 = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, $"Orders!A{writePosition}:H{writePosition}");
                     request1.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.RAW;
                     var result2 = await request1.ExecuteAsync();
                 }
