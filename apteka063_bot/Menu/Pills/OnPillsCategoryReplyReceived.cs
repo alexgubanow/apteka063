@@ -21,7 +21,7 @@ public partial class PillsMenu
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
-        var orderPills = order.Pills?.Split(',');
+        var orderPills = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoPills") }

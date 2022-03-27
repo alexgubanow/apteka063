@@ -75,16 +75,19 @@ public class Worker : BackgroundService
         Console.Title = me.Username ?? "apteka063";
         using var cts = new CancellationTokenSource();
         ReceiverOptions receiverOptions = new() { AllowedUpdates = { } };
-        if (_db.Database.EnsureCreated() == true)
+        if (_db.Database.EnsureCreated())
         {
-            if (await Services.Gsheet.SyncPillsAsync(_db) == 0)
+            if (await Services.Gsheet.SyncPillsAsync(_db) != 0)
             {
-                _logger.LogInformation(Resources.Translation.DBUpdateFinished);
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
-            else
+
+            if (await Services.Gsheet.SyncFoodAsync(_db) != 0)
             {
-                _logger.LogInformation(Resources.Translation.DBUpdateFailed);
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
+
+            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
         }
         Bot!.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, receiverOptions, cts.Token);
 

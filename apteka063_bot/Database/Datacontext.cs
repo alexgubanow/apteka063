@@ -12,6 +12,7 @@ public class Apteka063Context : DbContext
     public DbSet<Order>? Orders { get; set; }
     public DbSet<User>? Users { get; set; }
     public DbSet<Pill>? Pills { get; set; }
+    public DbSet<Food>? Foods { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}");
 }
 
@@ -25,7 +26,7 @@ public class Order
     [Key]
     public int Id { get; set; }
     public long UserId { get; set; }
-    public string? Pills { get; set; }
+    public string? Items { get; set; }
     public OrderStatus Status { get; set; }
 }
 public class Contact : Telegram.Bot.Types.Contact
@@ -48,4 +49,10 @@ public class Pill
     public int Id { get; set; }
     public string Name { get; set; }
     public PillCategories PillCategory { get; set; }
+}
+public class Food
+{
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

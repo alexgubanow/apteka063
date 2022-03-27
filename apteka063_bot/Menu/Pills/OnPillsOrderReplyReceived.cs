@@ -21,22 +21,15 @@ public partial class PillsMenu
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
-        if (order.Pills == null || order.Pills == "")
+        if (order.Items == null || order.Items == "")
         {
             await OnReplyReceived(db, botClient, callbackQuery, order);
         }
-        var pillsList = "";
-        try
-        {
-            foreach (var pill in order.Pills!.Split(','))
-            {
-                pillsList += db.Pills!.Where(x => x.Id == int.Parse(pill)).FirstOrDefault()?.Name + ", ";
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        
+        var pillIds = order.Items!.Split(',').Select(x => int.Parse(x));
+        var pillsNames = db.Pills.Where(p => pillIds.Contains(p.Id)).Select(x => x.Name);
+        var pillsList = string.Join(", " , pillsNames);
+        
         await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username, pillsList);
         await OnOrderPosted(db, botClient, callbackQuery, order, pillsList);
     }

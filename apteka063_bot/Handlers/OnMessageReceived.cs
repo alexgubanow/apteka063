@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using apteka063.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -30,20 +31,22 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        await ShowMainMenu(botClient, message.Chat.Id, header);
+        await ShowMainMenu(botClient, message, header);
     }
-    private async Task ShowMainMenu(ITelegramBotClient botClient, long chatId, string headerText, int? messageId = null)
+    private async Task ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, int? messageId = null)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
+            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Food, "food"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });
+        
         if (messageId != null)
         {
-            await botClient.EditMessageTextAsync(chatId: chatId, messageId: messageId ?? 0, text: headerText, replyMarkup: inlineKeyboard);
+            await botClient.EditMessageTextAsync(chatId: message.Chat.Id, messageId: messageId ?? 0, text: headerText, replyMarkup: inlineKeyboard);
         }
         else
         {
-            await botClient.SendTextMessageAsync(chatId: chatId, text: headerText, replyMarkup: inlineKeyboard);
+            await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: headerText, replyMarkup: inlineKeyboard);
         }
     }
 }
