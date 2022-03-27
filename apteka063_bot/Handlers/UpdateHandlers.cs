@@ -3,9 +3,6 @@ using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.bot;
 
@@ -58,39 +55,25 @@ public partial class UpdateHandlers
         //Console.WriteLine($"Unknown update type: {update.Type}");
         return Task.CompletedTask;
     }
-
     private static string GetLangaugeCodeFromUpdate(Update update)
     {
-        string locale = "ru";
-        bool localeFound = false;
-        try
+        string locale = "";
+        if (update.CallbackQuery != null)
         {
-            locale = update.CallbackQuery.From.LanguageCode;
-            localeFound = true;
+            locale = update.CallbackQuery.From.LanguageCode ?? "";
         }
-        catch { }
-
-        if (!localeFound)
+        else if (locale == "" && update.Message != null && update.Message.From != null)
         {
-            try
-            {
-                locale = update.Message.From.LanguageCode;
-                localeFound = true;
-            }
-            catch { }
+            locale = update.Message.From.LanguageCode ?? "";
         }
-
-        if (!localeFound)
+        else if (locale == "" && update.EditedMessage != null && update.EditedMessage.From != null)
         {
-            try
-            {
-                locale = update.EditedMessage.From.LanguageCode;
-                localeFound = true;
-            }
-            catch { }
+            locale = update.EditedMessage.From.LanguageCode ?? "";
         }
-
-        // Console.WriteLine("New update with " + locale);
+        else
+        {
+            locale = "ru";
+        }
         return locale;
     }
 }
