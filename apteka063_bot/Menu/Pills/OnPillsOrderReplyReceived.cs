@@ -1,12 +1,5 @@
-using System.Globalization;
-using System.Linq;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.bot;
 
@@ -25,11 +18,11 @@ public partial class PillsMenu
         {
             await OnReplyReceived(db, botClient, callbackQuery, order);
         }
-        
+
         var pillIds = order.Items!.Split(',').Select(x => int.Parse(x));
         var pillsNames = db.Pills!.Where(p => pillIds.Contains(p.Id)).Select(x => x.Name);
-        var pillsList = string.Join(", " , pillsNames);
-        
+        var pillsList = string.Join(", ", pillsNames);
+
         await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username!, pillsList);
         await OnOrderPosted(db, botClient, callbackQuery, order, pillsList);
     }

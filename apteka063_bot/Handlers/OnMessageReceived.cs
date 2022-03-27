@@ -1,12 +1,7 @@
 using Microsoft.Extensions.Logging;
-using System.Globalization;
-using apteka063.Extensions;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.bot;
@@ -39,7 +34,7 @@ public partial class UpdateHandlers
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Food, "food"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });
-        
+
         if (messageId != null)
         {
             await botClient.EditMessageTextAsync(chatId: message.Chat.Id, messageId: messageId ?? 0, text: headerText, replyMarkup: inlineKeyboard);

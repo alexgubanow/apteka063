@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Telegram.Bot.Types;
-
-namespace apteka063.dbc;
+﻿namespace apteka063.dbc;
 
 public class User : Telegram.Bot.Types.User
 {
