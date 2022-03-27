@@ -43,18 +43,12 @@ namespace apteka063.Services
                     writePosition = 2;
                 }
 
-                string personContact = "-";
-                if (personID != null)
-                {
-                    personContact = "https://t.me/" + personID;
-                }
-
                 ValueRange valueRange = new ValueRange() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {   new List<object>() { orderID },
                                                                 new List<object>() { person },
                                                                 new List<object>() { pills },
                                                                 new List<object>() { "not supported" },
-                                                                new List<object>() { personContact },
+                                                                new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
                                                                 new List<object>() { DateTime.Now.ToString("dd/MM/yyyy h:mm") },
                                                                 };
                 if (writePosition != -1)
