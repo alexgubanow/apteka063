@@ -13,7 +13,7 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private async Task OnMessageReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, Message message)
+    private async Task OnMessageReceived(ITelegramBotClient botClient, CallbackQuery? callbackQuery, Message message)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
@@ -33,15 +33,18 @@ public partial class UpdateHandlers
         }
         await ShowMainMenu(botClient, callbackQuery, message, header);
     }
-    private async Task ShowMainMenu(ITelegramBotClient botClient, CallbackQuery callbackQuery, Message message, string headerText, int? messageId = null)
+    private async Task ShowMainMenu(ITelegramBotClient botClient, CallbackQuery? callbackQuery, Message message, string headerText, int? messageId = null)
     {
         // Reset items as we only allow one category of items in an order
-        var activeOrder = await _db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
-        if (activeOrder != null)
+        if (callbackQuery != null)
         {
-            activeOrder.Items = null;
-            _db.Update(activeOrder);
-            await _db.SaveChangesAsync();
+            var activeOrder = await _db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
+            if (activeOrder != null)
+            {
+                activeOrder.Items = null;
+                _db.Update(activeOrder);
+                await _db.SaveChangesAsync();
+            }
         }
 
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
