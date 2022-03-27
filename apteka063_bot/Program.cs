@@ -25,17 +25,55 @@ public static class Program
             {
                 Console.WriteLine(Resources.Translation.DBUpdateFailed);
             }
+        _db.Database.EnsureCreated();
+        TelegramBotClient Bot = null;
+        var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        if (config == null)
+        {
+            Console.WriteLine("failed to open app config");
+            return -1;
         }
-        string token = "5254732281:AAF76_UiH2dpF6AU40JvOzb06TSCMO8Qw-4";
-        //if (args.Length > 0)
-        //{
-        //    token = args[0];
-        //}
-        //else
-        //{
-        //    Console.WriteLine("Please enter token");
-        //    token = Console.ReadLine() ?? "";
-        //}
+        //var tokenConfig = config.GetSection("Token");
+        int tryCount = 0;
+        string tokenFromArguments = "";
+        if (args.Length > 0)
+        {
+            tokenFromArguments = args[0];
+        }
+        while ((config!.AppSettings.Settings["Token"] == null || Bot == null) && tryCount < 5)
+        {
+            tryCount++;
+            string token = config!.AppSettings.Settings["Token"].Value ?? "";
+            if (tokenFromArguments != "")
+            {
+                token = tokenFromArguments;
+            }
+            else
+            {
+                Console.WriteLine("Please enter telegram token to be used:");
+                token = Console.ReadLine()!;
+            }
+            try
+            {
+                Bot = new(token);
+                if (config!.AppSettings.Settings["Token"] != null)
+                {
+                    config!.AppSettings.Settings["Token"].Value = token;
+                }
+                else
+                {
+                    config!.AppSettings.Settings.Add(new("Token", token));
+                }
+                config.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection("Token");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"failed to create bot with given token:\n{token}");
+                Console.WriteLine($"original error message:\n{ex.Message}");
+            }
+        }
+
         TelegramBotClient Bot = new(token);
 
         User me = await Bot.GetMeAsync();
@@ -45,12 +83,10 @@ public static class Program
 
         // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
         ReceiverOptions receiverOptions = new() { AllowedUpdates = { } };
-        Bot.StartReceiving(bot.UpdateHandlers.HandleUpdateAsync, bot.UpdateHandlers.HandleErrorAsync, receiverOptions, cts.Token);
+        Bot!.StartReceiving(bot.UpdateHandlers.HandleUpdateAsync, bot.UpdateHandlers.HandleErrorAsync, receiverOptions, cts.Token);
 
         Console.WriteLine($"Start listening for @{me.Username}");
-        while (true)
-        {
-        }
+        Console.ReadKey(true);
         // Send cancellation request to stop bot
         cts.Cancel();
         return 0;
