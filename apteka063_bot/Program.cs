@@ -15,7 +15,7 @@ public static class Program
     {
         using dbc.Apteka063Context _db = new();
         _db.Database.EnsureCreated();
-        string token = "5030252064:AAE6F4Aqj8hulKZtJCTAr0hoqoytqSVfuGI";
+        string token = "5254732281:AAF76_UiH2dpF6AU40JvOzb06TSCMO8Qw-4";
         //if (args.Length > 0)
         //{
         //    token = args[0];
