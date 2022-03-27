@@ -21,7 +21,7 @@ public partial class PillsMenu
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
-        if (order.Pills == null)
+        if (order.Pills == null || order.Pills == "")
         {
             await OnReplyReceived(db, botClient, callbackQuery, order);
         }
