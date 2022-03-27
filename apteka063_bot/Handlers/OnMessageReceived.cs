@@ -13,15 +13,13 @@ public partial class UpdateHandlers
 {
     private static async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(message.From.LanguageCode??"ru");
+        string locale = message.From.LanguageCode ?? "ru";
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
 
         //Console.WriteLine($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
             return;
         await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId);
-        InlineKeyboardMarkup inlineKeyboard = new(new[] {
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
@@ -34,6 +32,22 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: header, replyMarkup: inlineKeyboard);
+        await ShowMainMenu(botClient, locale, message.Chat.Id, header);
+    }
+    private static async Task ShowMainMenu(ITelegramBotClient botClient, string locale, long chatId, string headerText, int? messageId = null)
+    {
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
+
+        InlineKeyboardMarkup inlineKeyboard = new(new[] {
+            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
+            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });
+        if (messageId != null)
+        {
+            await botClient.EditMessageTextAsync(chatId: chatId, messageId: messageId ?? 0, text: headerText, replyMarkup: inlineKeyboard);
+        }
+        else
+        {
+            await botClient.SendTextMessageAsync(chatId: chatId, text: headerText, replyMarkup: inlineKeyboard);
+        }
     }
 }
