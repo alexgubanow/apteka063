@@ -30,10 +30,9 @@ public static class Program
         var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         if (config == null)
         {
-            Console.WriteLine("faile d to open app config");
+            Console.WriteLine("failed to open app config");
             return -1;
         }
-        //var tokenConfig = config.GetSection("Token");
         int tryCount = 0;
         string tokenFromArguments = "";
         if (args.Length > 0)
