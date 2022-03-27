@@ -30,7 +30,7 @@ public static class Program
         var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         if (config == null)
         {
-            Console.WriteLine("failed to open app config");
+            Console.WriteLine("faile d to open app config");
             return -1;
         }
         //var tokenConfig = config.GetSection("Token");
@@ -44,14 +44,17 @@ public static class Program
         {
             tryCount++;
             string token = config!.AppSettings.Settings["Token"].Value ?? "";
-            if (tokenFromArguments != "")
+            if (token == "")
             {
-                token = tokenFromArguments;
-            }
-            else
-            {
-                Console.WriteLine("Please enter telegram token to be used:");
-                token = Console.ReadLine()!;
+                if (tokenFromArguments != "")
+                {
+                    token = tokenFromArguments;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter telegram token to be used:");
+                    token = Console.ReadLine()!;
+                }
             }
             try
             {
