@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -8,8 +9,14 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private readonly static dbc.Apteka063Context _db = new();
-    public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    private readonly ILogger<UpdateHandlers> _logger;
+    private readonly dbc.Apteka063Context _db;
+    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db)
+    {
+        _logger = logger;
+        _db = db;
+    }
+    public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
         var ErrorMessage = exception switch
         {
@@ -21,7 +28,7 @@ public partial class UpdateHandlers
         return Task.CompletedTask;
     }
 
-    public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(GetLangaugeCodeFromUpdate(update));
 
@@ -50,9 +57,9 @@ public partial class UpdateHandlers
         }
     }
 
-    private static Task UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
+    private Task UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
     {
-        //Console.WriteLine($"Unknown update type: {update.Type}");
+        _logger.LogWarning($"Unknown update type: {update.Type}");
         return Task.CompletedTask;
     }
     private static string GetLangaugeCodeFromUpdate(Update update)

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -11,9 +12,9 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private static async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
+    private async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
     {
-        //Console.WriteLine($"Receive message type: {message.Type}");
+        _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
             return;
         await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId);
@@ -31,7 +32,7 @@ public partial class UpdateHandlers
         }
         await ShowMainMenu(botClient, message.Chat.Id, header);
     }
-    private static async Task ShowMainMenu(ITelegramBotClient botClient, long chatId, string headerText, int? messageId = null)
+    private async Task ShowMainMenu(ITelegramBotClient botClient, long chatId, string headerText, int? messageId = null)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
