@@ -80,7 +80,7 @@ public class Worker : BackgroundService
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
 
-            if (await Services.Gsheet.SyncFoodAsync(_db) != 0)
+            if (await _gsheet.SyncFoodAsync() != 0)
             {
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }

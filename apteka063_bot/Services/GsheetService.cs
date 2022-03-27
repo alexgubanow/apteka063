@@ -127,9 +127,9 @@ namespace apteka063.Services
             return 0;
         }
 
-        public static async Task<int> SyncFoodAsync(dbc.Apteka063Context db)
+        public async Task<int> SyncFoodAsync()
         {
-            SheetsService service = GetSheets();
+            var service = GetSheetsSevice();
             try
             {
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Food!A2:C");
@@ -138,18 +138,18 @@ namespace apteka063.Services
                 {
                     foreach (var sheetRow in response.Values)
                     {
-                        int foodID = int.Parse(sheetRow[0].ToString());
-                        var food = db.Foods.Where(x => x.Id == foodID).FirstOrDefault();
+                        int foodID = int.Parse(sheetRow[0].ToString()!);
+                        var food = _db.Foods!.Where(x => x.Id == foodID).FirstOrDefault();
                         if (food == null)
                         {
-                            food = new() { Id = foodID, Name = sheetRow[1].ToString() };
-                            await db.Foods.AddAsync(food);
+                            food = new() { Id = foodID, Name = sheetRow[1].ToString()! };
+                            await _db.Foods!.AddAsync(food);
                         }
                         else
                         {
                             food.Id = foodID;
-                            food.Name = sheetRow[1].ToString();
-                            db.Foods.Update(food);
+                            food.Name = sheetRow[1].ToString()!;
+                            _db.Foods!.Update(food);
                         }
                         await _db.SaveChangesAsync();
                     }

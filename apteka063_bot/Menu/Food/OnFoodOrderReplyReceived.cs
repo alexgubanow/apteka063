@@ -8,7 +8,7 @@ public partial class FoodMenu
 {
     public static async Task OnOrderReplyReceived(dbc.Apteka063Context db, ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        var order = await db.Orders.GetActiveOrderAsync(callbackQuery.From.Id);
+        var order = await db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
             order = new() { UserId = callbackQuery.From.Id };
@@ -21,10 +21,10 @@ public partial class FoodMenu
         }
 
         var foodIds = order.Items!.Split(',').Select(x => int.Parse(x));
-        var foodsNames = db.Foods.Where(f => foodIds.Contains(f.Id)).Select(x => x.Name);
+        var foodsNames = db.Foods!.Where(f => foodIds.Contains(f.Id)).Select(x => x.Name);
         var foodList = string.Join(", " , foodsNames);
 
-        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username, foodList);
+        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username!, foodList);
         await OnOrderPosted(db, botClient, callbackQuery, order, foodList);
     }
 }

@@ -8,7 +8,7 @@ public partial class FoodMenu
 {
     public static async Task OnItemReplyReceived(dbc.Apteka063Context db, ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        var order = await db.Orders.GetActiveOrderAsync(callbackQuery.From.Id);
+        var order = await db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
             order = new() { UserId = callbackQuery.From.Id };
