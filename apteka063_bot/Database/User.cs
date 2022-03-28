@@ -5,6 +5,7 @@ public class User : Telegram.Bot.Types.User
     public long ContactId { get; set; }
     public long LocationId { get; set; }
     public OrderStatus Status { get; set; }
+    public string State { get; set; }
     public User()
     {
     }
@@ -16,6 +17,7 @@ public class User : Telegram.Bot.Types.User
         LastName = tgUser.LastName;
         Username = tgUser.Username;
         LanguageCode = tgUser.LanguageCode;
+        State = "";
     }
     public static async Task<User> GetUserAsync(Apteka063Context db, Telegram.Bot.Types.User tgUser)
     {

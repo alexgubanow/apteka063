@@ -8,11 +8,34 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
+    private async Task OnMessageReceived(ITelegramBotClient botClient, Message message, dbc.Apteka063Context db)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
             return;
+
+        // Get User and check State
+        var user = await dbc.User.GetUserAsync(_db, message.From);
+        if (user.State != null && user.State != "")
+        {
+            // State will have to section: Request.Action
+            string[] stateSplit = user.State.Split('.');
+            var handler = stateSplit[0] switch
+            {
+                PillsMenu.pillsDetailsStateName => PillsMenu.getContactDetails(botClient, message, db, user, stateSplit[1])
+            };
+
+            try
+            {
+                await handler;
+            }
+            catch (Exception exception)
+            {
+            }
+
+            return;
+        }
+
         await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId);
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")

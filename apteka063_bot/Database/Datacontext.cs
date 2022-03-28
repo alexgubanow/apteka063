@@ -28,6 +28,8 @@ public class Order
     public long UserId { get; set; }
     public string? Items { get; set; }
     public OrderStatus Status { get; set; }
+    public string? ContactPhone { get; set; }
+    public string? DeliveryAddress { get; set; }
 }
 public class Contact : Telegram.Bot.Types.Contact
 {

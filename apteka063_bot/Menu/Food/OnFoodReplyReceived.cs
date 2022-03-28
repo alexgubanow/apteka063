@@ -12,7 +12,7 @@ public partial class FoodMenu
         order ??= await db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
-            order = new() { UserId = callbackQuery.From.Id };
+            order = new() { UserId = callbackQuery.From.Id, ContactPhone = "",  };
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }

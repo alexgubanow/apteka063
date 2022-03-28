@@ -120,6 +120,9 @@
   <data name="AvailableNow" xml:space="preserve">
     <value>Доступно сейчас:</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отменить</value>
+  </data>
   <data name="DBUpdateFailed" xml:space="preserve">
     <value>Обновление не удалось</value>
   </data>
@@ -133,7 +136,7 @@
     <value>Вернуться назад</value>
   </data>
   <data name="GoToMenu" xml:space="preserve">
-    <value>Вернуть в Главное меню</value>
+    <value>Вернуться в Главное меню</value>
   </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
@@ -146,6 +149,12 @@
   </data>
   <data name="Pills" xml:space="preserve">
     <value>Медикаменты</value>
+  </data>
+  <data name="ProvideDeliveryAddress" xml:space="preserve">
+    <value>Пожалуйста, напишите адрес получателя</value>
+  </data>
+  <data name="ProvidePhoneNumber" xml:space="preserve">
+    <value>Пожалуйста, напишите телефон получателя (или другой контакт)</value>
   </data>
   <data name="TakeCare" xml:space="preserve">
     <value>Позаботьтесь о себе и о своих близких</value>
