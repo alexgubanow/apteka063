@@ -24,7 +24,7 @@ public partial class FoodMenu
         var foodsNames = db.Foods!.Where(f => foodIds.Contains(f.Id)).Select(x => x.Name);
         var foodList = string.Join(", " , foodsNames);
 
-        await Services.Gsheet.PostOrder(order.Id.ToString(), callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username!, foodList);
+        await Services.Gsheet.PostOrder(order, callbackQuery.From.FirstName + ' ' + callbackQuery.From.LastName, callbackQuery.From.Username!, foodList);
         await OnOrderPosted(db, botClient, callbackQuery, order, foodList);
     }
 }

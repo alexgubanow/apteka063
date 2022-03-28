@@ -13,6 +13,29 @@ public partial class UpdateHandlers
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
             return;
+
+        // Get User and check State
+        var user = await dbc.User.GetUserAsync(_db, message.From);
+        if (user.State != null && user.State != "")
+        {
+            // State will have to section: Request.Action
+            string[] stateSplit = user.State.Split('.');
+            var handler = stateSplit[0] switch
+            {
+                PillsMenu.pillsDetailsStateName => PillsMenu.getContactDetails(botClient, message, _db, user, stateSplit[1])
+            };
+
+            try
+            {
+                await handler;
+            }
+            catch (Exception exception)
+            {
+            }
+
+            return;
+        }
+
         await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId);
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")

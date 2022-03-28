@@ -19,8 +19,10 @@ namespace apteka063.Services
         static string jsonfile = "googlecreds.json";
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
-        public static async Task PostOrder(string orderID, string person, string personID, string pills)
+        public static async Task PostOrder(dbc.Order order, string person, string personID, string pills)
         {
+            string orderID = order.Id.ToString();
+
             var service = GetSheetsSevice();
             try
             {
@@ -54,8 +56,8 @@ namespace apteka063.Services
                     new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
                     new List<object>() { pills },
                     new List<object>() { "not supported" },
-                    new List<object>() { "not supported" },
-                    new List<object>() { "not supported" },
+                    new List<object>() { order.ContactPhone },
+                    new List<object>() { order.DeliveryAddress },
                     new List<object>() { "not supported" },
                     new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") }, // Format depend on Google sheet
                 };

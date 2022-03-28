@@ -70,6 +70,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to database update failed.
         /// </summary>
         internal static string DBUpdateFailed {
@@ -147,6 +156,24 @@ namespace apteka063.Resources {
         internal static string Pills {
             get {
                 return ResourceManager.GetString("Pills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please provide the address where order should be shipped.
+        /// </summary>
+        internal static string ProvideDeliveryAddress {
+            get {
+                return ResourceManager.GetString("ProvideDeliveryAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please provide the phone number of the person who will recieve the help.
+        /// </summary>
+        internal static string ProvidePhoneNumber {
+            get {
+                return ResourceManager.GetString("ProvidePhoneNumber", resourceCulture);
             }
         }
         

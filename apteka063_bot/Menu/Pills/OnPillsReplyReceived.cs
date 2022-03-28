@@ -12,7 +12,7 @@ public partial class PillsMenu
         order ??= await db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
-            order = new() { UserId = callbackQuery.From.Id };
+            order = new() { UserId = callbackQuery.From.Id, ContactPhone = "", DeliveryAddress = "" }; // ToDo: make constructor?
             await db.Orders!.AddAsync(order);
             await db.SaveChangesAsync();
         }
