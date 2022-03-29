@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
-namespace apteka063.dbc;
+namespace apteka063.Database;
 //after update of any class below need to run:
 //Add-Migration DESCRIPTION_OF_CHANGE
 //Update-Database
@@ -35,12 +35,6 @@ public class Apteka063Context : DbContext
             await SaveChangesAsync();
         }
         return user;
-    }
-    public async Task<Order?> GetOrderByIdAsync(int orderId) => await Orders.FirstOrDefaultAsync(x => x.Id == orderId);
-    public async Task UpdateOrderAsync(Order order)
-    {
-        Orders.Update(order);
-        await SaveChangesAsync();
     }
 }
 

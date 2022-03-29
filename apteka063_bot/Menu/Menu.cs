@@ -1,6 +1,7 @@
-using Microsoft.Extensions.Logging;
+using apteka063.Menu.Food;
+using apteka063.Menu.Pills;
 
-namespace apteka063.menu;
+namespace apteka063.Menu;
 
 public class Menu
 {

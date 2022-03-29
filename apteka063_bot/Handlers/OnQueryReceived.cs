@@ -1,11 +1,13 @@
+using apteka063.Database;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using User = apteka063.Database.User;
 
-namespace apteka063.bot;
+namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.User user, CancellationToken cts)
+    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts)
     {
         if (callbackQuery.Data == "backtoMain")
         {
@@ -17,7 +19,7 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data!.Contains("pillsCategory_") == true)
         {
-            return await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), callbackQuery.Data.Split('_', 2).Last()));
+            return await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, (PillCategories)Enum.Parse(typeof(PillCategories), callbackQuery.Data.Split('_', 2).Last()));
         }
         else if (callbackQuery.Data!.Contains("pill_") == true)
         {

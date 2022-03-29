@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace apteka063.dbc;
+namespace apteka063.Database;
 
 public class Order
 {

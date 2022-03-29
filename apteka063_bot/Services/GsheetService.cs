@@ -1,4 +1,5 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using apteka063.Database;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
@@ -9,8 +10,8 @@ namespace apteka063.Services
     public class Gsheet
     {
         private readonly ILogger<Gsheet> _logger;
-        private readonly dbc.Apteka063Context _db;
-        public Gsheet(ILogger<Gsheet> logger, dbc.Apteka063Context db)
+        private readonly Apteka063Context _db;
+        public Gsheet(ILogger<Gsheet> logger, Apteka063Context db)
         {
             _logger = logger;
             _db = db;
@@ -19,7 +20,8 @@ namespace apteka063.Services
         static string jsonfile = "googlecreds.json";
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
-        public async Task PostOrder(dbc.Order order, string person, string personID, string pills)
+        
+        public async Task PostOrder(Order order, string person, string personID, string pills)
         {
             string orderID = order.Id.ToString();
 
@@ -79,15 +81,15 @@ namespace apteka063.Services
                 Console.WriteLine(ex.Message);
             }
         }
-        public readonly static Dictionary<string, dbc.PillCategories> pillCategoriesMap = new()
+        public readonly static Dictionary<string, PillCategories> pillCategoriesMap = new()
         {
-            { "Сердце", dbc.PillCategories.Heart },
-            { "Желудок", dbc.PillCategories.Stomach },
-            { "Обезболивающее", dbc.PillCategories.Painkiller },
-            { "Температура", dbc.PillCategories.Fever },
-            { "Детское", dbc.PillCategories.Child },
-            { "Женское", dbc.PillCategories.Women },
-            { "Другое", dbc.PillCategories.Other }
+            { "Сердце", PillCategories.Heart },
+            { "Желудок", PillCategories.Stomach },
+            { "Обезболивающее", PillCategories.Painkiller },
+            { "Температура", PillCategories.Fever },
+            { "Детское", PillCategories.Child },
+            { "Женское", PillCategories.Women },
+            { "Другое", PillCategories.Other }
         };
         public async Task<int> SyncPillsAsync()
         {
@@ -138,17 +140,17 @@ namespace apteka063.Services
                     foreach (var sheetRow in response.Values)
                     {
                         int foodID = int.Parse(sheetRow[0].ToString()!);
-                        var food = _db.Foods!.Where(x => x.Id == foodID).FirstOrDefault();
+                        var food = await _db.Foods.FindAsync(foodID);
                         if (food == null)
                         {
                             food = new() { Id = foodID, Name = sheetRow[1].ToString()! };
-                            await _db.Foods!.AddAsync(food);
+                            await _db.Foods.AddAsync(food);
                         }
                         else
                         {
                             food.Id = foodID;
                             food.Name = sheetRow[1].ToString()!;
-                            _db.Foods!.Update(food);
+                            _db.Foods.Update(food);
                         }
                         await _db.SaveChangesAsync();
                     }
@@ -182,6 +184,26 @@ namespace apteka063.Services
                 ApplicationName = "apteka063_bot",
             });
             return service;
+        }
+
+        public async Task<bool> TrySyncToDb()
+        {
+            var success = true;
+            
+            if (await SyncPillsAsync() != 0)
+            {
+                success = false;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+            }
+
+            if (await SyncFoodAsync() != 0)
+            {
+                success = false;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+            }
+
+            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
+            return success;
         }
     }
 }

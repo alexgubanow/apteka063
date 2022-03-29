@@ -1,21 +1,23 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System.Globalization;
+using apteka063.Database;
+using apteka063.Menu.OrderButton;
+using apteka063.Services;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace apteka063.bot;
+namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
     private readonly ILogger<UpdateHandlers> _logger;
-    private readonly dbc.Apteka063Context _db;
-    private readonly Services.Gsheet _gsheet;
-    private readonly menu.Menu _menu;
-    private readonly menu.OrderButton _orderButton;
-    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db, Services.Gsheet gsheet, menu.Menu menu, menu.OrderButton order)
+    private readonly Apteka063Context _db;
+    private readonly Gsheet _gsheet;
+    private readonly Menu.Menu _menu;
+    private readonly OrderButton _orderButton;
+    public UpdateHandlers(ILogger<UpdateHandlers> logger, Apteka063Context db, Gsheet gsheet, Menu.Menu menu, OrderButton order)
     {
         _logger = logger;
         _db = db;
@@ -25,26 +27,24 @@ public partial class UpdateHandlers
     }
     public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
-        var ErrorMessage = exception switch
-        {
-            ApiRequestException apiRequestException => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-            _ => exception.ToString()
-        };
-        _logger.LogError(ErrorMessage);
+        var errorMessage = exception is ApiRequestException apiRequestException
+            ? $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}"
+            : exception.ToString();
+        _logger.LogError(errorMessage);
         return Task.CompletedTask;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(GetLangaugeCodeFromUpdate(update));
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(GetLanguageCodeFromUpdate(update));
 
-        var tgUser = update.Message != null ? update.Message.From : update.EditedMessage != null ? update.EditedMessage.From : update.CallbackQuery != null ? update.CallbackQuery.From : null;
+        var tgUser = update.Message?.From ?? update.EditedMessage?.From ?? update.CallbackQuery?.From;
         if (tgUser == null)
         {
             return;
         }
         var user = await _db.GetOrCreateUserAsync(tgUser);
-        var handler = update.Type switch
+        Task<Message?> handler = update.Type switch
         {
             // UpdateType.Unknown:
             // UpdateType.ChannelPost:
@@ -59,6 +59,7 @@ public partial class UpdateHandlers
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
             _                             => UnknownUpdateHandlerAsync(botClient, update)
         };
+        
         try
         {
             var message = await handler;
@@ -72,7 +73,8 @@ public partial class UpdateHandlers
         {
             await HandleErrorAsync(botClient, exception, cancellationToken);
         }
-        var userMessageId = update.Message != null ? update.Message.MessageId : update.EditedMessage != null ? update.EditedMessage.MessageId : -1;
+        
+        var userMessageId = update.Message?.MessageId ?? update.EditedMessage?.MessageId ?? -1;
         if (userMessageId != -1)
         {
             var chatId = update.Message != null ? update.Message.Chat.Id : update.EditedMessage != null ? update.EditedMessage.Chat.Id : -1;
@@ -85,25 +87,24 @@ public partial class UpdateHandlers
         _logger.LogWarning($"Unknown update type: {update.Type}");
         return null!;
     }
-    private static string GetLangaugeCodeFromUpdate(Update update)
+    
+    private static string GetLanguageCodeFromUpdate(Update update)
     {
-        string locale = "";
-        if (update.CallbackQuery != null)
+        if (update.CallbackQuery?.From?.LanguageCode != null)
         {
-            locale = update.CallbackQuery.From.LanguageCode ?? "";
+            return update.CallbackQuery.From.LanguageCode;
         }
-        else if (locale == "" && update.Message != null && update.Message.From != null)
+        
+        if (update.Message?.From?.LanguageCode != null)
         {
-            locale = update.Message.From.LanguageCode ?? "";
+            return update.Message.From.LanguageCode;
         }
-        else if (locale == "" && update.EditedMessage != null && update.EditedMessage.From != null)
+
+        if (update.EditedMessage?.From?.LanguageCode != null)
         {
-            locale = update.EditedMessage.From.LanguageCode ?? "";
+            return update.EditedMessage.From.LanguageCode;
         }
-        else
-        {
-            locale = "ru";
-        }
-        return locale;
+
+        return "ru";
     }
 }

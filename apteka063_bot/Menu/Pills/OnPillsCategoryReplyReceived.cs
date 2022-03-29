@@ -1,12 +1,13 @@
+using apteka063.Database;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace apteka063.menu;
+namespace apteka063.Menu.Pills;
 
 public partial class PillsMenu
 {
-    public async Task<Message> OnCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.PillCategories pillCategory, dbc.Order? order = null)
+    public async Task<Message> OnCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, PillCategories pillCategory, Order? order = null)
     {
         order ??= await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id);
         var orderPills = order.Items?.Split(',');

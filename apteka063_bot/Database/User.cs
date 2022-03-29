@@ -1,4 +1,4 @@
-﻿namespace apteka063.dbc;
+﻿namespace apteka063.Database;
 
 public class User : Telegram.Bot.Types.User
 {
