@@ -22,7 +22,7 @@ public partial class UpdateHandlers
         {
             if (order.Count > 1)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "MORE THAN ONE ORDER FOUND", cancellationToken : cts);
+                await botClient.EditMessageTextAsync(message.Chat.Id, user.LastMessageSentId, "MORE THAN ONE ORDER FOUND", cancellationToken : cts);
                 _logger.LogError($"MORE THAN ONE ORDER FOUND, FOR USER ID: {user.Id}");
                 return null!;
             }
@@ -50,7 +50,7 @@ public partial class UpdateHandlers
             _logger.LogInformation(Resources.Translation.DBUpdateFinished);
             header += "\n" + Resources.Translation.DBUpdateFinished;
         }
-        return await ShowMainMenu(botClient, message, header, cts);
+        return await ShowMainMenu(botClient, message, header, cts, user.LastMessageSentId);
     }
     public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts, int? messageId = null)
     {
