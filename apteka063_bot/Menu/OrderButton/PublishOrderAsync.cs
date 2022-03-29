@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using apteka063.Database;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -6,7 +7,7 @@ namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
+    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
     {
         var itemsIds = order.Items!.Split(',');
         IQueryable<string> itemsNames = null;
