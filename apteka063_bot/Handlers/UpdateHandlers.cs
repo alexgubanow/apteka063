@@ -72,6 +72,12 @@ public partial class UpdateHandlers
         {
             await HandleErrorAsync(botClient, exception, cancellationToken);
         }
+        var userMessageId = update.Message != null ? update.Message.MessageId : update.EditedMessage != null ? update.EditedMessage.MessageId : -1;
+        if (userMessageId != -1)
+        {
+            var chatId = update.Message != null ? update.Message.Chat.Id : update.EditedMessage != null ? update.EditedMessage.Chat.Id : -1;
+            await botClient.DeleteMessageAsync(chatId, userMessageId, cancellationToken);
+        }
     }
 
     private Task<Message> UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)

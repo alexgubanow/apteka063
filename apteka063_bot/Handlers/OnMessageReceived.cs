@@ -14,7 +14,6 @@ public partial class UpdateHandlers
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
             return null!;
-        await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId, cts);
         var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == dbc.OrderStatus.NeedPhone || x.Status == dbc.OrderStatus.NeedAdress)).ToListAsync();
         if (order.Count > 0)
         {
