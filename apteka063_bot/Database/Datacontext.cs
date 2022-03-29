@@ -69,11 +69,13 @@ public class Pill
         Id = id;
         Name = row[0].ToString()!;
         PillCategoryName = row[1].ToString()!;
+        FreezedAmout = int.Parse(row[2].ToString()!);
     }
     [Key]
     public string Id { get; set; }
     public string Name { get; set; } = "";
     public string PillCategoryName { get; set; } = "";
+    public int FreezedAmout { get; set; }
 }
 public class Food
 {
