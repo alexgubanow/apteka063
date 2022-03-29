@@ -7,35 +7,30 @@ namespace apteka063.dbc;
 //Update-Database
 public class Apteka063Context : DbContext
 {
-    public DbSet<Contact>? Contacts { get; set; }
-    public DbSet<Location>? Locations { get; set; }
-    public DbSet<Order>? Orders { get; set; }
-    public DbSet<User>? Users { get; set; }
-    public DbSet<Pill>? Pills { get; set; }
-    public DbSet<Food>? Foods { get; set; }
+    public DbSet<Contact> Contacts { get; set; } = null!;
+    public DbSet<Location> Locations { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Pill> Pills { get; set; } = null!;
+    public DbSet<Food> Foods { get; set; } = null!;
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}");
+    public async Task<Order> GetOrCreateOrderAsync(long userId)
+    {
+        var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && x.Status == OrderStatus.Filling);
+        if (order == null)
+        {
+            order = new(userId);
+            await Orders.AddAsync(order);
+            await SaveChangesAsync();
+        }
+        return order;
+    }
+    public async Task<Order?> GetOrderByIdAsync(int orderId) => await Orders.FirstOrDefaultAsync(x => x.Id == orderId);
 }
 
 public enum OrderStatus
 {
-    NeedApprove, InProgress, Declined, Closed
-}
-
-public class Order
-{
-    public Order(long userId, string contactPhone = "", string deliveryAddress = "")
-    {
-        UserId = userId;
-        ContactPhone = contactPhone;
-        DeliveryAddress = deliveryAddress;
-    }
-    [Key]
-    public int Id { get; set; }
-    public long UserId { get; set; }
-    public string? Items { get; set; }
-    public OrderStatus Status { get; set; }
-    public string? ContactPhone { get; set; }
-    public string? DeliveryAddress { get; set; }
+    Filling, NeedApprove, InProgress, Declined, Closed
 }
 public class Contact : Telegram.Bot.Types.Contact
 {

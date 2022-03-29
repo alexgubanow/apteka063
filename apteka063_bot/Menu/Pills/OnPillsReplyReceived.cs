@@ -1,4 +1,3 @@
-using apteka063.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -7,15 +6,8 @@ namespace apteka063.menu;
 
 public partial class PillsMenu
 {
-    public async Task OnReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
+    public async Task OnReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        order ??= await _db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
-        if (order == null)
-        {
-            order = new(callbackQuery.From.Id);
-            await _db.Orders!.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoMain") }

@@ -6,21 +6,15 @@ namespace apteka063.menu;
 
 public partial class PillsMenu
 {
-    public async Task OnCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, string pillCategory, dbc.Order? order = null)
+    public async Task OnCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.PillCategories pillCategory, dbc.Order? order = null)
     {
-        order ??= _db.Orders!.Where(x => x.UserId == callbackQuery.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
-        if (order == null)
-        {
-            order = new(callbackQuery.From.Id);
-            await _db.Orders!.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
+        order ??= await _db.GetOrCreateOrderAsync(callbackQuery.From.Id);
         var orderPills = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoPills") }
         };
-        var pillsDB = _db.Pills!.Where(x => x.PillCategory == (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), pillCategory)).ToList();
+        var pillsDB = _db.Pills!.Where(x => x.PillCategory == pillCategory).ToList();
         foreach (var pillDB in pillsDB)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(

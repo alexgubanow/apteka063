@@ -8,13 +8,7 @@ public partial class OrderButton
 {
     public async Task PublishOrderAsync(ITelegramBotClient botClient, Message message)
     {
-        var order = _db.Orders!.Where(x => x.UserId == message.From.Id && x.Status != dbc.OrderStatus.Closed).FirstOrDefault();
-        if (order == null)
-        {
-            order = new(message.From.Id);
-            await _db.Orders!.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
+        var order = await _db.GetOrCreateOrderAsync(message.From.Id);
         if (order.Items == null || order.Items == "")
         {
             //await OnReplyReceived(db, botClient, callbackQuery, order);

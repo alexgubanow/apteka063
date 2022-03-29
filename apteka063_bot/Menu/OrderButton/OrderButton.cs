@@ -21,7 +21,7 @@ public partial class OrderButton
     public async Task DispatchStateAsync(ITelegramBotClient botClient, Message message, dbc.User user)
     {
         string[] statePath = user.State.Split('.');
-        var order = _db.Orders!.FirstOrDefault(x => x.Id == int.Parse(statePath[1]));
+        var order = await _db.GetOrderByIdAsync(int.Parse(statePath[1]));
         if (order == null)
         {
             throw new Exception($"Expected order #{statePath[1]} not found");

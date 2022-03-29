@@ -1,4 +1,3 @@
-using apteka063.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -9,13 +8,7 @@ public partial class FoodMenu
 {
     public async Task OnReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
     {
-        order ??= await _db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
-        if (order == null)
-        {
-            order = new(callbackQuery.From.Id);
-            await _db.Orders!.AddAsync(order);
-            await _db.SaveChangesAsync();
-        }
+        order ??= await _db.GetOrCreateOrderAsync(callbackQuery.From.Id);
         var orderFood = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
