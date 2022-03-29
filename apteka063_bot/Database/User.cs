@@ -6,9 +6,9 @@ public class User : Telegram.Bot.Types.User
     public long LocationId { get; set; }
     public OrderStatus Status { get; set; }
     public string State { get; set; }
+    //DO NOT REMOVE DEFAULT CTOR
     public User()
-    {
-    }
+    { }
     public User(Telegram.Bot.Types.User tgUser)
     {
         Id = tgUser.Id;
