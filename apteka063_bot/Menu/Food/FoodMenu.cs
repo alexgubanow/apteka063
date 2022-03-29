@@ -6,11 +6,11 @@ public partial class FoodMenu
 {
     private readonly ILogger<FoodMenu> _logger;
     private readonly dbc.Apteka063Context _db;
-    private readonly Services.Gsheet _gsheet;
-    public FoodMenu(ILogger<FoodMenu> logger, dbc.Apteka063Context db, Services.Gsheet gsheet)
+    private readonly Order _order;
+    public FoodMenu(ILogger<FoodMenu> logger, dbc.Apteka063Context db,Order order)
     {
         _logger = logger;
         _db = db;
-        _gsheet = gsheet;
+        _order = order;
     }
 }

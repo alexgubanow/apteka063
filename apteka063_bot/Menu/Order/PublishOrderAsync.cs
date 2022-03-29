@@ -22,11 +22,10 @@ public partial class Order
             return;
         }
 
-        var pillIds = order.Items!.Split(',').Select(x => int.Parse(x));
-        var pillsNames = _db.Pills!.Where(p => pillIds.Contains(p.Id)).Select(x => x.Name);
-        var pillsList = string.Join(", ", pillsNames);
+        var itemsIds = order.Items!.Split(',').Select(x => int.Parse(x));
+        var itemsNames = _db.Pills!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
 
-        await _gsheet.PostOrder(order, message.From.FirstName + ' ' + message.From.LastName, message.From.Username!, pillsList);
+        await _gsheet.PostOrder(order, message.From.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames));
 
 
         // Your order #%d has been posted
@@ -35,7 +34,7 @@ public partial class Order
         // <list of contacts>
         string resultTranslatedText =
             $"{Resources.Translation.OrderNumber}{order.Id} {Resources.Translation.HasBeenRegistered}\n" +
-            $"{string.Join('\n', pillsNames)}\n" +
+            $"{string.Join('\n', itemsNames)}\n" +
             $"{Resources.Translation.TakeCare}";
 
         var buttons = new List<List<InlineKeyboardButton>>

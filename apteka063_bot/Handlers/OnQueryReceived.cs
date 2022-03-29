@@ -23,10 +23,6 @@ public partial class UpdateHandlers
         {
             await _menu.Pills.OnItemReplyReceived(botClient, callbackQuery);
         }
-        else if (callbackQuery.Data == "orderPills")
-        {
-            await _menu.Pills.OnOrderReplyReceived(botClient, callbackQuery);
-        }
         else if (callbackQuery.Data == "backtoFood" || callbackQuery.Data == "food")
         {
             await _menu.Food.OnReplyReceived(botClient, callbackQuery);
@@ -35,9 +31,9 @@ public partial class UpdateHandlers
         {
             await _menu.Food.OnItemReplyReceived(botClient, callbackQuery);
         }
-        else if (callbackQuery.Data == "orderFood")
+        else if (callbackQuery.Data == "order")
         {
-            await _menu.Food.OnOrderReplyReceived(botClient, callbackQuery);
+            await _order.OnOrderReplyReceived(botClient, callbackQuery);
         }
         else
         {
