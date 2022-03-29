@@ -6,9 +6,8 @@ namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId)
+    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
     {
-        var order = await _db.GetOrCreateOrderForUserIdAsync(message.From!.Id);
         var itemsIds = order.Items!.Split(',');
         IQueryable<string> itemsNames = null;
         if (order.Items.Contains('p'))
