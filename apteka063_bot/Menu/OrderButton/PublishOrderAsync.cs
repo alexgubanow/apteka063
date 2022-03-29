@@ -13,7 +13,14 @@ public partial class OrderButton
         IQueryable<string> itemsNames = null;
         if (order.Items.Contains('p'))
         {
-            itemsNames = _db.Pills!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
+            var items = _db.Pills!.Where(p => itemsIds.Contains(p.Id));
+            itemsNames = items.Select(x => x.Name);
+            foreach (var pill in items)
+            {
+                pill.FreezedAmout++;
+            }
+            await _db.SaveChangesAsync();
+            await _gsheet.UpdateFreezedValues();
         }
         else
         {

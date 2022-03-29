@@ -20,7 +20,7 @@ namespace apteka063.Services
         static string jsonfile = "googlecreds.json";
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
-        
+
         public async Task PostOrder(Order order, string person, string personID, string pills)
         {
             string orderID = order.Id.ToString();
@@ -61,10 +61,30 @@ namespace apteka063.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, ex.Message);
             }
         }
-        
+        public async Task UpdateFreezedValues()
+        {
+            var service = GetSheetsSevice();
+            try
+            {
+                ValueRange valueRange = new() { MajorDimension = "ROWS" };
+                valueRange.Values = new List<IList<object>>();
+                foreach (var pill in _db.Pills)
+                {
+                    valueRange.Values.Add(new List<object>() { pill.FreezedAmout });
+                }
+                var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, "Таблетки!C2:C");
+                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+                UpdateValuesResponse result = await update.ExecuteAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
         public async Task<int> SyncPillCategoriesAsync()
         {
             var service = GetSheetsSevice();
@@ -86,7 +106,7 @@ namespace apteka063.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex,ex.Message);
                 return -1;
             }
             return 0;
@@ -97,7 +117,7 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:B");
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:C");
                 var response = await request.ExecuteAsync();
                 if (response.Values != null)
                 {
@@ -113,7 +133,7 @@ namespace apteka063.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, ex.Message);
                 return -1;
             }
             return 0;
@@ -140,7 +160,7 @@ namespace apteka063.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, ex.Message);
                 return -1;
             }
             return 0;
