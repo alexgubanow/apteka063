@@ -144,6 +144,9 @@
   <data name="Order_is_empty_please_pick_some" xml:space="preserve">
     <value>Заказ пустий, выберіть що-небудь для заказу</value>
   </data>
+  <data name="Order_received_processing_please_wait" xml:space="preserve">
+    <value>Замовлення отримано, тривае обробка, зачекайте</value>
+  </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Оберіть категорію:</value>
   </data>

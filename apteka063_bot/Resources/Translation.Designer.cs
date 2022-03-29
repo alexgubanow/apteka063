@@ -151,6 +151,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order received, processing, please wait.
+        /// </summary>
+        internal static string Order_received_processing_please_wait {
+            get {
+                return ResourceManager.GetString("Order_received_processing_please_wait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Order №.
         /// </summary>
         internal static string OrderNumber {

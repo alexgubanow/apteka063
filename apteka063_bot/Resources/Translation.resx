@@ -150,6 +150,9 @@
   <data name="Order_is_empty_please_pick_some" xml:space="preserve">
     <value>Order is empty, please pick some</value>
   </data>
+  <data name="Order_received_processing_please_wait" xml:space="preserve">
+    <value>Order received, processing, please wait</value>
+  </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Pick category:</value>
   </data>

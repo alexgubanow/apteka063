@@ -62,6 +62,7 @@ public partial class OrderButton
         order.ContactPhone = message.Text ?? "";
         order.Status = dbc.OrderStatus.NeedApprove;
         await _db.SaveChangesAsync();
+        await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.Order_received_processing_please_wait);
         return await PublishOrderAsync(botClient, message, lastMessageSentId);
     }
 }
