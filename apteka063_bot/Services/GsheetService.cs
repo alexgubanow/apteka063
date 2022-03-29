@@ -40,7 +40,7 @@ namespace apteka063.Services
                 {
                     writePosition = 2;
                 }
-
+                writePosition = writePosition > 0 ? writePosition : 2;
                 ValueRange valueRange = new() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {
                     new List<object>() { orderID },
@@ -53,20 +53,11 @@ namespace apteka063.Services
                     new List<object>() { order.DeliveryAddress },
                     new List<object>() { "not supported" },
                     new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") },
-                    new List<object>() { "=IF(J2,HOUR(NOW()-J2) + DAYS(NOW(), J2) * 24, -1)" }, // Format depend on Google sheet
+                    new List<object>() { $"=IF(J{writePosition},HOUR(NOW()-J{writePosition}) + DAYS(NOW(), J{writePosition}) * 24, -1)" }, // Format depend on Google sheet
                 };
-                if (writePosition != -1)
-                {
-                    var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:K{writePosition}");
-                    update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-                    UpdateValuesResponse result2 = await update.ExecuteAsync();
-                }
-                else
-                {
-                    var request1 = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, $"Заказы!A{writePosition}:K{writePosition}");
-                    request1.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-                    var result2 = await request1.ExecuteAsync();
-                }
+                var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:K{writePosition}");
+                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+                UpdateValuesResponse result2 = await update.ExecuteAsync();
             }
             catch (Exception ex)
             {
