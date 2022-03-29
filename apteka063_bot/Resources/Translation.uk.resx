@@ -120,6 +120,9 @@
   <data name="AvailableNow" xml:space="preserve">
     <value>Доступно зараз:</value>
   </data>
+  <data name="DBUpdateFailed" xml:space="preserve">
+    <value>Оновлення не вдалося</value>
+  </data>
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>База данних оновлена</value>
   </data>
@@ -138,8 +141,8 @@
   <data name="Pills" xml:space="preserve">
     <value>Медикаменти</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value>Оновлення не вдалося</value>
+  <data name="registered" xml:space="preserve">
+    <value>зареєстрований</value>
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Транспорт</value>

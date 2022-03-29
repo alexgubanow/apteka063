@@ -9,6 +9,10 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddTransient<apteka063.Services.Gsheet>();
         services.AddTransient<apteka063.bot.UpdateHandlers>();
         services.AddTransient<apteka063.dbc.Apteka063Context>();
+        services.AddTransient<apteka063.menu.Menu>();
+        services.AddTransient<apteka063.menu.PillsMenu>();
+        services.AddTransient<apteka063.menu.FoodMenu>();
+        services.AddTransient<apteka063.menu.Order>();
     })
     .ConfigureLogging((_, logging) =>
     {

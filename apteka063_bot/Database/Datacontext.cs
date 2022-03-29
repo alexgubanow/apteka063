@@ -23,6 +23,12 @@ public enum OrderStatus
 
 public class Order
 {
+    public Order(long userId, string contactPhone = "", string deliveryAddress = "")
+    {
+        UserId = userId;
+        ContactPhone = contactPhone;
+        DeliveryAddress = deliveryAddress;
+    }
     [Key]
     public int Id { get; set; }
     public long UserId { get; set; }

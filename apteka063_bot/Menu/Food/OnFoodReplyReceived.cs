@@ -3,25 +3,25 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace apteka063.Menu.Food;
+namespace apteka063.menu;
 
 public partial class FoodMenu
 {
-    public static async Task OnReplyReceived(dbc.Apteka063Context db, ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
+    public async Task OnReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order? order = null)
     {
-        order ??= await db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
+        order ??= await _db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
-            order = new() { UserId = callbackQuery.From.Id, ContactPhone = "",  };
-            await db.Orders!.AddAsync(order);
-            await db.SaveChangesAsync();
+            order = new(callbackQuery.From.Id);
+            await _db.Orders!.AddAsync(order);
+            await _db.SaveChangesAsync();
         }
         var orderFood = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoMain") }
         };
-        var foodsDB = db.Foods!.ToList();
+        var foodsDB = _db.Foods!.ToList();
         foreach (var foodInDb in foodsDB)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(

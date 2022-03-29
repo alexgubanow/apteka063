@@ -2,18 +2,18 @@ using apteka063.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace apteka063.Menu.Food;
+namespace apteka063.menu;
 
 public partial class FoodMenu
 {
-    public static async Task OnItemReplyReceived(dbc.Apteka063Context db, ITelegramBotClient botClient, CallbackQuery callbackQuery)
+    public async Task OnItemReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        var order = await db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
+        var order = await _db.Orders!.GetActiveOrderAsync(callbackQuery.From.Id);
         if (order == null)
         {
-            order = new() { UserId = callbackQuery.From.Id };
-            await db.Orders!.AddAsync(order);
-            await db.SaveChangesAsync();
+            order = new(callbackQuery.From.Id);
+            await _db.Orders!.AddAsync(order);
+            await _db.SaveChangesAsync();
         }
 
         var foodId = callbackQuery.Data!.Split('_', 2).Last();
@@ -34,8 +34,8 @@ public partial class FoodMenu
             orderFoodList = new() { foodId };
         }
         order.Items = string.Join(',', orderFoodList);
-        db.Orders!.Update(order);
-        await db.SaveChangesAsync();
-        await OnReplyReceived(db, botClient, callbackQuery, order);
+        _db.Orders!.Update(order);
+        await _db.SaveChangesAsync();
+        await OnReplyReceived(botClient, callbackQuery, order);
     }
 }

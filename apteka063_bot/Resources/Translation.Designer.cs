@@ -124,6 +124,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to has been registered.
+        /// </summary>
+        internal static string HasBeenRegistered {
+            get {
+                return ResourceManager.GetString("HasBeenRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main menu:.
         /// </summary>
         internal static string MainMenu {
@@ -133,11 +142,11 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your order #{0,0} has been received!.
+        ///   Looks up a localized string similar to Order №.
         /// </summary>
-        internal static string OrderPosted {
+        internal static string OrderNumber {
             get {
-                return ResourceManager.GetString("OrderPosted", resourceCulture);
+                return ResourceManager.GetString("OrderNumber", resourceCulture);
             }
         }
         

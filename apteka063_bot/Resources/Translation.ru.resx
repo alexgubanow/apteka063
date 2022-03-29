@@ -141,8 +141,8 @@
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
   </data>
-  <data name="OrderPosted" xml:space="preserve">
-    <value>Ваш заказ #{0,0} был отправлен!</value>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Заказ №</value>
   </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Выбери категорию:</value>
@@ -155,6 +155,9 @@
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
     <value>Пожалуйста, напишите телефон получателя (или другой контакт)</value>
+  </data>
+  <data name="registered" xml:space="preserve">
+    <value>зарегистрирован</value>
   </data>
   <data name="TakeCare" xml:space="preserve">
     <value>Позаботьтесь о себе и о своих близких</value>

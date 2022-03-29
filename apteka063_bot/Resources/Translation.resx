@@ -138,11 +138,14 @@
   <data name="GoToMenu" xml:space="preserve">
     <value>Go to the Main menu</value>
   </data>
+  <data name="HasBeenRegistered" xml:space="preserve">
+    <value>has been registered</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Main menu:</value>
   </data>
-  <data name="OrderPosted" xml:space="preserve">
-    <value>Your order #{0,0} has been received!</value>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Order №</value>
   </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Pick category:</value>

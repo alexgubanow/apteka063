@@ -19,7 +19,7 @@ namespace apteka063.Services
         static string jsonfile = "googlecreds.json";
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
-        public static async Task PostOrder(dbc.Order order, string person, string personID, string pills)
+        public async Task PostOrder(dbc.Order order, string person, string personID, string pills)
         {
             string orderID = order.Id.ToString();
 

@@ -12,11 +12,15 @@ public partial class UpdateHandlers
     private readonly ILogger<UpdateHandlers> _logger;
     private readonly dbc.Apteka063Context _db;
     private readonly Services.Gsheet _gsheet;
-    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db, Services.Gsheet gsheet)
+    private readonly menu.Menu _menu;
+    private readonly menu.Order _order;
+    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db, Services.Gsheet gsheet, menu.Menu menu, menu.Order order)
     {
         _logger = logger;
         _db = db;
         _gsheet = gsheet;
+        _menu = menu;
+        _order = order;
     }
     public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {

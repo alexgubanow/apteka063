@@ -18,11 +18,11 @@ public partial class UpdateHandlers
         var user = await dbc.User.GetUserAsync(_db, message.From);
         if (user.State != null && user.State != "")
         {
-            // State will have to section: Request.Action
-            string[] stateSplit = user.State.Split('.');
-            var handler = stateSplit[0] switch
+            // State will have action path : Order.1243.Action
+            var handler = user.State.Split('.', 2)[0] switch
             {
-                PillsMenu.pillsDetailsStateName => PillsMenu.getContactDetails(botClient, message, _db, user, stateSplit[1])
+                "Order" => _order.DispatchStateAsync(botClient, message, user),
+                _ => throw new NotImplementedException()
             };
 
             try
@@ -31,6 +31,7 @@ public partial class UpdateHandlers
             }
             catch (Exception exception)
             {
+                _logger.LogError($"Exception: {exception.Message}");
             }
 
             return;

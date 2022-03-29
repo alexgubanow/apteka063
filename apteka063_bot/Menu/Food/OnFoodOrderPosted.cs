@@ -2,20 +2,20 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace apteka063.Menu.Food;
+namespace apteka063.menu;
 
 public partial class FoodMenu
 {
-    public static async Task OnOrderPosted(dbc.Apteka063Context db, ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order order, string foodList)
+    public async Task OnOrderPosted(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order order, string foodList)
     {
         // Your order #%d has been posted
         // Details: .....
         // If nobody contacted you in 4 hours please use the follwing contacts
         // <list of contacts>
-        var resultTranslatedText = "";
-        resultTranslatedText += string.Format(Resources.Translation.OrderPosted, order.Id.ToString()) + "\n";
-        resultTranslatedText += foodList + "\n";
-        resultTranslatedText += Resources.Translation.TakeCare;
+        string resultTranslatedText =
+            $"{Resources.Translation.OrderNumber}{order.Id} {Resources.Translation.HasBeenRegistered}\n" +
+            $"{foodList}\n" +
+            $"{Resources.Translation.TakeCare}";
 
         var buttons = new List<List<InlineKeyboardButton>>
         {
