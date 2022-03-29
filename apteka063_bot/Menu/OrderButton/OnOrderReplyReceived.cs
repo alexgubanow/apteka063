@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace apteka063.menu;
 
-public partial class Order
+public partial class OrderButton
 {
     public async Task OnOrderReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {

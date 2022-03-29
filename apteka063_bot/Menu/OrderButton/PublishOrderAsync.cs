@@ -4,7 +4,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.menu;
 
-public partial class Order
+public partial class OrderButton
 {
     public async Task PublishOrderAsync(ITelegramBotClient botClient, Message message)
     {

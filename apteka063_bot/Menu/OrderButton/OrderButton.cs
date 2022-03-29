@@ -5,14 +5,14 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.menu;
 
-public partial class Order
+public partial class OrderButton
 {
     public const string ContactDetailsStateActionPhone = "Phone";
     public const string ContactDetailsStateActionAddress = "Address";
-    private readonly ILogger<Order> _logger;
+    private readonly ILogger<OrderButton> _logger;
     private readonly dbc.Apteka063Context _db;
     private readonly Services.Gsheet _gsheet;
-    public Order(ILogger<Order> logger, dbc.Apteka063Context db, Services.Gsheet gsheet)
+    public OrderButton(ILogger<OrderButton> logger, dbc.Apteka063Context db, Services.Gsheet gsheet)
     {
         _logger = logger;
         _db = db;

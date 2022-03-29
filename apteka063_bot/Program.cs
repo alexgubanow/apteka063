@@ -12,7 +12,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddTransient<apteka063.menu.Menu>();
         services.AddTransient<apteka063.menu.PillsMenu>();
         services.AddTransient<apteka063.menu.FoodMenu>();
-        services.AddTransient<apteka063.menu.Order>();
+        services.AddTransient<apteka063.menu.OrderButton>();
     })
     .ConfigureLogging((_, logging) =>
     {

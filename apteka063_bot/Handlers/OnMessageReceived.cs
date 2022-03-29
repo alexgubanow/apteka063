@@ -21,7 +21,7 @@ public partial class UpdateHandlers
             // State will have action path : Order.1243.Action
             var handler = user.State.Split('.', 2)[0] switch
             {
-                "Order" => _order.DispatchStateAsync(botClient, message, user),
+                "Order" => _orderButton.DispatchStateAsync(botClient, message, user),
                 _ => throw new NotImplementedException()
             };
 

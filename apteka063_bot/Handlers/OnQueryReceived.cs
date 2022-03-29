@@ -33,7 +33,7 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data == "order")
         {
-            await _order.OnOrderReplyReceived(botClient, callbackQuery);
+            await _orderButton.OnOrderReplyReceived(botClient, callbackQuery);
         }
         else
         {

@@ -13,14 +13,14 @@ public partial class UpdateHandlers
     private readonly dbc.Apteka063Context _db;
     private readonly Services.Gsheet _gsheet;
     private readonly menu.Menu _menu;
-    private readonly menu.Order _order;
-    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db, Services.Gsheet gsheet, menu.Menu menu, menu.Order order)
+    private readonly menu.OrderButton _orderButton;
+    public UpdateHandlers(ILogger<UpdateHandlers> logger, dbc.Apteka063Context db, Services.Gsheet gsheet, menu.Menu menu, menu.OrderButton order)
     {
         _logger = logger;
         _db = db;
         _gsheet = gsheet;
         _menu = menu;
-        _order = order;
+        _orderButton = order;
     }
     public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
