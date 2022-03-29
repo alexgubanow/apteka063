@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Microsoft.EntityFrameworkCore;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -10,7 +11,7 @@ public partial class OrderButton
     {
         var order = await _db.GetOrCreateOrderForUserIdAsync(message.From!.Id);
         var itemsIds = order.Items!.Split(',');
-        IQueryable<string> itemsNames = null;
+        IQueryable<string>? itemsNames;
         if (itemsIds[0].StartsWith('p'))
         {
             itemsNames = _db.Pills!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
@@ -19,6 +20,7 @@ public partial class OrderButton
         {
             itemsNames = _db.Foods!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
         }
+
         await _gsheet.PostOrder(order, message.From.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames));
 
         // Your order #%d has been posted

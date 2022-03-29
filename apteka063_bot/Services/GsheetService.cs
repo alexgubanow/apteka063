@@ -81,16 +81,6 @@ namespace apteka063.Services
                 Console.WriteLine(ex.Message);
             }
         }
-        public readonly static Dictionary<string, PillCategories> pillCategoriesMap = new()
-        {
-            { "Сердце", PillCategories.Heart },
-            { "Желудок", PillCategories.Stomach },
-            { "Обезболивающее", PillCategories.Painkiller },
-            { "Температура", PillCategories.Fever },
-            { "Детское", PillCategories.Child },
-            { "Женское", PillCategories.Women },
-            { "Другое", PillCategories.Other }
-        };
         
         public async Task<int> SyncPillCategoriesAsync()
         {
@@ -102,7 +92,7 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncatePillCategoriesAsync();
-                    List<dbc.PillCategory> itemsList = new(response.Values.Count);
+                    List<PillCategory> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
                         itemsList.Add(new() { Name = response.Values[i][0].ToString() });
@@ -129,7 +119,7 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncatePillsAsync();
-                    List<dbc.Pill> itemsList = new(response.Values.Count);
+                    List<Pill> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
                         itemsList.Add(new($"p{i}", response.Values[i]));
@@ -195,7 +185,7 @@ namespace apteka063.Services
             return service;
         }
 
-        public async Task<bool> TrySyncToDb()
+        public async Task<bool> TrySyncAllTablesToDb()
         {
             var success = true;
             
@@ -206,6 +196,12 @@ namespace apteka063.Services
             }
 
             if (await SyncFoodAsync() != 0)
+            {
+                success = false;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+            }
+
+            if (await SyncPillCategoriesAsync() != 0)
             {
                 success = false;
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);

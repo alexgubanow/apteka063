@@ -39,7 +39,7 @@ public partial class UpdateHandlers
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
-            if (await _gsheet.TrySyncToDb())
+            if (await _gsheet.TrySyncAllTablesToDb())
             {
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
