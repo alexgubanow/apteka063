@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using Telegram.Bot;
@@ -37,6 +38,12 @@ public partial class UpdateHandlers
     {
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(GetLangaugeCodeFromUpdate(update));
 
+        var tgUser = update.Message != null ? update.Message.From : update.EditedMessage != null ? update.EditedMessage.From : update.CallbackQuery != null ? update.CallbackQuery.From : null;
+        if (tgUser == null)
+        {
+            return;
+        }
+        var user = await _db.GetOrCreateUserAsync(tgUser);
         var handler = update.Type switch
         {
             // UpdateType.Unknown:
@@ -45,25 +52,25 @@ public partial class UpdateHandlers
             // UpdateType.ShippingQuery:
             // UpdateType.PreCheckoutQuery:
             // UpdateType.Poll:
-            UpdateType.Message            => OnMessageReceivedAsync(botClient, update.Message!, cancellationToken),
-            UpdateType.EditedMessage      => OnMessageReceivedAsync(botClient, update.EditedMessage!, cancellationToken),
-            UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!, cancellationToken),
+            UpdateType.Message            => OnMessageReceivedAsync(botClient, update.Message!, user, cancellationToken),
+            UpdateType.EditedMessage      => OnMessageReceivedAsync(botClient, update.EditedMessage!, user, cancellationToken),
+            UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!, user, cancellationToken),
             //UpdateType.InlineQuery        => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
             _                             => UnknownUpdateHandlerAsync(botClient, update)
         };
-        Message message = null!;
         try
         {
-            message = await handler;
+            var message = await handler;
+            if (message != null)
+            {
+                user.LastMessageSentId = message.MessageId;
+                await _db.SaveChangesAsync(cancellationToken);
+            }
         }
         catch (Exception exception)
         {
             await HandleErrorAsync(botClient, exception, cancellationToken);
-        }
-        if (message != null)
-        {
-            //await botClient.PinChatMessageAsync(message.Chat.Id, message.MessageId, false, cancellationToken: cancellationToken);
         }
     }
 

@@ -9,13 +9,12 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, CancellationToken cts)
+    private async Task<Message> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, dbc.User user, CancellationToken cts)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
             return null!;
         await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId, cts);
-        var user = await _db.GetOrCreateUserAsync(message.From);
         var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == dbc.OrderStatus.NeedPhone || x.Status == dbc.OrderStatus.NeedAdress)).ToListAsync();
         if (order.Count > 0)
         {
@@ -27,7 +26,7 @@ public partial class UpdateHandlers
             }
             try
             {
-                return await _orderButton.DispatchStateAsync(botClient, message, order.First());
+                return await _orderButton.DispatchStateAsync(botClient, message, user.LastMessageSentId, order.First());
             }
             catch (Exception exception)
             {

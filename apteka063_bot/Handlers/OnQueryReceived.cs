@@ -5,7 +5,7 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts)
+    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.User user, CancellationToken cts)
     {
         if (callbackQuery.Data == "backtoMain")
         {
@@ -33,7 +33,7 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data == "order")
         {
-            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery);
+            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, user.LastMessageSentId);
         }
         else if (callbackQuery.Data.Contains("cancelOrder_"))
         {

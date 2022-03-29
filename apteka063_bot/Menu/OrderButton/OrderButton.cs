@@ -16,12 +16,12 @@ public partial class OrderButton
         _db = db;
         _gsheet = gsheet;
     }
-    public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, dbc.Order order)
+    public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
     {
         var handler = order.Status switch
         {
-            dbc.OrderStatus.NeedPhone => SaveContactPhoneAsync(botClient, message, order),
-            dbc.OrderStatus.NeedAdress => SaveContactAddressAsync(botClient, message, order),
+            dbc.OrderStatus.NeedPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order),
+            dbc.OrderStatus.NeedAdress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order),
             _ => throw new NotImplementedException()
         };
         try
@@ -34,7 +34,7 @@ public partial class OrderButton
         }
         return null!;
     }
-    public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.Order order)
+    public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, dbc.Order order)
     {
         order.Status = dbc.OrderStatus.NeedPhone;
         await _db.SaveChangesAsync();
@@ -42,9 +42,9 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
         };
-        return await botClient.SendTextMessageAsync(chatId: callbackQuery.Message!.Chat.Id, text: Resources.Translation.ProvidePhoneNumber, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.EditMessageTextAsync(callbackQuery.Message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvidePhoneNumber, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
-    public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, dbc.Order order)
+    public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
     {
         order.ContactPhone = message.Text ?? "";
         order.Status = dbc.OrderStatus.NeedAdress;
@@ -53,15 +53,15 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
         };
-        return await botClient.SendTextMessageAsync(chatId: message!.Chat.Id, text: Resources.Translation.ProvideDeliveryAddress, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvideDeliveryAddress, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 
-    public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, dbc.Order order)
+    public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
     {
         order.DeliveryAddress = message.Text ?? "";
         order.ContactPhone = message.Text ?? "";
         order.Status = dbc.OrderStatus.NeedApprove;
         await _db.SaveChangesAsync();
-        return await PublishOrderAsync(botClient, message);
+        return await PublishOrderAsync(botClient, message, lastMessageSentId);
     }
 }

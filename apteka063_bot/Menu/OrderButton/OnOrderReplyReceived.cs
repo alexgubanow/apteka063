@@ -5,7 +5,7 @@ namespace apteka063.menu;
 
 public partial class OrderButton
 {
-    public async Task<Message> OnOrderReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
+    public async Task<Message> OnOrderReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId)
     {
         var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id);
         if (order.Items == null || order.Items == "")
@@ -15,7 +15,7 @@ public partial class OrderButton
         }
         else
         {
-            return await InitiateOrderAsync(botClient, callbackQuery, order);
+            return await InitiateOrderAsync(botClient, callbackQuery, lastMessageSentId, order);
         }
     }
 }

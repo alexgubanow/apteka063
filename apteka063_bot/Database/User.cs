@@ -5,6 +5,7 @@ public class User : Telegram.Bot.Types.User
     public long ContactId { get; set; }
     public long LocationId { get; set; }
     public OrderStatus Status { get; set; }
+    public int LastMessageSentId { get; set; }
     //DO NOT REMOVE DEFAULT CTOR
     public User()
     { }

@@ -6,7 +6,7 @@ namespace apteka063.menu;
 
 public partial class OrderButton
 {
-    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message)
+    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId)
     {
         var order = await _db.GetOrCreateOrderForUserIdAsync(message.From.Id);
         var itemsIds = order.Items!.Split(',').Select(x => int.Parse(x));
@@ -28,6 +28,6 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoToMenu, "backtoMain") }
         };
-        return await botClient.SendTextMessageAsync(chatId: message!.Chat.Id, text: resultTranslatedText, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, resultTranslatedText, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }
