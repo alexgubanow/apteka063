@@ -62,6 +62,6 @@ public partial class OrderButton
         order.Status = dbc.OrderStatus.NeedApprove;
         await _db.SaveChangesAsync();
         await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.Order_received_processing_please_wait);
-        return await PublishOrderAsync(botClient, message, lastMessageSentId);
+        return await PublishOrderAsync(botClient, message, lastMessageSentId, order);
     }
 }
