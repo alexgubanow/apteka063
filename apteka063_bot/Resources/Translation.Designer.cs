@@ -142,6 +142,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order is empty, please pick some.
+        /// </summary>
+        internal static string Order_is_empty_please_pick_some {
+            get {
+                return ResourceManager.GetString("Order_is_empty_please_pick_some", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Order №.
         /// </summary>
         internal static string OrderNumber {

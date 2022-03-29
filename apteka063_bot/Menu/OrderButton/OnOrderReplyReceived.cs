@@ -10,7 +10,7 @@ public partial class OrderButton
         var order = await _db.GetOrCreateOrderAsync(callbackQuery.From.Id);
         if (order.Items == null || order.Items == "")
         {
-            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "You haven't picked anything", true);
+            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, Resources.Translation.Order_is_empty_please_pick_some, true);
         }
         else
         {

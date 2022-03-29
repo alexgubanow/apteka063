@@ -120,6 +120,9 @@
   <data name="AvailableNow" xml:space="preserve">
     <value>Доступно зараз:</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
   <data name="DBUpdateFailed" xml:space="preserve">
     <value>Оновлення не вдалося</value>
   </data>
@@ -135,14 +138,29 @@
   <data name="MainMenu" xml:space="preserve">
     <value>Головне меню:</value>
   </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Заказ №</value>
+  </data>
+  <data name="Order_is_empty_please_pick_some" xml:space="preserve">
+    <value>Заказ пустий, выберіть що-небудь для заказу</value>
+  </data>
   <data name="PickCategory" xml:space="preserve">
-    <value>Вибери категорію:</value>
+    <value>Оберіть категорію:</value>
   </data>
   <data name="Pills" xml:space="preserve">
     <value>Медикаменти</value>
   </data>
+  <data name="ProvideDeliveryAddress" xml:space="preserve">
+    <value>Будь ласка, напишіть адресу одержувача</value>
+  </data>
+  <data name="ProvidePhoneNumber" xml:space="preserve">
+    <value>Будь ласка, напишіть телефон одержувача (або інший контакт)</value>
+  </data>
   <data name="registered" xml:space="preserve">
     <value>зареєстрований</value>
+  </data>
+  <data name="TakeCare" xml:space="preserve">
+    <value>Подбайте про себе та своїх близьких</value>
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Транспорт</value>

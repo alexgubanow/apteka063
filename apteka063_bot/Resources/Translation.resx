@@ -147,6 +147,9 @@
   <data name="OrderNumber" xml:space="preserve">
     <value>Order №</value>
   </data>
+  <data name="Order_is_empty_please_pick_some" xml:space="preserve">
+    <value>Order is empty, please pick some</value>
+  </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Pick category:</value>
   </data>
