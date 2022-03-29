@@ -11,7 +11,7 @@ public partial class OrderButton
         var order = await _db.GetOrCreateOrderForUserIdAsync(message.From!.Id);
         var itemsIds = order.Items!.Split(',');
         IQueryable<string>? itemsNames;
-        if (itemsIds[0].StartsWith('p'))
+        if (order.Items.Contains('p'))
         {
             itemsNames = _db.Pills!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
         }
