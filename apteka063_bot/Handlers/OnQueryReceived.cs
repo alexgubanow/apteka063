@@ -5,39 +5,40 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private async Task OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
+    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts)
     {
         if (callbackQuery.Data == "backtoMain")
         {
-            await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId);
+            return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, cts, callbackQuery.Message!.MessageId);
         }
         else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
         {
-            await _menu.Pills.OnReplyReceived(botClient, callbackQuery);
+            return await _menu.Pills.OnReplyReceived(botClient, callbackQuery);
         }
         else if (callbackQuery.Data!.Contains("pillsCategory_") == true)
         {
-            await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), callbackQuery.Data.Split('_', 2).Last()));
+            return await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, (dbc.PillCategories)Enum.Parse(typeof(dbc.PillCategories), callbackQuery.Data.Split('_', 2).Last()));
         }
         else if (callbackQuery.Data!.Contains("pill_") == true)
         {
-            await _menu.Pills.OnItemReplyReceived(botClient, callbackQuery);
+            return await _menu.Pills.OnItemReplyReceived(botClient, callbackQuery);
         }
         else if (callbackQuery.Data == "backtoFood" || callbackQuery.Data == "food")
         {
-            await _menu.Food.OnReplyReceived(botClient, callbackQuery);
+            return await _menu.Food.OnReplyReceived(botClient, callbackQuery);
         }
         else if (callbackQuery.Data!.Contains("food_") == true)
         {
-            await _menu.Food.OnItemReplyReceived(botClient, callbackQuery);
+            return await _menu.Food.OnItemReplyReceived(botClient, callbackQuery);
         }
         else if (callbackQuery.Data == "order")
         {
-            await _orderButton.OnOrderReplyReceived(botClient, callbackQuery);
+            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery);
         }
-        else
+        else if (callbackQuery.Data.Contains("cancelOrder_"))
         {
-            await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId);
+            return await _orderButton.OnCancelOrder(botClient, callbackQuery, cts);
         }
+        return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, cts, callbackQuery.Message!.MessageId);
     }
 }

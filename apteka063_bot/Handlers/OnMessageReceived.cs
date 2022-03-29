@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -8,36 +9,32 @@ namespace apteka063.bot;
 
 public partial class UpdateHandlers
 {
-    private async Task OnMessageReceived(ITelegramBotClient botClient, Message message)
+    private async Task<Message> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, CancellationToken cts)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
-            return;
-
-        // Get User and check State
-        var user = await dbc.User.GetUserAsync(_db, message.From);
-        if (user.State != null && user.State != "")
+            return null!;
+        await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId, cts);
+        var user = await _db.GetOrCreateUserAsync(message.From);
+        var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == dbc.OrderStatus.NeedPhone || x.Status == dbc.OrderStatus.NeedAdress)).ToListAsync();
+        if (order.Count > 0)
         {
-            // State will have action path : Order.1243.Action
-            var handler = user.State.Split('.', 2)[0] switch
+            if (order.Count > 1)
             {
-                "Order" => _orderButton.DispatchStateAsync(botClient, message, user),
-                _ => throw new NotImplementedException()
-            };
-
+                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: "MORE THAN ONE ORDER FOUND", cancellationToken : cts);
+                _logger.LogError($"MORE THAN ONE ORDER FOUND, FOR USER ID: {user.Id}");
+                return null!;
+            }
             try
             {
-                await handler;
+                return await _orderButton.DispatchStateAsync(botClient, message, order.First());
             }
             catch (Exception exception)
             {
                 _logger.LogError($"Exception: {exception.Message}");
             }
-
-            return;
         }
 
-        await botClient.DeleteMessageAsync(message.Chat.Id, message.MessageId);
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
@@ -50,9 +47,9 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        await ShowMainMenu(botClient, message, header);
+        return await ShowMainMenu(botClient, message, header, cts);
     }
-    private async Task ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, int? messageId = null)
+    public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts, int? messageId = null)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
@@ -61,11 +58,8 @@ public partial class UpdateHandlers
 
         if (messageId != null)
         {
-            await botClient.EditMessageTextAsync(chatId: message.Chat.Id, messageId: messageId ?? 0, text: headerText, replyMarkup: inlineKeyboard);
+            return await botClient.EditMessageTextAsync(chatId: message.Chat.Id, messageId: (int)messageId, text: headerText, replyMarkup: inlineKeyboard, cancellationToken: cts);
         }
-        else
-        {
-            await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: headerText, replyMarkup: inlineKeyboard);
-        }
+        return await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: headerText, replyMarkup: inlineKeyboard, cancellationToken: cts);
     }
 }

@@ -6,16 +6,9 @@ namespace apteka063.menu;
 
 public partial class OrderButton
 {
-    public async Task PublishOrderAsync(ITelegramBotClient botClient, Message message)
+    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message)
     {
-        var order = await _db.GetOrCreateOrderAsync(message.From.Id);
-        if (order.Items == null || order.Items == "")
-        {
-            //await OnReplyReceived(db, botClient, callbackQuery, order);
-            // ToDo: Send message to user that he did NOT do any order and return back Pills menu
-            return;
-        }
-
+        var order = await _db.GetOrCreateOrderForUserIdAsync(message.From.Id);
         var itemsIds = order.Items!.Split(',').Select(x => int.Parse(x));
         var itemsNames = _db.Pills!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
 
@@ -35,6 +28,6 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoToMenu, "backtoMain") }
         };
-        await botClient.SendTextMessageAsync(chatId: message!.Chat.Id, text: resultTranslatedText, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.SendTextMessageAsync(chatId: message!.Chat.Id, text: resultTranslatedText, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

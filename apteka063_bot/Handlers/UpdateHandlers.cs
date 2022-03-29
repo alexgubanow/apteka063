@@ -45,27 +45,32 @@ public partial class UpdateHandlers
             // UpdateType.ShippingQuery:
             // UpdateType.PreCheckoutQuery:
             // UpdateType.Poll:
-            UpdateType.Message            => OnMessageReceived(botClient, update.Message!),
-            UpdateType.EditedMessage      => OnMessageReceived(botClient, update.EditedMessage!),
-            UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!),
+            UpdateType.Message            => OnMessageReceivedAsync(botClient, update.Message!, cancellationToken),
+            UpdateType.EditedMessage      => OnMessageReceivedAsync(botClient, update.EditedMessage!, cancellationToken),
+            UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!, cancellationToken),
             //UpdateType.InlineQuery        => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
             _                             => UnknownUpdateHandlerAsync(botClient, update)
         };
+        Message message = null!;
         try
         {
-            await handler;
+            message = await handler;
         }
         catch (Exception exception)
         {
             await HandleErrorAsync(botClient, exception, cancellationToken);
         }
+        if (message != null)
+        {
+            //await botClient.PinChatMessageAsync(message.Chat.Id, message.MessageId, false, cancellationToken: cancellationToken);
+        }
     }
 
-    private Task UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
+    private Task<Message> UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
     {
         _logger.LogWarning($"Unknown update type: {update.Type}");
-        return Task.CompletedTask;
+        return null!;
     }
     private static string GetLangaugeCodeFromUpdate(Update update)
     {

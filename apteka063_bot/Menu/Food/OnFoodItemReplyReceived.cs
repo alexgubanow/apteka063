@@ -5,9 +5,9 @@ namespace apteka063.menu;
 
 public partial class FoodMenu
 {
-    public async Task OnItemReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
+    public async Task<Message> OnItemReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        var order = await _db.GetOrCreateOrderAsync(callbackQuery.From.Id);
+        var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id);
         var foodId = callbackQuery.Data!.Split('_', 2).Last();
         var orderFoodList = order.Items?.Split(',').ToList();
         if (orderFoodList != null)
@@ -28,6 +28,6 @@ public partial class FoodMenu
         order.Items = string.Join(',', orderFoodList);
         _db.Orders.Update(order);
         await _db.SaveChangesAsync();
-        await OnReplyReceived(botClient, callbackQuery, order);
+        return await OnReplyReceived(botClient, callbackQuery, order);
     }
 }

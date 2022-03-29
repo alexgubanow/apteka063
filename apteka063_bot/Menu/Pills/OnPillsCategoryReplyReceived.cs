@@ -6,9 +6,9 @@ namespace apteka063.menu;
 
 public partial class PillsMenu
 {
-    public async Task OnCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.PillCategories pillCategory, dbc.Order? order = null)
+    public async Task<Message> OnCategoryReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.PillCategories pillCategory, dbc.Order? order = null)
     {
-        order ??= await _db.GetOrCreateOrderAsync(callbackQuery.From.Id);
+        order ??= await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id);
         var orderPills = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
@@ -22,6 +22,6 @@ public partial class PillsMenu
                 $"pill_{pillDB.Id}") });
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("Order", "order") });
-        await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId, text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

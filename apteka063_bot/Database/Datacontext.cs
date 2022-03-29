@@ -14,9 +14,9 @@ public class Apteka063Context : DbContext
     public DbSet<Pill> Pills { get; set; } = null!;
     public DbSet<Food> Foods { get; set; } = null!;
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}");
-    public async Task<Order> GetOrCreateOrderAsync(long userId)
+    public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId)
     {
-        var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && x.Status == OrderStatus.Filling);
+        var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress));
         if (order == null)
         {
             order = new(userId);
@@ -25,12 +25,28 @@ public class Apteka063Context : DbContext
         }
         return order;
     }
+    public async Task<User> GetOrCreateUserAsync(Telegram.Bot.Types.User tgUser)
+    {
+        var user = await Users.FindAsync(tgUser?.Id);
+        if (user == null)
+        {
+            user = new(tgUser!);
+            await Users.AddAsync(user);
+            await SaveChangesAsync();
+        }
+        return user;
+    }
     public async Task<Order?> GetOrderByIdAsync(int orderId) => await Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+    public async Task UpdateOrderAsync(Order order)
+    {
+        Orders.Update(order);
+        await SaveChangesAsync();
+    }
 }
 
 public enum OrderStatus
 {
-    Filling, NeedApprove, InProgress, Declined, Closed
+    Filling, NeedPhone, NeedAdress, NeedApprove, InProgress, Declined, Closed
 }
 public class Contact : Telegram.Bot.Types.Contact
 {
