@@ -33,17 +33,8 @@ namespace apteka063.Services
                 var writePosition = -1;
                 if (response.Values != null)
                 {
-                    for (int i = 0; i < response.Values[0].Count; i++)
-                    {
-                        if (response.Values[0][i].ToString() == orderID)
-                        {
-                            writePosition = i + 2;
-                        }
-                    }
-                    if (writePosition == -1)
-                    {
-                        writePosition = response.Values[0].Count + 2;
-                    }
+                    int orderToUpdateIDX = response.Values[0].IndexOf(orderID);
+                    writePosition = orderToUpdateIDX != -1 ? orderToUpdateIDX : response.Values.Count + 2;
                 }
                 else
                 {
