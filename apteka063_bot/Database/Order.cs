@@ -14,8 +14,8 @@ public class Order
     [Key]
     public int Id { get; set; }
     public long UserId { get; set; }
-    public string? Items { get; set; }
+    public string Items { get; set; } = "";
     public OrderStatus Status { get; set; }
-    public string? ContactPhone { get; set; }
-    public string? DeliveryAddress { get; set; }
+    public string ContactPhone { get; set; } = "";
+    public string DeliveryAddress { get; set; } = "";
 }

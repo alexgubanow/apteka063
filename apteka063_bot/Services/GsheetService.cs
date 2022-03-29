@@ -79,43 +79,49 @@ namespace apteka063.Services
                 Console.WriteLine(ex.Message);
             }
         }
-        public readonly static Dictionary<string, dbc.PillCategories> pillCategoriesMap = new()
+        public async Task<int> SyncPillCategoriesAsync()
         {
-            { "Сердце", dbc.PillCategories.Heart },
-            { "Желудок", dbc.PillCategories.Stomach },
-            { "Обезболивающее", dbc.PillCategories.Painkiller },
-            { "Температура", dbc.PillCategories.Fever },
-            { "Детское", dbc.PillCategories.Child },
-            { "Женское", dbc.PillCategories.Women },
-            { "Другое", dbc.PillCategories.Other }
-        };
+            var service = GetSheetsSevice();
+            try
+            {
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!N2:N");
+                var response = await request.ExecuteAsync();
+                if (response.Values != null)
+                {
+                    await _db.TruncatePillCategoriesAsync();
+                    List<dbc.PillCategory> itemsList = new(response.Values.Count);
+                    for (int i = 0; i < response.Values.Count; i++)
+                    {
+                        itemsList.Add(new() { Name = response.Values[i][0].ToString() });
+                    }
+                    await _db.PillCategories.AddRangeAsync(itemsList);
+                    await _db.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return -1;
+            }
+            return 0;
+        }
         public async Task<int> SyncPillsAsync()
         {
             var service = GetSheetsSevice();
             try
             {
-                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:C");
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:B");
                 var response = await request.ExecuteAsync();
                 if (response.Values != null)
                 {
-                    foreach (var sheetRow in response.Values)
+                    await _db.TruncatePillsAsync();
+                    List<dbc.Pill> itemsList = new(response.Values.Count);
+                    for (int i = 0; i < response.Values.Count; i++)
                     {
-                        int pillID = int.Parse(sheetRow[0].ToString()!);
-                        var pill = _db.Pills!.Where(x => x.Id == pillID).FirstOrDefault();
-                        if (pill == null)
-                        {
-                            pill = new() { Id = pillID, Name = sheetRow[1].ToString()!, PillCategory = pillCategoriesMap[sheetRow[2].ToString()!] };
-                            await _db.Pills!.AddAsync(pill);
-                        }
-                        else
-                        {
-                            pill.Id = pillID;
-                            pill.Name = sheetRow[1].ToString()!;
-                            pill.PillCategory = pillCategoriesMap[sheetRow[2].ToString()!];
-                            _db.Pills!.Update(pill);
-                        }
-                        await _db.SaveChangesAsync();
+                        itemsList.Add(new($"p{i}", response.Values[i]));
                     }
+                    await _db.Pills.AddRangeAsync(itemsList);
+                    await _db.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
@@ -131,27 +137,18 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Еда!A2:C");
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Еда!A2:B");
                 var response = await request.ExecuteAsync();
                 if (response.Values != null)
                 {
-                    foreach (var sheetRow in response.Values)
+                    await _db.TruncateFoodAsync();
+                    List<dbc.Food> itemsList = new(response.Values.Count);
+                    for (int i = 0; i < response.Values.Count; i++)
                     {
-                        int foodID = int.Parse(sheetRow[0].ToString()!);
-                        var food = _db.Foods!.Where(x => x.Id == foodID).FirstOrDefault();
-                        if (food == null)
-                        {
-                            food = new() { Id = foodID, Name = sheetRow[1].ToString()! };
-                            await _db.Foods!.AddAsync(food);
-                        }
-                        else
-                        {
-                            food.Id = foodID;
-                            food.Name = sheetRow[1].ToString()!;
-                            _db.Foods!.Update(food);
-                        }
-                        await _db.SaveChangesAsync();
+                        itemsList.Add(new($"f{i}",response.Values[i]));
                     }
+                    await _db.Foods.AddRangeAsync(itemsList);
+                    await _db.SaveChangesAsync();
                 }
             }
             catch (Exception ex)

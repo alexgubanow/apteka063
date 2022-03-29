@@ -70,17 +70,17 @@ public class Worker : BackgroundService
         }
         if (_db.Database.EnsureCreated() == true)
         {
-            if (await _gsheet.SyncPillsAsync() != 0)
+            int rc = await _gsheet.SyncPillsAsync();
+            rc |= await _gsheet.SyncPillCategoriesAsync();
+            rc |= await _gsheet.SyncFoodAsync();
+            if (rc != 0)
             {
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
-
-            if (await _gsheet.SyncFoodAsync() != 0)
+            else
             {
-                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+                _logger.LogInformation(Resources.Translation.DBUpdateFinished);
             }
-
-            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
         }
         Bot!.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, new ReceiverOptions() { AllowedUpdates = { } }, stoppingToken);
 

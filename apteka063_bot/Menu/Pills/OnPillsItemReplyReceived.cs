@@ -29,7 +29,7 @@ public partial class PillsMenu
         order.Items = string.Join(',', orderPillsList);
         _db.Orders.Update(order);
         await _db.SaveChangesAsync();
-        var pill = await _db.Pills.FirstOrDefaultAsync(x => x.Id == int.Parse(pillID));
-        return await OnCategoryReplyReceived(botClient, callbackQuery, pill != null ? pill.PillCategory : dbc.PillCategories.Other, order);
+        var pill = await _db.Pills.FirstOrDefaultAsync(x => x.Id == pillID);
+        return await OnCategoryReplyReceived(botClient, callbackQuery, pill!.PillCategoryName, order);
     }
 }

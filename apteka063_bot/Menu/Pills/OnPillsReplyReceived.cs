@@ -12,9 +12,11 @@ public partial class PillsMenu
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoMain") }
         };
-        foreach (var pillCategory in Services.Gsheet.pillCategoriesMap)
+        var PillCategoryIds = _db.Pills.Select(x => x.PillCategoryName);
+        var pillCategories = _db.PillCategories.Where(x => PillCategoryIds.Contains(x.Name));
+        foreach (var pillCategory in pillCategories)
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(pillCategory.Key, $"pillsCategory_{pillCategory.Value}") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(pillCategory.Name, $"pillsCategory_{pillCategory.Id}") });
         }
         return await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId, 
             text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons));

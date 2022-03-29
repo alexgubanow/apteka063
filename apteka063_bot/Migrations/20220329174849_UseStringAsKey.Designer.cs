@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using apteka063.dbc;
 
@@ -10,9 +11,10 @@ using apteka063.dbc;
 namespace apteka063.Migrations
 {
     [DbContext(typeof(Apteka063Context))]
-    partial class Apteka063ContextModelSnapshot : ModelSnapshot
+    [Migration("20220329174849_UseStringAsKey")]
+    partial class UseStringAsKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
@@ -126,28 +128,12 @@ namespace apteka063.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PillCategoryName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("PillCategory")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Pills");
-                });
-
-            modelBuilder.Entity("apteka063.dbc.PillCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PillCategories");
                 });
 
             modelBuilder.Entity("apteka063.dbc.User", b =>
