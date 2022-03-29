@@ -1,7 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace apteka063.menu;
+namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {

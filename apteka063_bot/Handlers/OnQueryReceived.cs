@@ -1,11 +1,13 @@
+using apteka063.Database;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using User = apteka063.Database.User;
 
-namespace apteka063.bot;
+namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, dbc.User user, CancellationToken cts)
+    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts)
     {
         if (callbackQuery.Data == "backtoMain")
         {

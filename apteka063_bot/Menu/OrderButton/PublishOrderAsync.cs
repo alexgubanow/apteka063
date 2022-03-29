@@ -1,12 +1,13 @@
-﻿using Telegram.Bot;
+﻿using apteka063.Database;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace apteka063.menu;
+namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
+    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
     {
         var itemsIds = order.Items!.Split(',');
         IQueryable<string> itemsNames = null;
@@ -18,6 +19,7 @@ public partial class OrderButton
         {
             itemsNames = _db.Foods!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
         }
+
         await _gsheet.PostOrder(order, message.From.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames));
 
         // Your order #%d has been posted

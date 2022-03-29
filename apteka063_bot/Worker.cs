@@ -1,20 +1,22 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
+using apteka063.Database;
+using apteka063.Handlers;
 using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
-using Telegram.Bot.Types;
+using User = Telegram.Bot.Types.User;
 
 namespace apteka063;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-
     private readonly IHostApplicationLifetime _lifetime;
-    private readonly bot.UpdateHandlers _handlers;
-    readonly dbc.Apteka063Context _db;
+    private readonly UpdateHandlers _handlers;
+    readonly Apteka063Context _db;
     readonly Services.Gsheet _gsheet;
-    public Worker(ILogger<Worker> logger, bot.UpdateHandlers handlers, dbc.Apteka063Context db, Services.Gsheet gsheet, IHostApplicationLifetime lifetime)
+    
+    public Worker(ILogger<Worker> logger, UpdateHandlers handlers, Apteka063Context db, Services.Gsheet gsheet, IHostApplicationLifetime lifetime)
     {
         _handlers = handlers;
         _lifetime = lifetime;
@@ -34,10 +36,10 @@ public class Worker : BackgroundService
             return -1;
         }
         int tryCount = 0;
-        while ((config!.AppSettings.Settings["Token"] == null || Bot == null) && tryCount < 5)
+        while ((config.AppSettings.Settings["Token"] == null || Bot == null) && tryCount < 5)
         {
             tryCount++;
-            string token = config!.AppSettings.Settings["Token"].Value ?? "";
+            string token = config.AppSettings.Settings["Token"].Value ?? "";
             if (token == "")
             {
                 _logger.LogInformation("Please enter telegram token to be used:");
@@ -46,20 +48,20 @@ public class Worker : BackgroundService
             try
             {
                 Bot = new(token);
-                if (config!.AppSettings.Settings["Token"] != null)
+                if (config.AppSettings.Settings["Token"] != null)
                 {
-                    config!.AppSettings.Settings["Token"].Value = token;
+                    config.AppSettings.Settings["Token"].Value = token;
                 }
                 else
                 {
-                    config!.AppSettings.Settings.Add(new("Token", token));
+                    config.AppSettings.Settings.Add(new("Token", token));
                 }
                 config.Save(ConfigurationSaveMode.Modified);
                 ConfigurationManager.RefreshSection("Token");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"failed to create bot with given token:\n{token}\noriginal error message:\n{ex.Message}");
+                _logger.LogError(ex, $"failed to create bot with given token:\n{token}\noriginal error message:\n{ex.Message}");
             }
         }
         if (Bot == null)
@@ -68,23 +70,13 @@ public class Worker : BackgroundService
             _lifetime.StopApplication();
             return -2;
         }
-        if (_db.Database.EnsureCreated() == true)
+        if (await _db.Database.EnsureCreatedAsync(stoppingToken))
         {
-            int rc = await _gsheet.SyncPillsAsync();
-            rc |= await _gsheet.SyncPillCategoriesAsync();
-            rc |= await _gsheet.SyncFoodAsync();
-            if (rc != 0)
-            {
-                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
-            }
-            else
-            {
-                _logger.LogInformation(Resources.Translation.DBUpdateFinished);
-            }
+            await _gsheet.TrySyncAllTablesToDb();
         }
-        Bot!.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, new ReceiverOptions() { AllowedUpdates = { } }, stoppingToken);
+        Bot.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, new ReceiverOptions(), stoppingToken);
 
-        User me = await Bot!.GetMeAsync(cancellationToken: stoppingToken);
+        User me = await Bot.GetMeAsync(cancellationToken: stoppingToken);
         _logger.LogInformation($"Started listening for @{me.Username}");
 
         while (!stoppingToken.IsCancellationRequested)

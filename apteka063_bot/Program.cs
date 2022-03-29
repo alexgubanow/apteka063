@@ -1,4 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using apteka063.Database;
+using apteka063.Handlers;
+using apteka063.Menu;
+using apteka063.Menu.Food;
+using apteka063.Menu.OrderButton;
+using apteka063.Menu.Pills;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -7,12 +13,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddHostedService<apteka063.Worker>();
         services.AddTransient<apteka063.Services.Gsheet>();
-        services.AddTransient<apteka063.bot.UpdateHandlers>();
-        services.AddTransient<apteka063.dbc.Apteka063Context>();
-        services.AddTransient<apteka063.menu.Menu>();
-        services.AddTransient<apteka063.menu.PillsMenu>();
-        services.AddTransient<apteka063.menu.FoodMenu>();
-        services.AddTransient<apteka063.menu.OrderButton>();
+        services.AddTransient<UpdateHandlers>();
+        services.AddTransient<Apteka063Context>();
+        services.AddTransient<Menu>();
+        services.AddTransient<PillsMenu>();
+        services.AddTransient<FoodMenu>();
+        services.AddTransient<OrderButton>();
     })
     .ConfigureLogging((_, logging) =>
     {

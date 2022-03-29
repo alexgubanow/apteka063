@@ -1,20 +1,23 @@
+using apteka063.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using User = apteka063.Database.User;
 
-namespace apteka063.bot;
+namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, dbc.User user, CancellationToken cts)
+    private async Task<Message?> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, User user, CancellationToken cts)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
-            return null!;
-        var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == dbc.OrderStatus.NeedPhone || x.Status == dbc.OrderStatus.NeedAdress)).ToListAsync(cts);
+            return null;
+        
+        var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress)).ToListAsync(cts);
         if (order.Count > 0)
         {
             if (order.Count > 1)
@@ -36,11 +39,7 @@ public partial class UpdateHandlers
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
-            if (await _gsheet.SyncPillsAsync() != 0)
-            {
-                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
-            }
-            if (await _gsheet.SyncPillCategoriesAsync() != 0)
+            if (await _gsheet.TrySyncAllTablesToDb())
             {
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }

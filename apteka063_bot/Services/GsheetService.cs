@@ -1,4 +1,5 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using apteka063.Database;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
@@ -9,8 +10,8 @@ namespace apteka063.Services
     public class Gsheet
     {
         private readonly ILogger<Gsheet> _logger;
-        private readonly dbc.Apteka063Context _db;
-        public Gsheet(ILogger<Gsheet> logger, dbc.Apteka063Context db)
+        private readonly Apteka063Context _db;
+        public Gsheet(ILogger<Gsheet> logger, Apteka063Context db)
         {
             _logger = logger;
             _db = db;
@@ -19,7 +20,8 @@ namespace apteka063.Services
         static string jsonfile = "googlecreds.json";
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
-        public async Task PostOrder(dbc.Order order, string person, string personID, string pills)
+        
+        public async Task PostOrder(Order order, string person, string personID, string pills)
         {
             string orderID = order.Id.ToString();
 
@@ -80,6 +82,7 @@ namespace apteka063.Services
                 Console.WriteLine(ex.Message);
             }
         }
+        
         public async Task<int> SyncPillCategoriesAsync()
         {
             var service = GetSheetsSevice();
@@ -90,7 +93,7 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncatePillCategoriesAsync();
-                    List<dbc.PillCategory> itemsList = new(response.Values.Count);
+                    List<PillCategory> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
                         itemsList.Add(new() { Name = response.Values[i][0].ToString() });
@@ -106,6 +109,7 @@ namespace apteka063.Services
             }
             return 0;
         }
+        
         public async Task<int> SyncPillsAsync()
         {
             var service = GetSheetsSevice();
@@ -116,7 +120,7 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncatePillsAsync();
-                    List<dbc.Pill> itemsList = new(response.Values.Count);
+                    List<Pill> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
                         itemsList.Add(new($"p{i}", response.Values[i]));
@@ -143,7 +147,7 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncateFoodAsync();
-                    List<dbc.Food> itemsList = new(response.Values.Count);
+                    List<Food> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
                         itemsList.Add(new($"f{i}",response.Values[i]));
@@ -180,6 +184,32 @@ namespace apteka063.Services
                 ApplicationName = "apteka063_bot",
             });
             return service;
+        }
+
+        public async Task<bool> TrySyncAllTablesToDb()
+        {
+            var success = true;
+            
+            if (await SyncPillsAsync() != 0)
+            {
+                success = false;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+            }
+
+            if (await SyncFoodAsync() != 0)
+            {
+                success = false;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+            }
+
+            if (await SyncPillCategoriesAsync() != 0)
+            {
+                success = false;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+            }
+
+            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
+            return success;
         }
     }
 }

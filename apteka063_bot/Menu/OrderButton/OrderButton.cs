@@ -1,27 +1,28 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using apteka063.Database;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace apteka063.menu;
+namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
     private readonly ILogger<OrderButton> _logger;
-    private readonly dbc.Apteka063Context _db;
+    private readonly Apteka063Context _db;
     private readonly Services.Gsheet _gsheet;
-    public OrderButton(ILogger<OrderButton> logger, dbc.Apteka063Context db, Services.Gsheet gsheet)
+    public OrderButton(ILogger<OrderButton> logger, Apteka063Context db, Services.Gsheet gsheet)
     {
         _logger = logger;
         _db = db;
         _gsheet = gsheet;
     }
-    public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
+    public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
     {
         var handler = order.Status switch
         {
-            dbc.OrderStatus.NeedPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order),
-            dbc.OrderStatus.NeedAdress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order),
+            OrderStatus.NeedPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order),
+            OrderStatus.NeedAdress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order),
             _ => throw new NotImplementedException()
         };
         try
@@ -34,9 +35,9 @@ public partial class OrderButton
         }
         return null!;
     }
-    public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, dbc.Order order)
+    public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, Order order)
     {
-        order.Status = dbc.OrderStatus.NeedPhone;
+        order.Status = OrderStatus.NeedPhone;
         await _db.SaveChangesAsync();
         var buttons = new List<List<InlineKeyboardButton>>
         {
@@ -44,10 +45,10 @@ public partial class OrderButton
         };
         return await botClient.EditMessageTextAsync(callbackQuery.Message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvidePhoneNumber, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
-    public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
+    public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
     {
         order.ContactPhone = message.Text ?? "";
-        order.Status = dbc.OrderStatus.NeedAdress;
+        order.Status = OrderStatus.NeedAdress;
         await _db.SaveChangesAsync();
         var buttons = new List<List<InlineKeyboardButton>>
         {
@@ -56,10 +57,10 @@ public partial class OrderButton
         return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvideDeliveryAddress, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 
-    public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, dbc.Order order)
+    public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
     {
         order.DeliveryAddress = message.Text ?? "";
-        order.Status = dbc.OrderStatus.NeedApprove;
+        order.Status = OrderStatus.NeedApprove;
         await _db.SaveChangesAsync();
         await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.Order_received_processing_please_wait);
         return await PublishOrderAsync(botClient, message, lastMessageSentId, order);
