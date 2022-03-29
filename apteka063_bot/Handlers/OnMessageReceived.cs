@@ -17,12 +17,12 @@ public partial class UpdateHandlers
         if (message.Type != MessageType.Text)
             return null;
         
-        var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress)).ToListAsync();
+        var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress)).ToListAsync(cts);
         if (order.Count > 0)
         {
             if (order.Count > 1)
             {
-                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: "MORE THAN ONE ORDER FOUND", cancellationToken : cts);
+                await botClient.SendTextMessageAsync(message.Chat.Id, "MORE THAN ONE ORDER FOUND", cancellationToken : cts);
                 _logger.LogError($"MORE THAN ONE ORDER FOUND, FOR USER ID: {user.Id}");
                 return null!;
             }
@@ -41,12 +41,14 @@ public partial class UpdateHandlers
         {
             if (await _gsheet.TrySyncToDb())
             {
-                header += "\n" + Resources.Translation.DBUpdateFinished;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
-            else
+            if (await _gsheet.SyncFoodAsync() != 0)
             {
-                header += "\n" + Resources.Translation.DBUpdateFailed;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
+            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
+            header += "\n" + Resources.Translation.DBUpdateFinished;
         }
         return await ShowMainMenu(botClient, message, header, cts);
     }

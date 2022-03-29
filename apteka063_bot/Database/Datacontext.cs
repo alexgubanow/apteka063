@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace apteka063.Database;
 //after update of any class below need to run:
@@ -13,6 +13,7 @@ public class Apteka063Context : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Pill> Pills { get; set; } = null!;
     public DbSet<Food> Foods { get; set; } = null!;
+    public DbSet<PillCategory> PillCategories { get; set; } = null!;
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}");
     public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId)
     {
@@ -36,8 +37,10 @@ public class Apteka063Context : DbContext
         }
         return user;
     }
+    public async Task TruncatePillsAsync() => await Database.ExecuteSqlRawAsync("DELETE FROM Pills");
+    public async Task TruncatePillCategoriesAsync() => await Database.ExecuteSqlRawAsync("DELETE FROM PillCategories");
+    public async Task TruncateFoodAsync() => await Database.ExecuteSqlRawAsync("DELETE FROM Foods");
 }
-
 public enum OrderStatus
 {
     Filling, NeedPhone, NeedAdress, NeedApprove, InProgress, Declined, Closed
@@ -52,20 +55,35 @@ public class Location : Telegram.Bot.Types.Location
     [Key]
     public long Id { get; set; }
 }
-public enum PillCategories
+public class PillCategory
 {
-    Heart, Stomach, Painkiller, Fever, Child, Women, Other
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
 }
 public class Pill
 {
+    Pill() { }
+    public Pill(string id, IList<object> row)
+    {
+        Id = id;
+        Name = row[0].ToString()!;
+        PillCategoryName = row[1].ToString()!;
+    }
     [Key]
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public PillCategories PillCategory { get; set; }
+    public string Id { get; set; }
+    public string Name { get; set; } = "";
+    public string PillCategoryName { get; set; } = "";
 }
 public class Food
 {
+    Food() { }
+    public Food(string id, IList<object> row)
+    {
+        Id = id;
+        Name = row[0].ToString()!;
+    }
     [Key]
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public string Id { get; set; }
+    public string Name { get; set; } = "";
 }

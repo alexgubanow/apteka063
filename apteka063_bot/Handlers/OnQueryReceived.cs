@@ -19,7 +19,8 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data!.Contains("pillsCategory_") == true)
         {
-            return await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, (PillCategories)Enum.Parse(typeof(PillCategories), callbackQuery.Data.Split('_', 2).Last()));
+            var pillCategory = await _db.PillCategories.FindAsync(int.Parse(callbackQuery.Data.Split('_', 2).Last()));
+            return await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, pillCategory!.Name);
         }
         else if (callbackQuery.Data!.Contains("pill_") == true)
         {

@@ -15,7 +15,7 @@ public partial class PillsMenu
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "backtoPills") }
         };
-        var pillsDB = _db.Pills!.Where(x => x.PillCategory == pillCategory).ToList();
+        var pillsDB = _db.Pills!.Where(x => x.PillCategoryName == pillCategoryName).ToList();
         foreach (var pillDB in pillsDB)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(

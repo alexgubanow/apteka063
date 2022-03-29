@@ -59,20 +59,21 @@ public partial class UpdateHandlers
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
             _                             => UnknownUpdateHandlerAsync(botClient, update)
         };
-        
+        Message? message = null!;
         try
         {
-            var message = await handler;
-            if (message != null)
-            {
-                user.LastMessageSentId = message.MessageId;
-                await _db.SaveChangesAsync(cancellationToken);
-            }
+            message = await handler;
         }
         catch (Exception exception)
         {
             await HandleErrorAsync(botClient, exception, cancellationToken);
         }
+        if (message != null)
+        {
+            user.LastMessageSentId = message.MessageId;
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+        
         
         var userMessageId = update.Message?.MessageId ?? update.EditedMessage?.MessageId ?? -1;
         if (userMessageId != -1)
