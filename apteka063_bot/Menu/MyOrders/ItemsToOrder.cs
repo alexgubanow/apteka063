@@ -49,15 +49,15 @@ public class ItemsToOrder
         return await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId,
             text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
     }
-    public async Task<Message> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default, string category = null, Order? order = null)
+    public async Task<Message> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default, string category = null!, Order? order = null)
     {
         category ??= callbackQuery.Data!.Split('_', 2).Last();
-        var section = await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts);
+        var section = (await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts))?.Section;
         order ??= await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, cts);
         var orderItems = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, $"section_{section.Section}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, $"section_{section}") }
         };
         var items = _db.ItemsToOrder!.Where(x => x.CategoryId == category).ToList();
         foreach (var item in items)
