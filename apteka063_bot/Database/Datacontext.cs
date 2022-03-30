@@ -16,10 +16,10 @@ public class Apteka063Context : DbContext
     public DbSet<Pill> Pills { get; set; } = null!;
     public DbSet<Food> Foods { get; set; } = null!;
     public DbSet<PillCategory> PillCategories { get; set; } = null!;
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    => optionsBuilder.ConfigureWarnings(c => 
-    c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug), 
-        (RelationalEventId.CommandExecuted, LogLevel.Debug)));
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //=> optionsBuilder.ConfigureWarnings(c => 
+    //c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug), 
+    //    (RelationalEventId.CommandExecuted, LogLevel.Debug)));
     public Apteka063Context(DbContextOptions<Apteka063Context> options) : base(options) { }
     public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId)
     {

@@ -95,12 +95,10 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncatePillCategoriesAsync();
-                    List<PillCategory> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        itemsList.Add(new() { Name = response.Values[i][0].ToString() });
+                        await _db.PillCategories.AddAsync(new() { Name = response.Values[i][0].ToString()! });
                     }
-                    await _db.PillCategories.AddRangeAsync(itemsList);
                     await _db.SaveChangesAsync();
                 }
             }
@@ -122,12 +120,10 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncatePillsAsync();
-                    List<Pill> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        itemsList.Add(new($"p{i}", response.Values[i]));
+                        await _db.Pills.AddAsync(new($"p{i}", response.Values[i]));
                     }
-                    await _db.Pills.AddRangeAsync(itemsList);
                     await _db.SaveChangesAsync();
                 }
             }
@@ -149,12 +145,10 @@ namespace apteka063.Services
                 if (response.Values != null)
                 {
                     await _db.TruncateFoodAsync();
-                    List<Food> itemsList = new(response.Values.Count);
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        itemsList.Add(new($"f{i}",response.Values[i]));
+                        await _db.Foods.AddAsync(new($"f{i}",response.Values[i]));
                     }
-                    await _db.Foods.AddRangeAsync(itemsList);
                     await _db.SaveChangesAsync();
                 }
             }
@@ -209,7 +203,6 @@ namespace apteka063.Services
                 success = false;
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
-
             _logger.LogInformation(Resources.Translation.DBUpdateFinished);
             return success;
         }

@@ -41,14 +41,12 @@ public partial class UpdateHandlers
         {
             if (await _gsheet.TrySyncAllTablesToDb())
             {
-                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+                header += "\n" + Resources.Translation.DBUpdateFailed;
             }
-            if (await _gsheet.SyncFoodAsync() != 0)
+            else
             {
-                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+                header += "\n" + Resources.Translation.DBUpdateFinished;
             }
-            _logger.LogInformation(Resources.Translation.DBUpdateFinished);
-            header += "\n" + Resources.Translation.DBUpdateFinished;
         }
         return await ShowMainMenu(botClient, message, header, cts, user.LastMessageSentId);
     }

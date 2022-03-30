@@ -10,7 +10,7 @@ public partial class OrderButton
     public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
     {
         var itemsIds = order.Items!.Split(',');
-        IQueryable<string> itemsNames = null;
+        IQueryable<string> itemsNames = null!;
         if (order.Items.Contains('p'))
         {
             var items = _db.Pills!.Where(p => itemsIds.Contains(p.Id));
@@ -27,7 +27,7 @@ public partial class OrderButton
             itemsNames = _db.Foods!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
         }
 
-        await _gsheet.PostOrder(order, message.From.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames));
+        await _gsheet.PostOrder(order, message.From!.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames));
 
         // Your order #%d has been posted
         // Details: .....

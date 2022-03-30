@@ -7,7 +7,7 @@ namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts)
+    private async Task<Message?> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts)
     {
         if (callbackQuery.Data == "backtoMain")
         {

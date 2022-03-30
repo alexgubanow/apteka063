@@ -72,9 +72,7 @@ public partial class UpdateHandlers
         {
             user.LastMessageSentId = message.MessageId;
             await _db.SaveChangesAsync(cancellationToken);
-        }
-        
-        
+        }        
         var userMessageId = update.Message?.MessageId ?? update.EditedMessage?.MessageId ?? -1;
         if (userMessageId != -1)
         {
@@ -83,7 +81,7 @@ public partial class UpdateHandlers
         }
     }
 
-    private Task<Message> UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
+    private Task<Message?> UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
     {
         _logger.LogWarning($"Unknown update type: {update.Type}");
         return null!;
