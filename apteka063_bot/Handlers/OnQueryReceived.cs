@@ -11,7 +11,7 @@ public partial class UpdateHandlers
     {
         if (callbackQuery.Data == "backtoMain")
         {
-            return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, cts, callbackQuery.Message!.MessageId);
+            return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
         }
         else if (callbackQuery.Data!.Contains("section_"))
         {
@@ -33,6 +33,6 @@ public partial class UpdateHandlers
         {
             return await _orderButton.OnCancelOrder(botClient, callbackQuery, cts);
         }
-        return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, cts, callbackQuery.Message!.MessageId);
+        return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
     }
 }
