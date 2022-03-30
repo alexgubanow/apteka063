@@ -19,7 +19,7 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data!.Contains("category_") == true)
         {
-            return await _menu.ItemsToOrder.ShowItemsAsync(botClient, callbackQuery, cts);
+            return await _menu.ItemsToOrder.ShowItemsAsync(botClient, callbackQuery, cts: cts);
         }
         else if (callbackQuery.Data!.Contains("item_") == true)
         {

@@ -15,7 +15,7 @@ public class ItemsToOrder
         _logger = logger;
         _db = db;
     }
-    public static async Task<Message> ShowSectionsAsync(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts = default, int? messageId = null)
+    public static async Task<Message> ShowSectionsAsync(ITelegramBotClient botClient, Message message, string headerText, int? messageId = null, CancellationToken cts = default)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "section_pills"), },
@@ -49,7 +49,7 @@ public class ItemsToOrder
         return await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId,
             text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
     }
-    public async Task<Message> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default, string category = null!, Order? order = null)
+    public async Task<Message> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, string category = null!, Order? order = null, CancellationToken cts = default)
     {
         category ??= callbackQuery.Data!.Split('_', 2).Last();
         var section = (await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts))?.Section;
@@ -94,6 +94,6 @@ public class ItemsToOrder
         _db.Orders.Update(order);
         await _db.SaveChangesAsync(cts);
         var item = await _db.ItemsToOrder.FindAsync(new object?[] { itemId }, cancellationToken: cts);
-        return await ShowItemsAsync(botClient, callbackQuery, cts, item!.CategoryId, order);
+        return await ShowItemsAsync(botClient, callbackQuery, item!.CategoryId, order, cts);
     }
 }

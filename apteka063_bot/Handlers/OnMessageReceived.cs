@@ -48,9 +48,9 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        return await ShowMainMenu(botClient, message, header, cts, user.LastMessageSentId);
+        return await ShowMainMenu(botClient, message, header, user.LastMessageSentId, cts);
     }
-    public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts = default, int? messageId = null)
+    public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, int? messageId = null, CancellationToken cts = default)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "section_pills"), },
