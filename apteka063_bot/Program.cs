@@ -4,6 +4,7 @@ using apteka063.Menu;
 using apteka063.Menu.Food;
 using apteka063.Menu.OrderButton;
 using apteka063.Menu.Pills;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<apteka063.Worker>();
         services.AddTransient<apteka063.Services.Gsheet>();
         services.AddTransient<UpdateHandlers>();
-        services.AddTransient<Apteka063Context>();
+        services.AddDbContext<Apteka063Context>(
+         options => options.UseSqlite($"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}"));
         services.AddTransient<Menu>();
         services.AddTransient<PillsMenu>();
         services.AddTransient<FoodMenu>();

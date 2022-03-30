@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace apteka063.Database;
@@ -14,7 +16,11 @@ public class Apteka063Context : DbContext
     public DbSet<Pill> Pills { get; set; } = null!;
     public DbSet<Food> Foods { get; set; } = null!;
     public DbSet<PillCategory> PillCategories { get; set; } = null!;
-    protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    => optionsBuilder.ConfigureWarnings(c => 
+    c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug), 
+        (RelationalEventId.CommandExecuted, LogLevel.Debug)));
+    public Apteka063Context(DbContextOptions<Apteka063Context> options) : base(options) { }
     public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId)
     {
         var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress));

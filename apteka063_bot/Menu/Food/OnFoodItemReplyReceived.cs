@@ -26,7 +26,6 @@ public partial class FoodMenu
             orderFoodList = new() { foodId };
         }
         order.Items = string.Join(',', orderFoodList);
-        _db.Orders.Update(order);
         await _db.SaveChangesAsync();
         return await OnReplyReceived(botClient, callbackQuery, order);
     }
