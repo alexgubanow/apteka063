@@ -13,26 +13,17 @@ public partial class UpdateHandlers
         {
             return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, cts, callbackQuery.Message!.MessageId);
         }
-        else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
+        else if (callbackQuery.Data!.Contains("section_"))
         {
-            return await _menu.Pills.OnReplyReceived(botClient, callbackQuery);
+            return await _menu.ItemsToOrder.ShowCategoriesAsync(botClient, callbackQuery);
         }
-        else if (callbackQuery.Data!.Contains("pillsCategory_") == true)
+        else if (callbackQuery.Data!.Contains("category_") == true)
         {
-            var pillCategory = await _db.PillCategories.FindAsync(int.Parse(callbackQuery.Data.Split('_', 2).Last()));
-            return await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, pillCategory!.Name);
+            return await _menu.ItemsToOrder.ShowItemsAsync(botClient, callbackQuery);
         }
-        else if (callbackQuery.Data!.Contains("pill_") == true)
+        else if (callbackQuery.Data!.Contains("item_") == true)
         {
-            return await _menu.Pills.OnItemReplyReceived(botClient, callbackQuery);
-        }
-        else if (callbackQuery.Data == "backtoFood" || callbackQuery.Data == "food")
-        {
-            return await _menu.Food.OnReplyReceived(botClient, callbackQuery);
-        }
-        else if (callbackQuery.Data!.Contains("food_") == true)
-        {
-            return await _menu.Food.OnItemReplyReceived(botClient, callbackQuery);
+            return await _menu.ItemsToOrder.OnItemReceivedAsync(botClient, callbackQuery);
         }
         else if (callbackQuery.Data == "order")
         {

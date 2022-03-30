@@ -72,7 +72,7 @@ public partial class UpdateHandlers
         {
             user.LastMessageSentId = message.MessageId;
             await _db.SaveChangesAsync(cancellationToken);
-        }        
+        }
         var userMessageId = update.Message?.MessageId ?? update.EditedMessage?.MessageId ?? -1;
         if (userMessageId != -1)
         {

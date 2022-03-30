@@ -1,15 +1,12 @@
-using apteka063.Menu.Food;
-using apteka063.Menu.Pills;
+//using apteka063.Menu.ItemsToOrder;
 
 namespace apteka063.Menu;
 
 public class Menu
 {
-    public readonly PillsMenu Pills;
-    public readonly FoodMenu Food;
-    public Menu(PillsMenu pills, FoodMenu food)
+    public readonly ItemsToOrder ItemsToOrder;
+    public Menu(ItemsToOrder _ItemsToOrder)
     {
-        Pills = pills;
-        Food = food;
+        ItemsToOrder = _ItemsToOrder;
     }
 }

@@ -13,7 +13,7 @@ public partial class OrderButton
         IQueryable<string> itemsNames = null!;
         if (order.Items.Contains('p'))
         {
-            var items = _db.Pills!.Where(p => itemsIds.Contains(p.Id));
+            var items = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id));
             itemsNames = items.Select(x => x.Name);
             foreach (var pill in items)
             {
@@ -24,7 +24,7 @@ public partial class OrderButton
         }
         else
         {
-            itemsNames = _db.Foods!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
+            itemsNames = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
         }
 
         await _gsheet.PostOrder(order, message.From!.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames));

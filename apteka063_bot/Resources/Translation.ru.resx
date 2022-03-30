@@ -138,8 +138,14 @@
   <data name="GoToMenu" xml:space="preserve">
     <value>Вернуться в Главное меню</value>
   </data>
+  <data name="Humaid" xml:space="preserve">
+    <value>Гуманитарка</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Заказать</value>
   </data>
   <data name="OrderNumber" xml:space="preserve">
     <value>Заказ №</value>

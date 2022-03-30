@@ -41,11 +41,11 @@ public partial class UpdateHandlers
         {
             if (await _gsheet.TrySyncAllTablesToDb())
             {
-                header += "\n" + Resources.Translation.DBUpdateFailed;
+                header += "\n" + Resources.Translation.DBUpdateFinished;
             }
             else
             {
-                header += "\n" + Resources.Translation.DBUpdateFinished;
+                header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
         return await ShowMainMenu(botClient, message, header, cts, user.LastMessageSentId);
@@ -53,9 +53,9 @@ public partial class UpdateHandlers
     public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts, int? messageId = null)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Food, "food"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });
+            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "section_pills"), },
+            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Humaid, "section_humaid"), },
+            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "section_transport"), }, });
 
         if (messageId != null)
         {
