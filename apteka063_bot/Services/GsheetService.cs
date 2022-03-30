@@ -22,7 +22,7 @@ namespace apteka063.Services
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
 
-        public async Task PostOrder(Order order, string person, string personID, string pills)
+        public async Task PostOrder(Order order, string person, string personID, string pills, CancellationToken cts = default)
         {
             string orderID = order.Id.ToString();
 
@@ -30,7 +30,7 @@ namespace apteka063.Services
             try
             {
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Заказы!A2:A");
-                var response = await request.ExecuteAsync();
+                var response = await request.ExecuteAsync(cts);
                 var writePosition = -1;
                 if (response.Values != null)
                 {
@@ -58,14 +58,14 @@ namespace apteka063.Services
                 };
                 var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:K{writePosition}");
                 update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-                UpdateValuesResponse result2 = await update.ExecuteAsync();
+                UpdateValuesResponse result2 = await update.ExecuteAsync(cts);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
             }
         }
-        public async Task UpdateFreezedValues()
+        public async Task UpdateFreezedValues(CancellationToken cts = default)
         {
             var service = GetSheetsSevice();
             try
@@ -78,7 +78,7 @@ namespace apteka063.Services
                 }
                 var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, "Таблетки!C2:C");
                 update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-                UpdateValuesResponse result = await update.ExecuteAsync();
+                UpdateValuesResponse result = await update.ExecuteAsync(cts);
             }
             catch (Exception ex)
             {
@@ -86,30 +86,30 @@ namespace apteka063.Services
             }
         }
 
-        public async Task<int> SyncItemsCategoriesAsync()
+        private async Task<int> SyncItemsCategoriesAsync(CancellationToken cts = default)
         {
             var service = GetSheetsSevice();
             try
             {
-                await _db.ClearItemsCategoriesAsync();
+                await _db.ClearItemsCategoriesAsync(cts);
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!N2:N");
-                var response = await request.ExecuteAsync();
+                var response = await request.ExecuteAsync(cts);
                 if (response.Values != null)
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"pc{i}", Name = response.Values[i][0].ToString()!, Section = "pills" });
+                        await _db.ItemsCategories.AddAsync(new() { Id = $"pc{i}", Name = response.Values[i][0].ToString()!, Section = "pills" }, cts);
                     }
                 }
                 request = service.Spreadsheets.Values.Get(spreadsheetId, "Гуманитарка!N2:N");
-                response = await request.ExecuteAsync();
+                response = await request.ExecuteAsync(cts);
                 if (response.Values != null)
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, Section = "humaid" });
+                        await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, Section = "humaid" }, cts);
                     }
-                    await _db.SaveChangesAsync();
+                    await _db.SaveChangesAsync(cts);
                 }
             }
             catch (Exception ex)
@@ -120,35 +120,35 @@ namespace apteka063.Services
             return 0;
         }
         
-        public async Task<int> SyncItemsToOrderAsync()
+        private async Task<int> SyncItemsToOrderAsync(CancellationToken cts = default)
         {
             var service = GetSheetsSevice();
             try
             {
-                await _db.ClearItemsToOrderAsync();
+                await _db.ClearItemsToOrderAsync(cts);
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:C");
-                var response = await request.ExecuteAsync();
+                var response = await request.ExecuteAsync(cts);
                 if (response.Values != null)
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        var category = await _db.ItemsCategories.FirstOrDefaultAsync(x => x.Name == response.Values[i][1].ToString()!);
+                        var category = await _db.ItemsCategories.FirstOrDefaultAsync(x => x.Name == response.Values[i][1].ToString()!, cts);
                         var categoryId = category != null ? category.Id : "p0";
-                        await _db.ItemsToOrder.AddAsync(new($"p{i}", response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)));
+                        await _db.ItemsToOrder.AddAsync(new($"p{i}", response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)), cts);
                     }
                 }
                 request = service.Spreadsheets.Values.Get(spreadsheetId, "Гуманитарка!A2:C");
-                response = await request.ExecuteAsync();
+                response = await request.ExecuteAsync(cts);
                 if (response.Values != null)
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        var category = await _db.ItemsCategories.FirstOrDefaultAsync(x => x.Name == response.Values[i][1].ToString()!);
+                        var category = await _db.ItemsCategories.FirstOrDefaultAsync(x => x.Name == response.Values[i][1].ToString()!, cts);
                         var categoryId = category != null ? category.Id : "f0";
-                        await _db.ItemsToOrder.AddAsync(new($"f{i}", response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)));
+                        await _db.ItemsToOrder.AddAsync(new($"f{i}", response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)), cts);
                     }
                 }
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync(cts);
             }
             catch (Exception ex)
             {
@@ -180,15 +180,15 @@ namespace apteka063.Services
             return service;
         }
 
-        public async Task<bool> TrySyncAllTablesToDb()
+        public async Task<bool> SyncAllTablesToDb(CancellationToken cts = default)
         {
             var success = true;
-            if (await SyncItemsCategoriesAsync() != 0)
+            if (await SyncItemsCategoriesAsync(cts) != 0)
             {
                 success = false;
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
-            if (await SyncItemsToOrderAsync() != 0)
+            if (await SyncItemsToOrderAsync(cts) != 0)
             {
                 success = false;
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);

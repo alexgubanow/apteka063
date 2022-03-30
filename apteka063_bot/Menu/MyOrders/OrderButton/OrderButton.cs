@@ -17,12 +17,12 @@ public partial class OrderButton
         _db = db;
         _gsheet = gsheet;
     }
-    public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
+    public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         var handler = order.Status switch
         {
-            OrderStatus.NeedPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order),
-            OrderStatus.NeedAdress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order),
+            OrderStatus.NeedPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order, cts),
+            OrderStatus.NeedAdress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order, cts),
             _ => throw new NotImplementedException()
         };
         try
@@ -31,38 +31,40 @@ public partial class OrderButton
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception.Message);
+            _logger.LogError(exception, exception.Message);
         }
         return null!;
     }
-    public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, Order order)
+    public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.Status = OrderStatus.NeedPhone;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
         };
-        return await botClient.EditMessageTextAsync(callbackQuery.Message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvidePhoneNumber, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.EditMessageTextAsync(callbackQuery.Message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvidePhoneNumber, 
+            replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
     }
-    public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
+    public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.ContactPhone = message.Text ?? "";
         order.Status = OrderStatus.NeedAdress;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
         };
-        return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvideDeliveryAddress, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvideDeliveryAddress,
+            replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
     }
 
-    public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
+    public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.DeliveryAddress = message.Text ?? "";
         order.Status = OrderStatus.NeedApprove;
-        await _db.SaveChangesAsync();
-        await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.Order_received_processing_please_wait);
-        return await PublishOrderAsync(botClient, message, lastMessageSentId, order);
+        await _db.SaveChangesAsync(cts);
+        await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.Order_received_processing_please_wait, cancellationToken: cts);
+        return await PublishOrderAsync(botClient, message, lastMessageSentId, order, cts);
     }
 }

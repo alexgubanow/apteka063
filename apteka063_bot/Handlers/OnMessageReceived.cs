@@ -11,7 +11,7 @@ namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message?> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, User user, CancellationToken cts)
+    private async Task<Message?> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, User user, CancellationToken cts = default)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
@@ -28,7 +28,7 @@ public partial class UpdateHandlers
             }
             try
             {
-                return await _orderButton.DispatchStateAsync(botClient, message, user.LastMessageSentId, order.First());
+                return await _orderButton.DispatchStateAsync(botClient, message, user.LastMessageSentId, order.First(), cts);
             }
             catch (Exception exception)
             {
@@ -39,7 +39,7 @@ public partial class UpdateHandlers
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
-            if (await _gsheet.TrySyncAllTablesToDb())
+            if (await _gsheet.SyncAllTablesToDb(cts))
             {
                 header += "\n" + Resources.Translation.DBUpdateFinished;
             }
@@ -50,7 +50,7 @@ public partial class UpdateHandlers
         }
         return await ShowMainMenu(botClient, message, header, cts, user.LastMessageSentId);
     }
-    public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts, int? messageId = null)
+    public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts = default, int? messageId = null)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "section_pills"), },

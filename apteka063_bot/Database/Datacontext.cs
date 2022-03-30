@@ -31,30 +31,30 @@ public class Apteka063Context : DbContext
     c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug),
         (RelationalEventId.CommandExecuted, LogLevel.Debug))).UseSqlite(connString);
     public Apteka063Context(DbContextOptions<Apteka063Context> options) : base(options) { }
-    public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId)
+    public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId, CancellationToken cts)
     {
-        var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress));
+        var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress), cts);
         if (order == null)
         {
             order = new(userId);
-            await Orders.AddAsync(order);
-            await SaveChangesAsync();
+            await Orders.AddAsync(order, cts);
+            await SaveChangesAsync(cts);
         }
         return order;
     }
-    public async Task<User> GetOrCreateUserAsync(Telegram.Bot.Types.User tgUser)
+    public async Task<User> GetOrCreateUserAsync(Telegram.Bot.Types.User tgUser, CancellationToken cts)
     {
-        var user = await Users.FindAsync(tgUser?.Id);
+        var user = await Users.FindAsync(new object?[] { tgUser?.Id }, cancellationToken: cts);
         if (user == null)
         {
             user = new(tgUser!);
-            await Users.AddAsync(user);
-            await SaveChangesAsync();
+            await Users.AddAsync(user, cts);
+            await SaveChangesAsync(cts);
         }
         return user;
     }
-    public async Task ClearItemsToOrderAsync() => await Database.ExecuteSqlRawAsync("DELETE FROM ItemsToOrder");
-    public async Task ClearItemsCategoriesAsync() => await Database.ExecuteSqlRawAsync("DELETE FROM ItemsCategories");
+    public async Task ClearItemsToOrderAsync(CancellationToken cts = default) => await Database.ExecuteSqlRawAsync("DELETE FROM ItemsToOrder", cts);
+    public async Task ClearItemsCategoriesAsync(CancellationToken cts = default) => await Database.ExecuteSqlRawAsync("DELETE FROM ItemsCategories", cts);
 }
 public enum OrderStatus
 {

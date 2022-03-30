@@ -7,7 +7,7 @@ namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message?> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts)
+    private async Task<Message?> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts = default)
     {
         if (callbackQuery.Data == "backtoMain")
         {
@@ -15,19 +15,19 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data!.Contains("section_"))
         {
-            return await _menu.ItemsToOrder.ShowCategoriesAsync(botClient, callbackQuery);
+            return await _menu.ItemsToOrder.ShowCategoriesAsync(botClient, callbackQuery, cts);
         }
         else if (callbackQuery.Data!.Contains("category_") == true)
         {
-            return await _menu.ItemsToOrder.ShowItemsAsync(botClient, callbackQuery);
+            return await _menu.ItemsToOrder.ShowItemsAsync(botClient, callbackQuery, cts);
         }
         else if (callbackQuery.Data!.Contains("item_") == true)
         {
-            return await _menu.ItemsToOrder.OnItemReceivedAsync(botClient, callbackQuery);
+            return await _menu.ItemsToOrder.OnItemReceivedAsync(botClient, callbackQuery, cts);
         }
         else if (callbackQuery.Data == "order")
         {
-            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, user.LastMessageSentId);
+            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, user.LastMessageSentId, cts);
         }
         else if (callbackQuery.Data.Contains("cancelOrder_"))
         {

@@ -25,7 +25,7 @@ public partial class UpdateHandlers
         _menu = menu;
         _orderButton = order;
     }
-    public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cts)
     {
         var errorMessage = exception is ApiRequestException apiRequestException
             ? $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}"
@@ -34,7 +34,7 @@ public partial class UpdateHandlers
         return Task.CompletedTask;
     }
 
-    public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cts = default)
     {
         Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(GetLanguageCodeFromUpdate(update));
 
@@ -43,7 +43,7 @@ public partial class UpdateHandlers
         {
             return;
         }
-        var user = await _db.GetOrCreateUserAsync(tgUser);
+        var user = await _db.GetOrCreateUserAsync(tgUser, cts);
         Task<Message?> handler = update.Type switch
         {
             // UpdateType.Unknown:
@@ -52,9 +52,9 @@ public partial class UpdateHandlers
             // UpdateType.ShippingQuery:
             // UpdateType.PreCheckoutQuery:
             // UpdateType.Poll:
-            UpdateType.Message            => OnMessageReceivedAsync(botClient, update.Message!, user, cancellationToken),
-            UpdateType.EditedMessage      => OnMessageReceivedAsync(botClient, update.EditedMessage!, user, cancellationToken),
-            UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!, user, cancellationToken),
+            UpdateType.Message            => OnMessageReceivedAsync(botClient, update.Message!, user, cts),
+            UpdateType.EditedMessage      => OnMessageReceivedAsync(botClient, update.EditedMessage!, user, cts),
+            UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!, user, cts),
             //UpdateType.InlineQuery        => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
             _                             => UnknownUpdateHandlerAsync(botClient, update)
@@ -66,18 +66,18 @@ public partial class UpdateHandlers
         }
         catch (Exception exception)
         {
-            await HandleErrorAsync(botClient, exception, cancellationToken);
+            await HandleErrorAsync(botClient, exception, cts);
         }
         if (message != null)
         {
             user.LastMessageSentId = message.MessageId;
-            await _db.SaveChangesAsync(cancellationToken);
+            await _db.SaveChangesAsync(cts);
         }
         var userMessageId = update.Message?.MessageId ?? update.EditedMessage?.MessageId ?? -1;
         if (userMessageId != -1)
         {
             var chatId = update.Message != null ? update.Message.Chat.Id : update.EditedMessage != null ? update.EditedMessage.Chat.Id : -1;
-            await botClient.DeleteMessageAsync(chatId, userMessageId, cancellationToken);
+            await botClient.DeleteMessageAsync(chatId, userMessageId, cts);
         }
     }
 

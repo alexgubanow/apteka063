@@ -7,7 +7,7 @@ namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order)
+    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         var itemsIds = order.Items!.Split(',');
         IQueryable<string> itemsNames = null!;
@@ -19,15 +19,15 @@ public partial class OrderButton
             {
                 pill.FreezedAmout++;
             }
-            await _db.SaveChangesAsync();
-            await _gsheet.UpdateFreezedValues();
+            await _db.SaveChangesAsync(cts);
+            await _gsheet.UpdateFreezedValues(cts);
         }
         else
         {
             itemsNames = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id)).Select(x => x.Name);
         }
 
-        await _gsheet.PostOrder(order, message.From!.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames));
+        await _gsheet.PostOrder(order, message.From!.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames), cts);
 
         // Your order #%d has been posted
         // Details: .....
@@ -42,6 +42,6 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoToMenu, "backtoMain") }
         };
-        return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, resultTranslatedText, replyMarkup: new InlineKeyboardMarkup(buttons));
+        return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, resultTranslatedText, replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
     }
 }
