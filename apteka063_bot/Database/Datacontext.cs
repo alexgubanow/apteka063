@@ -31,18 +31,18 @@ public class Apteka063Context : DbContext
     c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug),
         (RelationalEventId.CommandExecuted, LogLevel.Debug))).UseSqlite(connString);
     public Apteka063Context(DbContextOptions<Apteka063Context> options) : base(options) { }
-    public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId, CancellationToken cts)
+    public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId, string? orderType = null, CancellationToken cts = default)
     {
         var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress), cts);
         if (order == null)
         {
-            order = new(userId);
+            order = new(userId, orderType!);
             await Orders.AddAsync(order, cts);
             await SaveChangesAsync(cts);
         }
         return order;
     }
-    public async Task<User> GetOrCreateUserAsync(Telegram.Bot.Types.User tgUser, CancellationToken cts)
+    public async Task<User> GetOrCreateUserAsync(Telegram.Bot.Types.User tgUser, CancellationToken cts = default)
     {
         var user = await Users.FindAsync(new object?[] { tgUser?.Id }, cancellationToken: cts);
         if (user == null)
@@ -81,7 +81,7 @@ public class ItemToOrderCategory
     [Key]
     public string Id { get; set; }
     public string Name { get; set; } = "";
-    public string Section { get; set; } = "";
+    public string OrderType { get; set; } = "";
 }
 public class Contact : Telegram.Bot.Types.Contact
 {

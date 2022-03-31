@@ -52,7 +52,7 @@ namespace apteka063.Services
                     new List<object>() { "not supported" },
                     new List<object>() { order.ContactPhone },
                     new List<object>() { order.DeliveryAddress },
-                    new List<object>() { "not supported" },
+                    new List<object>() { order.OrderType },
                     new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") },
                     new List<object>() { $"=IF(J{writePosition},HOUR(NOW()-J{writePosition}) + DAYS(NOW(), J{writePosition}) * 24, -1)" }, // Format depend on Google sheet
                 };
@@ -98,7 +98,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"pc{i}", Name = response.Values[i][0].ToString()!, Section = "pills" }, cts);
+                        await _db.ItemsCategories.AddAsync(new() { Id = $"pc{i}", Name = response.Values[i][0].ToString()!, OrderType = "pills" }, cts);
                     }
                 }
                 request = service.Spreadsheets.Values.Get(spreadsheetId, "Гуманитарка!N2:N");
@@ -107,7 +107,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, Section = "humaid" }, cts);
+                        await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, OrderType = "humaid" }, cts);
                     }
                     await _db.SaveChangesAsync(cts);
                 }

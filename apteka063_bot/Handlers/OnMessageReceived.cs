@@ -1,4 +1,5 @@
 using apteka063.Database;
+using apteka063.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -48,26 +49,6 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        return await ShowMainMenu(botClient, message, header, user.LastMessageSentId, cts);
-    }
-    public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, int? messageId = null, CancellationToken cts = default)
-    {
-        InlineKeyboardMarkup inlineKeyboard = new(new[] {
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "section_pills"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Humaid, "section_humaid"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "section_transport"), }, });
-
-        if (messageId != null)
-        {
-            try
-            {
-                return await botClient.EditMessageTextAsync(chatId: message.Chat.Id, messageId: (int)messageId, text: headerText, replyMarkup: inlineKeyboard, cancellationToken: cts);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"message by id:\n{messageId} does not exist anymore\noriginal error message:\n{ex.Message}");
-            }
-        }
-        return await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: headerText, replyMarkup: inlineKeyboard, cancellationToken: cts);
+        return await _menu.ShowMainMenuAsync(botClient, message, header, user.LastMessageSentId, cts);
     }
 }

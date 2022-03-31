@@ -129,6 +129,9 @@
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>База данних оновлена</value>
   </data>
+  <data name="EmergencyContacts" xml:space="preserve">
+    <value>Екстренні контакти</value>
+  </data>
   <data name="Food" xml:space="preserve">
     <value>Їжа</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="OrderNumber" xml:space="preserve">
     <value>Заказ №</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Замовлення</value>
   </data>
   <data name="Order_is_empty_please_pick_some" xml:space="preserve">
     <value>Заказ пустий, выберіть що-небудь для заказу</value>
@@ -167,6 +173,12 @@
   </data>
   <data name="registered" xml:space="preserve">
     <value>зареєстрований</value>
+  </data>
+  <data name="ReportActivity" xml:space="preserve">
+    <value>Повідомити про підозрілу активність</value>
+  </data>
+  <data name="ReportIncident" xml:space="preserve">
+    <value>Повідомити про інцидент</value>
   </data>
   <data name="TakeCare" xml:space="preserve">
     <value>Подбайте про себе та своїх близьких</value>

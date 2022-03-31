@@ -97,6 +97,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emergency contacts.
+        /// </summary>
+        internal static string EmergencyContacts {
+            get {
+                return ResourceManager.GetString("EmergencyContacts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Food.
         /// </summary>
         internal static string Food {
@@ -187,6 +196,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Orders.
+        /// </summary>
+        internal static string Orders {
+            get {
+                return ResourceManager.GetString("Orders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pick category:.
         /// </summary>
         internal static string PickCategory {
@@ -219,6 +237,24 @@ namespace apteka063.Resources {
         internal static string ProvidePhoneNumber {
             get {
                 return ResourceManager.GetString("ProvidePhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report suspicious activity.
+        /// </summary>
+        internal static string ReportActivity {
+            get {
+                return ResourceManager.GetString("ReportActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report incident.
+        /// </summary>
+        internal static string ReportIncident {
+            get {
+                return ResourceManager.GetString("ReportIncident", resourceCulture);
             }
         }
         

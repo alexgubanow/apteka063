@@ -11,11 +11,13 @@ public partial class OrderButton
     private readonly ILogger<OrderButton> _logger;
     private readonly Apteka063Context _db;
     private readonly Services.Gsheet _gsheet;
-    public OrderButton(ILogger<OrderButton> logger, Apteka063Context db, Services.Gsheet gsheet)
+    private readonly Menu _menu;
+    public OrderButton(ILogger<OrderButton> logger, Apteka063Context db, Services.Gsheet gsheet, Menu menu)
     {
         _logger = logger;
         _db = db;
         _gsheet = gsheet;
+        _menu = menu;
     }
     public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {

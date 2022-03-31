@@ -15,7 +15,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddTransient<UpdateHandlers>();
         services.AddDbContext<Apteka063Context>();
         services.AddTransient<Menu>();
-        services.AddTransient<ItemsToOrder>();
+        services.AddTransient<MyOrders>();
         services.AddTransient<OrderButton>();
     })
     .ConfigureLogging((_, logging) =>

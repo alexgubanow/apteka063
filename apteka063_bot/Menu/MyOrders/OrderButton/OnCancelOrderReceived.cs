@@ -21,6 +21,6 @@ public partial class OrderButton
             await _db.SaveChangesAsync(cts);
             await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, $"Order #{orderId} deleted", true, cancellationToken: cts);
         }
-        return await UpdateHandlers.ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
+        return await _menu.ShowMainMenuAsync(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
     }
 }
