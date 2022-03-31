@@ -72,7 +72,7 @@ namespace apteka063.Services
             {
                 ValueRange valueRange = new() { MajorDimension = "ROWS" };
                 valueRange.Values = new List<IList<object>>();
-                foreach (var pill in _db.ItemsToOrder.Where(x => x.Id.StartsWith('p')))
+                foreach (var pill in _db.ItemsToOrder.Where(x => x.Id.StartsWith("p")))
                 {
                     valueRange.Values.Add(new List<object>() { pill.FreezedAmout });
                 }
