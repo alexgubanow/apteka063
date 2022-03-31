@@ -7,41 +7,42 @@ namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message?> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts)
+    private async Task<Message?> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts = default)
     {
-        if (callbackQuery.Data == "backtoMain")
+        if (callbackQuery.Data == "main")
         {
-            return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, cts, callbackQuery.Message!.MessageId);
+            return await _menu.ShowMainMenuAsync(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
         }
-        else if (callbackQuery.Data == "backtoPills" || callbackQuery.Data == "pills")
+        if (callbackQuery.Data == "myOrders")
         {
-            return await _menu.Pills.OnReplyReceived(botClient, callbackQuery);
+            return await _menu.MyOrders.ShowMyOrdersAsync(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data!.Contains("pillsCategory_") == true)
+        if (callbackQuery.Data == "newOrder")
         {
-            var pillCategory = await _db.PillCategories.FindAsync(int.Parse(callbackQuery.Data.Split('_', 2).Last()));
-            return await _menu.Pills.OnCategoryReplyReceived(botClient, callbackQuery, pillCategory!.Name);
+            return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data!.Contains("pill_") == true)
+        else if (callbackQuery.Data!.Contains("orderType_"))
         {
-            return await _menu.Pills.OnItemReplyReceived(botClient, callbackQuery);
+            return await _menu.MyOrders.ShowCategoriesAsync(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data == "backtoFood" || callbackQuery.Data == "food")
+        else if (callbackQuery.Data!.Contains("category_") == true)
         {
-            return await _menu.Food.OnReplyReceived(botClient, callbackQuery);
+            return await _menu.MyOrders.ShowItemsAsync(botClient, callbackQuery, cts: cts);
         }
-        else if (callbackQuery.Data!.Contains("food_") == true)
+        else if (callbackQuery.Data!.Contains("item_") == true)
         {
-            return await _menu.Food.OnItemReplyReceived(botClient, callbackQuery);
+            return await _menu.MyOrders.OnItemReceivedAsync(botClient, callbackQuery, cts);
         }
         else if (callbackQuery.Data == "order")
         {
-            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, user.LastMessageSentId);
+            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, user.LastMessageSentId, cts);
         }
         else if (callbackQuery.Data.Contains("cancelOrder_"))
         {
             return await _orderButton.OnCancelOrder(botClient, callbackQuery, cts);
         }
-        return await ShowMainMenu(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, cts, callbackQuery.Message!.MessageId);
+        await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "Not implemented", true, cancellationToken: cts);
+        return null!;
+        //return await _menu.ShowMainMenuAsync(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
     }
 }

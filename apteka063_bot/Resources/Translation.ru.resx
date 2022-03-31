@@ -129,6 +129,9 @@
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>База данных обновлена</value>
   </data>
+  <data name="EmergencyContacts" xml:space="preserve">
+    <value>Экстренные контакты</value>
+  </data>
   <data name="Food" xml:space="preserve">
     <value>Еда</value>
   </data>
@@ -138,11 +141,20 @@
   <data name="GoToMenu" xml:space="preserve">
     <value>Вернуться в Главное меню</value>
   </data>
+  <data name="Humaid" xml:space="preserve">
+    <value>Гуманитарка</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
   </data>
+  <data name="Order" xml:space="preserve">
+    <value>Заказать</value>
+  </data>
   <data name="OrderNumber" xml:space="preserve">
     <value>Заказ №</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Заказы</value>
   </data>
   <data name="Order_is_empty_please_pick_some" xml:space="preserve">
     <value>Заказ пуст, выберите чтото для заказа</value>
@@ -164,6 +176,12 @@
   </data>
   <data name="registered" xml:space="preserve">
     <value>зарегистрирован</value>
+  </data>
+  <data name="ReportActivity" xml:space="preserve">
+    <value>Сообщить о подозрительной активности</value>
+  </data>
+  <data name="ReportIncident" xml:space="preserve">
+    <value>Сообщить об инциденте</value>
   </data>
   <data name="TakeCare" xml:space="preserve">
     <value>Позаботьтесь о себе и о своих близких</value>

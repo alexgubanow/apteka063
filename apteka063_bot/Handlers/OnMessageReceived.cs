@@ -1,4 +1,5 @@
 using apteka063.Database;
+using apteka063.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -11,7 +12,7 @@ namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message?> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, User user, CancellationToken cts)
+    private async Task<Message?> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, User user, CancellationToken cts = default)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
@@ -28,7 +29,7 @@ public partial class UpdateHandlers
             }
             try
             {
-                return await _orderButton.DispatchStateAsync(botClient, message, user.LastMessageSentId, order.First());
+                return await _orderButton.DispatchStateAsync(botClient, message, user.LastMessageSentId, order.First(), cts);
             }
             catch (Exception exception)
             {
@@ -39,35 +40,15 @@ public partial class UpdateHandlers
         var header = Resources.Translation.MainMenu;
         if (message.Text == "updb")
         {
-            if (await _gsheet.TrySyncAllTablesToDb())
-            {
-                header += "\n" + Resources.Translation.DBUpdateFailed;
-            }
-            else
+            if (await _gsheet.SyncAllTablesToDb(cts))
             {
                 header += "\n" + Resources.Translation.DBUpdateFinished;
             }
-        }
-        return await ShowMainMenu(botClient, message, header, cts, user.LastMessageSentId);
-    }
-    public static async Task<Message> ShowMainMenu(ITelegramBotClient botClient, Message message, string headerText, CancellationToken cts, int? messageId = null)
-    {
-        InlineKeyboardMarkup inlineKeyboard = new(new[] {
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "pills"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Food, "food"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "transport"), }, });
-
-        if (messageId != null)
-        {
-            try
+            else
             {
-                return await botClient.EditMessageTextAsync(chatId: message.Chat.Id, messageId: (int)messageId, text: headerText, replyMarkup: inlineKeyboard, cancellationToken: cts);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"message by id:\n{messageId} does not exist anymore\noriginal error message:\n{ex.Message}");
+                header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        return await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: headerText, replyMarkup: inlineKeyboard, cancellationToken: cts);
+        return await _menu.ShowMainMenuAsync(botClient, message, header, user.LastMessageSentId, cts);
     }
 }

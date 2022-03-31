@@ -72,7 +72,7 @@ public class Worker : BackgroundService
         }
         if (await _db.Database.EnsureCreatedAsync(stoppingToken))
         {
-            await _gsheet.TrySyncAllTablesToDb();
+            await _gsheet.SyncAllTablesToDb(stoppingToken);
         }
         Bot.StartReceiving(_handlers.HandleUpdateAsync, _handlers.HandleErrorAsync, new ReceiverOptions(), stoppingToken);
 

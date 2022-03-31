@@ -129,6 +129,9 @@
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>database update finished</value>
   </data>
+  <data name="EmergencyContacts" xml:space="preserve">
+    <value>Emergency contacts</value>
+  </data>
   <data name="Food" xml:space="preserve">
     <value>Food</value>
   </data>
@@ -141,11 +144,20 @@
   <data name="HasBeenRegistered" xml:space="preserve">
     <value>has been registered</value>
   </data>
+  <data name="Humaid" xml:space="preserve">
+    <value>Humanitarian Aid</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Main menu:</value>
   </data>
+  <data name="Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
   <data name="OrderNumber" xml:space="preserve">
     <value>Order №</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Orders</value>
   </data>
   <data name="Order_is_empty_please_pick_some" xml:space="preserve">
     <value>Order is empty, please pick some</value>
@@ -164,6 +176,12 @@
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
     <value>Please provide the phone number of the person who will recieve the help</value>
+  </data>
+  <data name="ReportActivity" xml:space="preserve">
+    <value>Report suspicious activity</value>
+  </data>
+  <data name="ReportIncident" xml:space="preserve">
+    <value>Report incident</value>
   </data>
   <data name="TakeCare" xml:space="preserve">
     <value>Take care of yourself and loved ones</value>

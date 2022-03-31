@@ -97,6 +97,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emergency contacts.
+        /// </summary>
+        internal static string EmergencyContacts {
+            get {
+                return ResourceManager.GetString("EmergencyContacts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Food.
         /// </summary>
         internal static string Food {
@@ -133,11 +142,29 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Humanitarian Aid.
+        /// </summary>
+        internal static string Humaid {
+            get {
+                return ResourceManager.GetString("Humaid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main menu:.
         /// </summary>
         internal static string MainMenu {
             get {
                 return ResourceManager.GetString("MainMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order.
+        /// </summary>
+        internal static string Order {
+            get {
+                return ResourceManager.GetString("Order", resourceCulture);
             }
         }
         
@@ -165,6 +192,15 @@ namespace apteka063.Resources {
         internal static string OrderNumber {
             get {
                 return ResourceManager.GetString("OrderNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Orders.
+        /// </summary>
+        internal static string Orders {
+            get {
+                return ResourceManager.GetString("Orders", resourceCulture);
             }
         }
         
@@ -201,6 +237,24 @@ namespace apteka063.Resources {
         internal static string ProvidePhoneNumber {
             get {
                 return ResourceManager.GetString("ProvidePhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report suspicious activity.
+        /// </summary>
+        internal static string ReportActivity {
+            get {
+                return ResourceManager.GetString("ReportActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report incident.
+        /// </summary>
+        internal static string ReportIncident {
+            get {
+                return ResourceManager.GetString("ReportIncident", resourceCulture);
             }
         }
         
