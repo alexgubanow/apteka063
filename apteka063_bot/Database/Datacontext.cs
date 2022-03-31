@@ -26,6 +26,7 @@ public class Apteka063Context : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<ItemToOrder> ItemsToOrder { get; set; } = null!;
     public DbSet<ItemToOrderCategory> ItemsCategories { get; set; } = null!;
+    public DbSet<UserSetting> UserSettings { get; set; } = null!;
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     => optionsBuilder.ConfigureWarnings(c =>
     c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug),
@@ -53,8 +54,6 @@ public class Apteka063Context : DbContext
         }
         return user;
     }
-    public async Task ClearItemsToOrderAsync(CancellationToken cts = default) => await Database.ExecuteSqlRawAsync("DELETE FROM ItemsToOrder", cts);
-    public async Task ClearItemsCategoriesAsync(CancellationToken cts = default) => await Database.ExecuteSqlRawAsync("DELETE FROM ItemsCategories", cts);
 }
 public enum OrderStatus
 {
@@ -92,4 +91,10 @@ public class Location : Telegram.Bot.Types.Location
 {
     [Key]
     public long Id { get; set; }
+}
+public class UserSetting
+{
+    [Key]
+    public string Id { get; set; }
+    public string Value { get; set; } = "";
 }

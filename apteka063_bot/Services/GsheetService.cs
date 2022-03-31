@@ -5,6 +5,7 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using EFCore.BulkExtensions;
 
 namespace apteka063.Services
 {
@@ -85,13 +86,46 @@ namespace apteka063.Services
                 _logger.LogError(ex, ex.Message);
             }
         }
-
+        private async Task<int> SyncSettingsAsync(CancellationToken cts = default)
+        {
+            var service = GetSheetsSevice();
+            try
+            {
+                await _db.UserSettings.BatchDeleteAsync(cancellationToken: cts); 
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, "Настройки!A:B");
+                var response = await request.ExecuteAsync(cts);
+                if (response.Values != null)
+                {
+                    for (int i = 0; i < response.Values.Count; i++)
+                    {
+                        var settingName = response.Values[i][0].ToString();
+                        var settingValue = response.Values[i].Count > 1 ? response.Values[i][1].ToString() : "";
+                        i++;
+                        while (i < response.Values.Count && (response.Values[i].Count > 1 ? response.Values[i][0].ToString() : "") == "")
+                        {
+                            settingValue += '\n';
+                            settingValue += response.Values[i].Count > 1 ? response.Values[i][1].ToString() : "";
+                            i++;
+                        }
+                        i--;
+                        await _db.UserSettings.AddAsync(new() { Id = settingName, Value = settingValue }, cts);
+                    }
+                    await _db.SaveChangesAsync(cts);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return -1;
+            }
+            return 0;
+        }
         private async Task<int> SyncItemsCategoriesAsync(CancellationToken cts = default)
         {
             var service = GetSheetsSevice();
             try
             {
-                await _db.ClearItemsCategoriesAsync(cts);
+                await _db.ItemsCategories.BatchDeleteAsync(cancellationToken: cts);
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!N2:N");
                 var response = await request.ExecuteAsync(cts);
                 if (response.Values != null)
@@ -109,23 +143,23 @@ namespace apteka063.Services
                     {
                         await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, OrderType = "humaid" }, cts);
                     }
-                    await _db.SaveChangesAsync(cts);
                 }
+                await _db.SaveChangesAsync(cts);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,ex.Message);
+                _logger.LogError(ex, ex.Message);
                 return -1;
             }
             return 0;
         }
-        
+
         private async Task<int> SyncItemsToOrderAsync(CancellationToken cts = default)
         {
             var service = GetSheetsSevice();
             try
             {
-                await _db.ClearItemsToOrderAsync(cts);
+                await _db.ItemsToOrder.BatchDeleteAsync(cancellationToken: cts);
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:C");
                 var response = await request.ExecuteAsync(cts);
                 if (response.Values != null)
@@ -157,7 +191,6 @@ namespace apteka063.Services
             }
             return 0;
         }
-
         private static SheetsService GetSheetsSevice()
         {
             ServiceAccountCredential credential;
@@ -179,7 +212,6 @@ namespace apteka063.Services
             });
             return service;
         }
-
         public async Task<bool> SyncAllTablesToDb(CancellationToken cts = default)
         {
             var success = true;
@@ -189,6 +221,11 @@ namespace apteka063.Services
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);
             }
             if (await SyncItemsToOrderAsync(cts) != 0)
+            {
+                success = false;
+                _logger.LogCritical(Resources.Translation.DBUpdateFailed);
+            }
+            if (await SyncSettingsAsync(cts) != 0)
             {
                 success = false;
                 _logger.LogCritical(Resources.Translation.DBUpdateFailed);

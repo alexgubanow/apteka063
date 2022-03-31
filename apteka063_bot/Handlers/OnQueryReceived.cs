@@ -1,6 +1,9 @@
 using apteka063.Database;
+using apteka063.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = apteka063.Database.User;
 
 namespace apteka063.Handlers;
@@ -41,8 +44,14 @@ public partial class UpdateHandlers
         {
             return await _orderButton.OnCancelOrder(botClient, callbackQuery, cts);
         }
+        else if (callbackQuery.Data == "emergencyContacts")
+        {
+            var emergencyContacts = await _db.UserSettings.FirstOrDefaultAsync(x => x.Id == "emergencyContacts", cts);
+            var buttons = new List<List<InlineKeyboardButton>> { new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "main") } };
+            return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts.Value, callbackQuery.Message!.Chat.Id,
+                callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
+        }
         await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "Not implemented", true, cancellationToken: cts);
         return null!;
-        //return await _menu.ShowMainMenuAsync(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
     }
 }
