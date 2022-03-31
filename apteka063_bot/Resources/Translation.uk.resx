@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Скасувати</value>
   </data>
+  <data name="Choose_order_type" xml:space="preserve">
+    <value>Виберіть тип замовлення</value>
+  </data>
   <data name="DBUpdateFailed" xml:space="preserve">
     <value>Оновлення не вдалося</value>
   </data>

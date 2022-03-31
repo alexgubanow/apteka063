@@ -23,7 +23,7 @@ public partial class UpdateHandlers
         {
             if (order.Count > 1)
             {
-                await botClient.EditMessageTextAsync(message.Chat.Id, user.LastMessageSentId, "MORE THAN ONE ORDER FOUND", cancellationToken : cts);
+                await botClient.UpdateOrSendMessageAsync(_logger, "MORE THAN ONE ORDER FOUND\nPlease contact admin", message!.Chat.Id, user.LastMessageSentId, cts: cts);
                 _logger.LogError($"MORE THAN ONE ORDER FOUND, FOR USER ID: {user.Id}");
                 return null!;
             }

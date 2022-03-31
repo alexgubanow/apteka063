@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Choose_order_type" xml:space="preserve">
+    <value>Choose order type</value>
+  </data>
   <data name="DBUpdateFailed" xml:space="preserve">
     <value>database update failed</value>
   </data>

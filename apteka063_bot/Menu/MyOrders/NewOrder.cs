@@ -1,4 +1,5 @@
 using apteka063.Database;
+using apteka063.Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -10,13 +11,15 @@ public partial class MyOrders
 {
     public async Task<Message> ShowOrderTypesAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
-        InlineKeyboardMarkup inlineKeyboard = new(new[] {
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "myOrders"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "orderType_pills"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Humaid, "orderType_humaid"), },
-            new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "orderType_transport"), }, });
-        return await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId,
-            text: "Choose order type", replyMarkup: inlineKeyboard, cancellationToken: cts);
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "myOrders") },
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "orderType_pills") },
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Humaid, "orderType_humaid") },
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "orderType_transport") }
+        };
+        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.Choose_order_type, callbackQuery.Message!.Chat.Id, 
+            callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
     public async Task<Message> ShowCategoriesAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
@@ -30,8 +33,8 @@ public partial class MyOrders
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(category.Name, $"category_{category.Id}") });
         }
-        return await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId,
-            text: Resources.Translation.PickCategory, replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.PickCategory, callbackQuery.Message!.Chat.Id,
+            callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
     public async Task<Message> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, string category = null!, Order? order = null, CancellationToken cts = default)
     {
@@ -56,8 +59,8 @@ public partial class MyOrders
                 $"item_{item.Id}") });
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Order, "order") });
-        return await botClient.EditMessageTextAsync(chatId: callbackQuery.Message!.Chat.Id, messageId: callbackQuery.Message.MessageId, 
-            text: Resources.Translation.AvailableNow, replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.AvailableNow, callbackQuery.Message!.Chat.Id,
+            callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
     public async Task<Message> OnItemReceivedAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {

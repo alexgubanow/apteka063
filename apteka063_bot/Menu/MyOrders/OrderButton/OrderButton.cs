@@ -1,4 +1,5 @@
 ﻿using apteka063.Database;
+using apteka063.Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -45,8 +46,7 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
         };
-        return await botClient.EditMessageTextAsync(callbackQuery.Message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvidePhoneNumber, 
-            replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvidePhoneNumber, callbackQuery.Message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
     public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
@@ -57,8 +57,7 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
         };
-        return await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.ProvideDeliveryAddress,
-            replyMarkup: new InlineKeyboardMarkup(buttons), cancellationToken: cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvideDeliveryAddress, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
 
     public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
@@ -66,7 +65,7 @@ public partial class OrderButton
         order.DeliveryAddress = message.Text ?? "";
         order.Status = OrderStatus.NeedApprove;
         await _db.SaveChangesAsync(cts);
-        await botClient.EditMessageTextAsync(message!.Chat.Id, lastMessageSentId, Resources.Translation.Order_received_processing_please_wait, cancellationToken: cts);
+        await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.Order_received_processing_please_wait, message!.Chat.Id, lastMessageSentId, cts: cts);
         return await PublishOrderAsync(botClient, message, lastMessageSentId, order, cts);
     }
 }

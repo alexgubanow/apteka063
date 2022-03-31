@@ -79,6 +79,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose order type.
+        /// </summary>
+        internal static string Choose_order_type {
+            get {
+                return ResourceManager.GetString("Choose_order_type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to database update failed.
         /// </summary>
         internal static string DBUpdateFailed {
