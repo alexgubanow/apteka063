@@ -172,13 +172,13 @@
     <value>Main menu:</value>
   </data>
   <data name="NeedAdress" xml:space="preserve">
-    <value>NeedAdress</value>
+    <value>Need contact address</value>
   </data>
-  <data name="NeedApprove" xml:space="preserve">
-    <value>NeedApprove</value>
+  <data name="NeedContactName" xml:space="preserve">
+    <value>Need contact name</value>
   </data>
   <data name="NeedPhone" xml:space="preserve">
-    <value>NeedPhone</value>
+    <value>Need contact phone</value>
   </data>
   <data name="NewOrder" xml:space="preserve">
     <value>New order</value>
@@ -215,6 +215,9 @@
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
     <value>Please provide the phone number of the person who will recieve the help</value>
+  </data>
+  <data name="ProvideReceiverName" xml:space="preserve">
+    <value>Please provide the contact name</value>
   </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Report suspicious activity</value>

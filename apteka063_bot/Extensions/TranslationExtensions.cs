@@ -11,8 +11,9 @@ namespace apteka063.Extensions
             return status switch
             {
                 OrderStatus.Filling => Resources.Translation.Filling,
-                OrderStatus.NeedPhone => Resources.Translation.NeedPhone,
-                OrderStatus.NeedAdress => Resources.Translation.NeedAdress,
+                OrderStatus.NeedContactPhone => Resources.Translation.NeedPhone,
+                OrderStatus.NeedContactName => Resources.Translation.NeedContactName,
+                OrderStatus.NeedContactAddress => Resources.Translation.NeedAdress,
                 OrderStatus.Canceled => Resources.Translation.Canceled,
                 OrderStatus.InProgress => Resources.Translation.InProgress,
                 OrderStatus.Declined => Resources.Translation.Declined,

@@ -30,7 +30,8 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data!.Contains("category_") == true)
         {
-            return await _menu.MyOrders.ShowItemsAsync(botClient, callbackQuery, cts: cts);
+            var categoryId = int.Parse(callbackQuery.Data!.Split('_', 2).Last());
+            return await _menu.MyOrders.ShowItemsAsync(botClient, callbackQuery, categoryId, cts: cts);
         }
         else if (callbackQuery.Data!.Contains("item_") == true)
         {
@@ -46,7 +47,7 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data == "emergencyContacts")
         {
-            var emergencyContacts = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Id == "emergencyContacts", cts))?.Value ?? "";
+            var emergencyContacts = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "emergencyContacts", cts))?.Value ?? "";
             var buttons = new List<List<InlineKeyboardButton>> { new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "main") } };
             return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts, callbackQuery.Message!.Chat.Id,
                 callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);

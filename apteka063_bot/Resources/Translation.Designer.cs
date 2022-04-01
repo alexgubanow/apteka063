@@ -223,7 +223,7 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NeedAdress.
+        ///   Looks up a localized string similar to Need contact address.
         /// </summary>
         internal static string NeedAdress {
             get {
@@ -232,16 +232,16 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NeedApprove.
+        ///   Looks up a localized string similar to Need contact name.
         /// </summary>
-        internal static string NeedApprove {
+        internal static string NeedContactName {
             get {
-                return ResourceManager.GetString("NeedApprove", resourceCulture);
+                return ResourceManager.GetString("NeedContactName", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NeedPhone.
+        ///   Looks up a localized string similar to Need contact phone.
         /// </summary>
         internal static string NeedPhone {
             get {
@@ -354,6 +354,15 @@ namespace apteka063.Resources {
         internal static string ProvidePhoneNumber {
             get {
                 return ResourceManager.GetString("ProvidePhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please provide the contact name.
+        /// </summary>
+        internal static string ProvideReceiverName {
+            get {
+                return ResourceManager.GetString("ProvideReceiverName", resourceCulture);
             }
         }
         

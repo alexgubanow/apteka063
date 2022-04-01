@@ -171,8 +171,8 @@
   <data name="NeedAdress" xml:space="preserve">
     <value>Потрібна адреса</value>
   </data>
-  <data name="NeedApprove" xml:space="preserve">
-    <value>Потрібно схвалити</value>
+  <data name="NeedContactName" xml:space="preserve">
+    <value>Потрібен телефон</value>
   </data>
   <data name="NeedPhone" xml:space="preserve">
     <value>Потрібен телефон</value>
@@ -212,6 +212,9 @@
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
     <value>Будь ласка, напишіть телефон одержувача (або інший контакт)</value>
+  </data>
+  <data name="ProvideReceiverName" xml:space="preserve">
+    <value>Будь ласка, напишіть ім'я отримувача</value>
   </data>
   <data name="registered" xml:space="preserve">
     <value>зареєстрований</value>

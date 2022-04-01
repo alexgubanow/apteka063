@@ -2,6 +2,7 @@
 
 using apteka063.Database;
 using apteka063.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -27,7 +28,7 @@ public class Menu
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, "reportActivity"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportIncident, "reportIncident"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.EmergencyContacts, "emergencyContacts"), }, });
-        var headerFormDB = (await _db.UserSettings.FindAsync(new object?[] { "Шапка главное меню" }, cancellationToken: cts))?.Value;
+        var headerFormDB = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "Шапка главное меню"))?.Value;
         return await botClient.UpdateOrSendMessageAsync(_logger, $"{headerFormDB ?? ""}\n{headerText}", chatId, messageId, inlineKeyboard, cts);
     }
 }
