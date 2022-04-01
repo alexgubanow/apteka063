@@ -6,6 +6,7 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Configuration;
 using System.Globalization;
 
 namespace apteka063.Services
@@ -14,16 +15,64 @@ namespace apteka063.Services
     {
         private readonly ILogger<Gsheet> _logger;
         private readonly Apteka063Context _db;
+        private readonly string spreadsheetId = "";
         public Gsheet(ILogger<Gsheet> logger, Apteka063Context db)
         {
             _logger = logger;
             _db = db;
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            if (config == null)
+            {
+                _logger.LogCritical("failed to open app config");
+            }
+            else
+            {
+                int tryCount = 0;
+                while ((config.AppSettings.Settings["spreadsheetId"] == null) && tryCount < 5)
+                {
+                    tryCount++;
+                    string spreadsheetId = config.AppSettings.Settings["spreadsheetId"]?.Value ?? "";
+                    if (spreadsheetId == "")
+                    {
+                        _logger.LogInformation("Please enter spreadsheetId to be used:");
+                        spreadsheetId = Console.ReadLine()!;
+                    }
+                    if (IsSheetIdValid(_logger, spreadsheetId) == true)
+                    {
+                        if (config.AppSettings.Settings["spreadsheetId"] != null)
+                        {
+                            config.AppSettings.Settings["spreadsheetId"].Value = spreadsheetId;
+                        }
+                        else
+                        {
+                            config.AppSettings.Settings.Add(new("spreadsheetId", spreadsheetId));
+                        }
+                        config.Save(ConfigurationSaveMode.Modified);
+                        ConfigurationManager.RefreshSection("spreadsheetId");
+                    }
+                }
+                config.Save(ConfigurationSaveMode.Modified);
+            }
+            spreadsheetId = config?.AppSettings.Settings["spreadsheetId"].Value ?? "";
         }
         static string serviceAccountEmail = "apteka063-bot@apteka063.iam.gserviceaccount.com";
         static string jsonfile = "googlecreds.json";
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
-        static string spreadsheetId = "1d90xhyr_zrIFTTfccrDnav5lc9nMEhnKEWpTyUYEKOg";
-
+        public static bool IsSheetIdValid(ILogger logger, string sheetId)
+        {
+            var service = GetSheetsSevice();
+            try
+            {
+                var request = service.Spreadsheets.Values.Get(sheetId, "Таблетки!A2:A");
+                var response = request.Execute();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+            }
+            return false;
+        }
         public async Task PostOrder(Order order, string person, string personID, string pills, CancellationToken cts = default)
         {
             var currentLocale = Thread.CurrentThread.CurrentUICulture;
@@ -165,7 +214,6 @@ namespace apteka063.Services
             }
             return 0;
         }
-
         private async Task<int> SyncItemsToOrderAsync(CancellationToken cts = default)
         {
             var service = GetSheetsSevice();

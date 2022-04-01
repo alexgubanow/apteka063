@@ -6,6 +6,7 @@ using apteka063.Handlers;
 using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 using User = Telegram.Bot.Types.User;
+using apteka063.Services;
 
 namespace apteka063;
 public class Worker : BackgroundService

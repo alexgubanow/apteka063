@@ -166,7 +166,7 @@
     <value>Гуманитарка</value>
   </data>
   <data name="InProgress" xml:space="preserve">
-    <value>В ходе выполнения</value>
+    <value>В процессе</value>
   </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
