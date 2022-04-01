@@ -15,9 +15,9 @@ namespace apteka063.Extensions
                 {
                     return await botClient.EditMessageTextAsync(chatId: chatId, messageId: (int)messageId, text: text, replyMarkup: markup, cancellationToken: cts);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _log.LogWarning(ex, $"message by id:\n{messageId} does not exist anymore\noriginal error message:\n{ex.Message}");
+                    //_log.LogWarning(ex, $"message by id:{messageId}\noriginal error message:\n{ex.Message}");
                 }
             }
             return await botClient.SendTextMessageAsync(chatId: chatId, text: text, replyMarkup: markup, cancellationToken: cts);

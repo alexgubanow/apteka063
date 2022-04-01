@@ -101,8 +101,8 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        var settingName = response.Values[i][0].ToString();
-                        var settingValue = response.Values[i].Count > 1 ? response.Values[i][1].ToString() : "";
+                        var settingName = response.Values[i][0]?.ToString() ?? $"s{i}";
+                        var settingValue = response.Values[i].Count > 1 ? response.Values[i][1]?.ToString() ?? "" : "";
                         i++;
                         while (i < response.Values.Count && (response.Values[i].Count > 1 ? response.Values[i][0].ToString() : "") == "")
                         {

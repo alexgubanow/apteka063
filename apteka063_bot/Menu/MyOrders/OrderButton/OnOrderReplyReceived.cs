@@ -5,7 +5,7 @@ namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<Message> OnOrderReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, CancellationToken cts = default)
+    public async Task<Message?> OnOrderReplyReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, CancellationToken cts = default)
     {
         var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, cts: cts);
         if (order.Items == null || order.Items == "")

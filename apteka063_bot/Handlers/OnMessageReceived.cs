@@ -49,6 +49,6 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        return await _menu.ShowMainMenuAsync(botClient, message, header, user.LastMessageSentId, cts);
+        return await _menu.ShowMainMenuAsync(botClient, header, message.Chat.Id, user.LastMessageSentId, cts);
     }
 }

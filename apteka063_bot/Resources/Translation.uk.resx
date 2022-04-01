@@ -153,6 +153,9 @@
   <data name="NewOrder" xml:space="preserve">
     <value>Нове замовлення</value>
   </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>Цей функціонал не реалізований</value>
+  </data>
   <data name="Order" xml:space="preserve">
     <value>Замовити</value>
   </data>

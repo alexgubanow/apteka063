@@ -9,7 +9,7 @@ namespace apteka063.Menu;
 
 public partial class MyOrders
 {
-    public async Task<Message> ShowOrderTypesAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    public async Task<Message?> ShowOrderTypesAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
@@ -21,7 +21,7 @@ public partial class MyOrders
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.Choose_order_type, callbackQuery.Message!.Chat.Id, 
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
-    public async Task<Message> ShowCategoriesAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    public async Task<Message?> ShowCategoriesAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
         var orderType = callbackQuery.Data!.Split('_', 2).Last();
         var buttons = new List<List<InlineKeyboardButton>>
@@ -36,7 +36,7 @@ public partial class MyOrders
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.PickCategory, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
-    public async Task<Message> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, string category = null!, Order? order = null, CancellationToken cts = default)
+    public async Task<Message?> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, string category = null!, Order? order = null, CancellationToken cts = default)
     {
         category ??= callbackQuery.Data!.Split('_', 2).Last();
         var orderType = (await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts))?.OrderType;
@@ -62,7 +62,7 @@ public partial class MyOrders
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.AvailableNow, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
-    public async Task<Message> OnItemReceivedAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    public async Task<Message?> OnItemReceivedAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
         var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, cts: cts);
         var itemId = callbackQuery.Data!.Split('_', 2).Last();

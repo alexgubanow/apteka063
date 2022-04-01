@@ -16,7 +16,7 @@ public partial class MyOrders
         _logger = logger;
         _db = db;
     }
-    public async Task<Message> ShowMyOrdersAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    public async Task<Message?> ShowMyOrdersAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {

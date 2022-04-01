@@ -159,6 +159,9 @@
   <data name="NewOrder" xml:space="preserve">
     <value>New order</value>
   </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>Not implemented</value>
+  </data>
   <data name="Order" xml:space="preserve">
     <value>Order</value>
   </data>

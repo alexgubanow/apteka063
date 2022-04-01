@@ -57,7 +57,7 @@ public partial class UpdateHandlers
             UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!, user, cts),
             //UpdateType.InlineQuery        => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
-            _                             => UnknownUpdateHandlerAsync(botClient, update)
+            _                             => UnknownUpdateHandlerAsync(botClient, update, user, cts)
         };
         Message? message = null!;
         try
@@ -81,10 +81,10 @@ public partial class UpdateHandlers
         }
     }
 
-    private Task<Message?> UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
+    private async Task<Message?> UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update, Database.User user, CancellationToken cts = default)
     {
         _logger.LogWarning($"Unknown update type: {update.Type}");
-        return null!;
+        return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, update.Id, user.LastMessageSentId, cts);
     }
     
     private static string GetLanguageCodeFromUpdate(Update update)

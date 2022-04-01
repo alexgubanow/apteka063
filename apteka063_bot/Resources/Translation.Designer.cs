@@ -187,6 +187,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not implemented.
+        /// </summary>
+        internal static string NotImplemented {
+            get {
+                return ResourceManager.GetString("NotImplemented", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Order.
         /// </summary>
         internal static string Order {

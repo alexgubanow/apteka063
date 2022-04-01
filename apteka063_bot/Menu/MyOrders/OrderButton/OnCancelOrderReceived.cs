@@ -7,7 +7,7 @@ namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<Message> OnCancelOrder(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    public async Task<Message?> OnCancelOrder(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
         int orderId = int.Parse(callbackQuery.Data!.Split('_', 2).Last());
         var order = await _db.Orders.FindAsync(new object?[] { orderId }, cancellationToken: cts);
@@ -21,6 +21,6 @@ public partial class OrderButton
             await _db.SaveChangesAsync(cts);
             await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, $"Order #{orderId} deleted", true, cancellationToken: cts);
         }
-        return await _menu.ShowMainMenuAsync(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
+        return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, callbackQuery.Message!.Chat.Id, callbackQuery.Message!.MessageId, cts);
     }
 }

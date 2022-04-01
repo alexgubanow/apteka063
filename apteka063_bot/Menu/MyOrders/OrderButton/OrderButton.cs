@@ -20,7 +20,7 @@ public partial class OrderButton
         _gsheet = gsheet;
         _menu = menu;
     }
-    public async Task<Message> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    public async Task<Message?> DispatchStateAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         var handler = order.Status switch
         {
@@ -38,7 +38,7 @@ public partial class OrderButton
         }
         return null!;
     }
-    public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, Order order, CancellationToken cts = default)
+    public async Task<Message?> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.Status = OrderStatus.NeedPhone;
         await _db.SaveChangesAsync(cts);
@@ -48,7 +48,7 @@ public partial class OrderButton
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvidePhoneNumber, callbackQuery.Message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
-    public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    public async Task<Message?> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.ContactPhone = message.Text ?? "";
         order.Status = OrderStatus.NeedAdress;
@@ -60,7 +60,7 @@ public partial class OrderButton
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvideDeliveryAddress, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
 
-    public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    public async Task<Message?> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.DeliveryAddress = message.Text ?? "";
         order.Status = OrderStatus.NeedApprove;

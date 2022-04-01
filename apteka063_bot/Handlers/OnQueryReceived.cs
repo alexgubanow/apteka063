@@ -14,7 +14,7 @@ public partial class UpdateHandlers
     {
         if (callbackQuery.Data == "main")
         {
-            return await _menu.ShowMainMenuAsync(botClient, callbackQuery.Message!, Resources.Translation.MainMenu, callbackQuery.Message!.MessageId, cts);
+            return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, callbackQuery.Message!.Chat.Id, callbackQuery.Message!.MessageId, cts);
         }
         if (callbackQuery.Data == "myOrders")
         {
@@ -46,12 +46,12 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data == "emergencyContacts")
         {
-            var emergencyContacts = await _db.UserSettings.FirstOrDefaultAsync(x => x.Id == "emergencyContacts", cts);
+            var emergencyContacts = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Id == "emergencyContacts", cts))?.Value ?? "";
             var buttons = new List<List<InlineKeyboardButton>> { new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "main") } };
-            return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts.Value, callbackQuery.Message!.Chat.Id,
+            return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts, callbackQuery.Message!.Chat.Id,
                 callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
         }
-        await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "Not implemented", true, cancellationToken: cts);
+        await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, Resources.Translation.NotImplemented, true, cancellationToken: cts);
         return null!;
     }
 }

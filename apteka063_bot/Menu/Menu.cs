@@ -20,7 +20,7 @@ public class Menu
         MyOrders = _MyOrders;
         _db = db;
     }
-    public async Task<Message> ShowMainMenuAsync(ITelegramBotClient botClient, Message message, string headerText, int? messageId = null, CancellationToken cts = default)
+    public async Task<Message?> ShowMainMenuAsync(ITelegramBotClient botClient, string headerText, long chatId, int? messageId = null, CancellationToken cts = default)
     {
         InlineKeyboardMarkup inlineKeyboard = new(new[] {
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.Orders, "myOrders"), },
@@ -28,6 +28,6 @@ public class Menu
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportIncident, "reportIncident"), },
             new [] { InlineKeyboardButton.WithCallbackData(Resources.Translation.EmergencyContacts, "emergencyContacts"), }, });
         var headerFormDB = (await _db.UserSettings.FindAsync(new object?[] { "Шапка главное меню" }, cancellationToken: cts))?.Value;
-        return await botClient.UpdateOrSendMessageAsync(_logger, $"{headerFormDB ?? ""}\n{headerText}", message.Chat.Id, messageId, inlineKeyboard, cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, $"{headerFormDB ?? ""}\n{headerText}", chatId, messageId, inlineKeyboard, cts);
     }
 }
