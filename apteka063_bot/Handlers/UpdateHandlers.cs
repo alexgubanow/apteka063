@@ -89,21 +89,37 @@ public partial class UpdateHandlers
     
     private static string GetLanguageCodeFromUpdate(Update update)
     {
-        if (update.CallbackQuery?.From?.LanguageCode != null)
+        switch (update.Type)
         {
-            return update.CallbackQuery.From.LanguageCode;
+            case UpdateType.Message:
+                return update.Message!.From!.LanguageCode!;
+            case UpdateType.InlineQuery:
+                return update.InlineQuery!.From!.LanguageCode!;
+            case UpdateType.ChosenInlineResult:
+                return update.ChosenInlineResult!.From!.LanguageCode!;
+            case UpdateType.CallbackQuery:
+                return update.CallbackQuery!.From!.LanguageCode!;
+            case UpdateType.EditedMessage:
+                return update.EditedMessage!.From!.LanguageCode!;
+            case UpdateType.ChannelPost:
+                return update.ChannelPost!.From!.LanguageCode!;
+            case UpdateType.EditedChannelPost:
+                return update.EditedChannelPost!.From!.LanguageCode!;
+            case UpdateType.ShippingQuery:
+                return update.ShippingQuery!.From!.LanguageCode!;
+            case UpdateType.PreCheckoutQuery:
+                return update.PreCheckoutQuery!.From!.LanguageCode!;
+            case UpdateType.MyChatMember:
+                return update.MyChatMember!.From!.LanguageCode!;
+            case UpdateType.ChatMember:
+                return update.ChatMember!.From!.LanguageCode!;
+            case UpdateType.ChatJoinRequest:
+                return update.ChatJoinRequest!.From!.LanguageCode!;
+            case UpdateType.Poll:
+            case UpdateType.PollAnswer:
+            case UpdateType.Unknown:
+            default:
+                return "ru";
         }
-        
-        if (update.Message?.From?.LanguageCode != null)
-        {
-            return update.Message.From.LanguageCode;
-        }
-
-        if (update.EditedMessage?.From?.LanguageCode != null)
-        {
-            return update.EditedMessage.From.LanguageCode;
-        }
-
-        return "ru";
     }
 }
