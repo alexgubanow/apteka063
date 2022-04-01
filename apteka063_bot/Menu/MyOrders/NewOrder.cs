@@ -26,7 +26,7 @@ public partial class MyOrders
         var orderType = callbackQuery.Data!.Split('_', 2).Last();
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "myOrders") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "OrderTypes") }
         };
         var categories = _db.ItemsCategories.Where(x => x.OrderType == orderType);
         foreach (var category in categories)

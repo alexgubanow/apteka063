@@ -28,7 +28,7 @@ public partial class MyOrders
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData($"{Resources.Translation.OrderNumber}{order.Id}", $"order_{order.Id}") });
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.NewOrder, "newOrder") });
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.NewOrder, "OrderTypes") });
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ActiveOrders, callbackQuery.Message!.Chat.Id, 
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }

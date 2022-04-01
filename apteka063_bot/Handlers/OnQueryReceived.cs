@@ -20,7 +20,7 @@ public partial class UpdateHandlers
         {
             return await _menu.MyOrders.ShowMyOrdersAsync(botClient, callbackQuery, cts);
         }
-        if (callbackQuery.Data == "newOrder")
+        if (callbackQuery.Data == "OrderTypes")
         {
             return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
         }
