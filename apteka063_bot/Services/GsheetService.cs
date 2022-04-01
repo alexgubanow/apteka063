@@ -102,12 +102,12 @@ namespace apteka063.Services
                     new List<object>() { person },
                     new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
                     new List<object>() { pills },
-                    new List<object>() { "not supported" },
+                    new List<object>() { order.ContactName },
                     new List<object>() { order.ContactPhone },
                     new List<object>() { order.DeliveryAddress },
                     new List<object>() { TranslationConverter.ToLocaleString(order.OrderType) },
                     new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") },
-                    new List<object>() { $"=IF(J{writePosition},HOUR(NOW()-J{writePosition}) + DAYS(NOW(), J{writePosition}) * 24, -1)" }, // Format depend on Google sheet
+                    new List<object>() { $"=NOW()-J{writePosition}" }, // Format depend on Google sheet
                 };
                 var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:K{writePosition}");
                 update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
@@ -126,7 +126,8 @@ namespace apteka063.Services
             {
                 ValueRange valueRange = new() { MajorDimension = "ROWS" };
                 valueRange.Values = new List<IList<object>>();
-                foreach (var pill in _db.ItemsToOrder.Where(x => x.Id.StartsWith("p")))
+                var pillsCategories = _db.ItemsCategories.Where(x => x.OrderType == OrderType.Pills).Select(x => x.Id);
+                foreach (var pill in _db.ItemsToOrder.Where(x => pillsCategories.Contains(x.CategoryId)))
                 {
                     valueRange.Values.Add(new List<object>() { pill.FreezedAmout });
                 }
@@ -165,7 +166,7 @@ namespace apteka063.Services
                             i++;
                         }
                         i--;
-                        await _db.UserSettings.AddAsync(new() { Id = settingName, Value = settingValue }, cts);
+                        await _db.UserSettings.AddAsync(new(settingName, settingValue), cts);
                     }
                     await _db.SaveChangesAsync(cts);
                 }
@@ -193,7 +194,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"pc{i}", Name = response.Values[i][0].ToString()!, OrderType = OrderType.Pills }, cts);
+                        await _db.ItemsCategories.AddAsync(new(response.Values[i][0].ToString()!, OrderType.Pills ), cts);
                     }
                 }
                 request = service.Spreadsheets.Values.Get(spreadsheetId, "Гуманитарка!N2:N");
@@ -202,7 +203,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, OrderType = OrderType.Humaid }, cts);
+                        await _db.ItemsCategories.AddAsync(new(response.Values[i][0].ToString()!, OrderType.Humaid ), cts);
                     }
                 }
                 await _db.SaveChangesAsync(cts);
@@ -231,8 +232,8 @@ namespace apteka063.Services
                     for (int i = 0; i < response.Values.Count; i++)
                     {
                         var category = await _db.ItemsCategories.FirstOrDefaultAsync(x => x.Name == response.Values[i][1].ToString()!, cts);
-                        var categoryId = category != null ? category.Id : "p0";
-                        await _db.ItemsToOrder.AddAsync(new($"p{i}", response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)), cts);
+                        var categoryId = category != null ? category.Id : 0;
+                        await _db.ItemsToOrder.AddAsync(new(response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)), cts);
                     }
                 }
                 request = service.Spreadsheets.Values.Get(spreadsheetId, "Гуманитарка!A2:C");
@@ -242,8 +243,8 @@ namespace apteka063.Services
                     for (int i = 0; i < response.Values.Count; i++)
                     {
                         var category = await _db.ItemsCategories.FirstOrDefaultAsync(x => x.Name == response.Values[i][1].ToString()!, cts);
-                        var categoryId = category != null ? category.Id : "f0";
-                        await _db.ItemsToOrder.AddAsync(new($"f{i}", response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)), cts);
+                        var categoryId = category != null ? category.Id : 0;
+                        await _db.ItemsToOrder.AddAsync(new(response.Values[i][0].ToString()!, categoryId, int.Parse(response.Values[i][2].ToString()!)), cts);
                     }
                 }
                 await _db.SaveChangesAsync(cts);

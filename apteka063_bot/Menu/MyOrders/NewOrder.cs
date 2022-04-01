@@ -36,9 +36,8 @@ public partial class MyOrders
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.PickCategory, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
-    public async Task<Message?> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, string category = null!, Order? order = null, CancellationToken cts = default)
+    public async Task<Message?> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int category, Order? order = null, CancellationToken cts = default)
     {
-        category ??= callbackQuery.Data!.Split('_', 2).Last();
         var orderType = (await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts))!.OrderType;
         order ??= await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, orderType, cts);
         var orderItems = order.Items?.Split(',');
@@ -50,7 +49,7 @@ public partial class MyOrders
         foreach (var item in items)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
-                item.Name + (orderItems != null && orderItems.Contains(item.Id) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
+                item.Name + (orderItems != null && orderItems.Contains(item.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
                 $"item_{item.Id}") });
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Order, "order") });
@@ -60,7 +59,7 @@ public partial class MyOrders
     public async Task<Message?> OnItemReceivedAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
         var itemId = callbackQuery.Data!.Split('_', 2).Last();
-        var categoryId = (await _db.ItemsToOrder.FindAsync(new object?[] { itemId }, cancellationToken: cts))!.CategoryId;
+        var categoryId = (await _db.ItemsToOrder.FindAsync(new object?[] { int.Parse(itemId) }, cancellationToken: cts))!.CategoryId;
         var itemCategory = await _db.ItemsCategories.FindAsync(new object?[] { categoryId }, cancellationToken: cts);
         var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, itemCategory!.OrderType, cts: cts);
         var orderItemsList = order.Items?.Split(',').ToList();

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace apteka063.Database;
 //after update of any class below need to run:
@@ -20,13 +21,13 @@ public class Apteka063ContextFactory : IDesignTimeDbContextFactory<Apteka063Cont
 public class Apteka063Context : DbContext
 {
     public readonly static string connString = $"Data Source={Path.Join(Environment.CurrentDirectory, "database.db")}";
-    public DbSet<Contact> Contacts { get; set; } = null!;
-    public DbSet<Location> Locations { get; set; } = null!;
-    public DbSet<Order> Orders { get; set; } = null!;
-    public DbSet<User> Users { get; set; } = null!;
-    public DbSet<ItemToOrder> ItemsToOrder { get; set; } = null!;
-    public DbSet<ItemToOrderCategory> ItemsCategories { get; set; } = null!;
-    public DbSet<UserSetting> UserSettings { get; set; } = null!;
+    public DbSet<Contact> Contacts => Set<Contact>();
+    public DbSet<Location> Locations => Set<Location>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<ItemToOrder> ItemsToOrder => Set<ItemToOrder>();
+    public DbSet<ItemToOrderCategory> ItemsCategories => Set<ItemToOrderCategory>();
+    public DbSet<UserSetting> UserSettings => Set<UserSetting>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     => optionsBuilder.ConfigureWarnings(c =>
     c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug),
@@ -35,7 +36,7 @@ public class Apteka063Context : DbContext
     public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId, OrderType orderType, CancellationToken cts = default)
     {
         var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && x.OrderType == orderType &&
-            (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress), cts);
+            (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName || x.Status == OrderStatus.NeedContactAddress), cts);
         if (order == null)
         {
             order = new(userId, orderType);
@@ -58,7 +59,7 @@ public class Apteka063Context : DbContext
 }
 public enum OrderStatus
 {
-    Filling, NeedPhone, NeedAdress, Canceled, InProgress, Declined, Closed, N_A
+    Filling, NeedContactPhone, NeedContactName, NeedContactAddress, Canceled, InProgress, Declined, Closed, N_A
 }
 public enum OrderType
 {
@@ -67,23 +68,26 @@ public enum OrderType
 public class ItemToOrder
 {
     public ItemToOrder() { }
-    public ItemToOrder(string id, string name, string _CategoryId, int freezedAmount)
+    public ItemToOrder(string name, int _CategoryId, int freezedAmount)
     {
-        Id = id;
         Name = name;
         CategoryId = _CategoryId;
         FreezedAmout = freezedAmount;
     }
-    [Key]
-    public string Id { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; } = "";
-    public string CategoryId { get; set; } = "";
+    public int CategoryId { get; set; }
     public int FreezedAmout { get; set; }
 }
 public class ItemToOrderCategory
 {
-    [Key]
-    public string Id { get; set; }
+    public ItemToOrderCategory() { }
+    public ItemToOrderCategory(string name, OrderType _OrderType)
+    {
+        Name = name;
+        OrderType = _OrderType;
+    }
+    public int Id { get; set; }
     public string Name { get; set; } = "";
     public OrderType OrderType { get; set; }
 }
@@ -99,7 +103,13 @@ public class Location : Telegram.Bot.Types.Location
 }
 public class UserSetting
 {
-    [Key]
-    public string Id { get; set; }
+    public UserSetting() { }
+    public UserSetting(string name, string _Value)
+    {
+        Name = name;
+        Value = _Value;
+    }
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
     public string Value { get; set; } = "";
 }

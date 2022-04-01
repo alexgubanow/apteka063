@@ -24,8 +24,9 @@ public partial class OrderButton
     {
         var handler = order.Status switch
         {
-            OrderStatus.NeedPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order, cts),
-            OrderStatus.NeedAdress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order, cts),
+            OrderStatus.NeedContactPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order, cts),
+            OrderStatus.NeedContactName => SaveContactNameAsync(botClient, message, lastMessageSentId, order, cts),
+            OrderStatus.NeedContactAddress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order, cts),
             _ => throw new NotImplementedException()
         };
         try
@@ -40,7 +41,7 @@ public partial class OrderButton
     }
     public async Task<Message?> InitiateOrderAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
-        order.Status = OrderStatus.NeedPhone;
+        order.Status = OrderStatus.NeedContactPhone;
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
@@ -51,7 +52,18 @@ public partial class OrderButton
     public async Task<Message?> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.ContactPhone = message.Text ?? "";
-        order.Status = OrderStatus.NeedAdress;
+        order.Status = OrderStatus.NeedContactName;
+        await _db.SaveChangesAsync(cts);
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
+        };
+        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvideReceiverName, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
+    }
+    public async Task<Message?> SaveContactNameAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    {
+        order.ContactName = message.Text ?? "";
+        order.Status = OrderStatus.NeedContactAddress;
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
@@ -59,7 +71,6 @@ public partial class OrderButton
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvideDeliveryAddress, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
-
     public async Task<Message?> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.DeliveryAddress = message.Text ?? "";
