@@ -13,11 +13,20 @@ public partial class MyOrders
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, "myOrders") },
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Pills, $"orderType_{OrderType.Pills}") },
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Humaid, $"orderType_{OrderType.Humaid}") },
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Transport, $"orderType_{OrderType.Transport}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, "myOrders") }
         };
+        if (_db.ItemsCategories.Where(x => x.OrderType == OrderType.Pills).Any())
+        {
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Pills, $"orderType_{OrderType.Pills}") });
+        }
+        if (_db.ItemsCategories.Where(x => x.OrderType == OrderType.Humaid).Any())
+        {
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Humaid, $"orderType_{OrderType.Humaid}") });
+        }
+        if (_db.ItemsCategories.Where(x => x.OrderType == OrderType.Transport).Any())
+        {
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Transport, $"orderType_{OrderType.Transport}") });
+        }
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.Choose_order_type, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
@@ -31,7 +40,10 @@ public partial class MyOrders
         var categories = _db.ItemsCategories.Where(x => x.OrderType == orderType);
         foreach (var category in categories)
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(category.Name, $"category_{category.Id}") });
+            if (_db.ItemsToOrder.Where(x => x.CategoryId == category.Id).Any())
+            {
+                buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(category.Name, $"category_{category.Id}") });
+            }
         }
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.PickCategory, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
