@@ -61,6 +61,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Active orders.
+        /// </summary>
+        internal static string ActiveOrders {
+            get {
+                return ResourceManager.GetString("ActiveOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Available now:.
         /// </summary>
         internal static string AvailableNow {
@@ -165,6 +174,15 @@ namespace apteka063.Resources {
         internal static string MainMenu {
             get {
                 return ResourceManager.GetString("MainMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New order.
+        /// </summary>
+        internal static string NewOrder {
+            get {
+                return ResourceManager.GetString("NewOrder", resourceCulture);
             }
         }
         

@@ -28,8 +28,8 @@ public partial class MyOrders
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData($"{Resources.Translation.OrderNumber}{order.Id}", $"order_{order.Id}") });
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData("New Order", "newOrder") });
-        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.PickCategory, callbackQuery.Message!.Chat.Id, 
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.NewOrder, "newOrder") });
+        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ActiveOrders, callbackQuery.Message!.Chat.Id, 
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
 }

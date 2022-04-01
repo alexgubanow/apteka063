@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActiveOrders" xml:space="preserve">
+    <value>Active orders</value>
+  </data>
   <data name="AvailableNow" xml:space="preserve">
     <value>Available now:</value>
   </data>
@@ -152,6 +155,9 @@
   </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Main menu:</value>
+  </data>
+  <data name="NewOrder" xml:space="preserve">
+    <value>New order</value>
   </data>
   <data name="Order" xml:space="preserve">
     <value>Order</value>

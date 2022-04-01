@@ -5,7 +5,6 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using EFCore.BulkExtensions;
 
 namespace apteka063.Services
 {
@@ -91,7 +90,10 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                await _db.UserSettings.BatchDeleteAsync(cancellationToken: cts);
+                foreach (var item in _db.UserSettings)
+                {
+                    _db.UserSettings.Remove(item);
+                }
                 await _db.SaveChangesAsync(cts);
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Настройки!A:B");
                 var response = await request.ExecuteAsync(cts);
@@ -126,7 +128,10 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                await _db.ItemsCategories.BatchDeleteAsync(cancellationToken: cts);
+                foreach (var item in _db.ItemsCategories)
+                {
+                    _db.ItemsCategories.Remove(item);
+                }
                 await _db.SaveChangesAsync(cts);
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!N2:N");
                 var response = await request.ExecuteAsync(cts);
@@ -161,7 +166,10 @@ namespace apteka063.Services
             var service = GetSheetsSevice();
             try
             {
-                await _db.ItemsToOrder.BatchDeleteAsync(cancellationToken: cts);
+                foreach (var item in _db.ItemsToOrder)
+                {
+                    _db.ItemsToOrder.Remove(item);
+                }
                 await _db.SaveChangesAsync(cts);
                 var request = service.Spreadsheets.Values.Get(spreadsheetId, "Таблетки!A2:C");
                 var response = await request.ExecuteAsync(cts);
