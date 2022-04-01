@@ -126,8 +126,14 @@
   <data name="Cancel" xml:space="preserve">
     <value>Скасувати</value>
   </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Отмененный</value>
+  </data>
   <data name="Choose_order_type" xml:space="preserve">
     <value>Виберіть тип замовлення</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Закрито</value>
   </data>
   <data name="DBUpdateFailed" xml:space="preserve">
     <value>Оновлення не вдалося</value>
@@ -135,8 +141,14 @@
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>База данних оновлена</value>
   </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
   <data name="EmergencyContacts" xml:space="preserve">
     <value>Екстренні контакти</value>
+  </data>
+  <data name="Filling" xml:space="preserve">
+    <value>Наповнення</value>
   </data>
   <data name="Food" xml:space="preserve">
     <value>Їжа</value>
@@ -144,17 +156,35 @@
   <data name="GoBack" xml:space="preserve">
     <value>Повернутись назад</value>
   </data>
+  <data name="HasBeenRegistered" xml:space="preserve">
+    <value>було зареєстровано</value>
+  </data>
   <data name="Humaid" xml:space="preserve">
     <value>Гуманітарка</value>
   </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>В процесі</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Головне меню:</value>
+  </data>
+  <data name="NeedAdress" xml:space="preserve">
+    <value>Потрібна адреса</value>
+  </data>
+  <data name="NeedApprove" xml:space="preserve">
+    <value>Потрібно схвалити</value>
+  </data>
+  <data name="NeedPhone" xml:space="preserve">
+    <value>Потрібен телефон</value>
   </data>
   <data name="NewOrder" xml:space="preserve">
     <value>Нове замовлення</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
     <value>Цей функціонал не реалізований</value>
+  </data>
+  <data name="No_any_active_orders_found" xml:space="preserve">
+    <value>Активних замовлень не знайдено</value>
   </data>
   <data name="Order" xml:space="preserve">
     <value>Замовити</value>
@@ -197,5 +227,8 @@
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Транспорт</value>
+  </data>
+  <data name="You_dont_have_orders" xml:space="preserve">
+    <value>Ви не маєте замовлень</value>
   </data>
 </root>

@@ -4,7 +4,7 @@ namespace apteka063.Database;
 
 public class Order
 {
-    public Order(long userId, string orderType = "", OrderStatus status = OrderStatus.Filling, string contactPhone = "", string deliveryAddress = "")
+    public Order(long userId, OrderType orderType, OrderStatus status = OrderStatus.Filling, string contactPhone = "", string deliveryAddress = "")
     {
         UserId = userId;
         OrderType = orderType;
@@ -18,6 +18,6 @@ public class Order
     public string Items { get; set; } = "";
     public OrderStatus Status { get; set; }
     public string ContactPhone { get; set; } = "";
-    public string OrderType { get; set; } = "";
+    public OrderType OrderType { get; set; }
     public string DeliveryAddress { get; set; } = "";
 }

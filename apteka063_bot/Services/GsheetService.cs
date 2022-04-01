@@ -1,10 +1,12 @@
 ﻿using apteka063.Database;
+using apteka063.Extensions;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace apteka063.Services
 {
@@ -24,6 +26,8 @@ namespace apteka063.Services
 
         public async Task PostOrder(Order order, string person, string personID, string pills, CancellationToken cts = default)
         {
+            var currentLocale = Thread.CurrentThread.CurrentUICulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("ru");
             string orderID = order.Id.ToString();
 
             var service = GetSheetsSevice();
@@ -45,14 +49,14 @@ namespace apteka063.Services
                 ValueRange valueRange = new() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {
                     new List<object>() { orderID },
-                    new List<object>() { "not supported" },
+                    new List<object>() { TranslationConverter.ToLocaleString(order.Status) },
                     new List<object>() { person },
                     new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
                     new List<object>() { pills },
                     new List<object>() { "not supported" },
                     new List<object>() { order.ContactPhone },
                     new List<object>() { order.DeliveryAddress },
-                    new List<object>() { order.OrderType },
+                    new List<object>() { TranslationConverter.ToLocaleString(order.OrderType) },
                     new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") },
                     new List<object>() { $"=IF(J{writePosition},HOUR(NOW()-J{writePosition}) + DAYS(NOW(), J{writePosition}) * 24, -1)" }, // Format depend on Google sheet
                 };
@@ -64,6 +68,7 @@ namespace apteka063.Services
             {
                 _logger.LogError(ex, ex.Message);
             }
+            Thread.CurrentThread.CurrentUICulture = currentLocale;
         }
         public async Task UpdateFreezedValues(CancellationToken cts = default)
         {
@@ -139,7 +144,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"pc{i}", Name = response.Values[i][0].ToString()!, OrderType = "pills" }, cts);
+                        await _db.ItemsCategories.AddAsync(new() { Id = $"pc{i}", Name = response.Values[i][0].ToString()!, OrderType = OrderType.Pills }, cts);
                     }
                 }
                 request = service.Spreadsheets.Values.Get(spreadsheetId, "Гуманитарка!N2:N");
@@ -148,7 +153,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, OrderType = "humaid" }, cts);
+                        await _db.ItemsCategories.AddAsync(new() { Id = $"fc{i}", Name = response.Values[i][0].ToString()!, OrderType = OrderType.Humaid }, cts);
                     }
                 }
                 await _db.SaveChangesAsync(cts);

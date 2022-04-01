@@ -12,7 +12,7 @@ public partial class OrderButton
     {
         var itemsIds = order.Items!.Split(',');
         IQueryable<string> itemsNames = null!;
-        if (order.Items.Contains('p'))
+        if (order.OrderType == OrderType.Pills)
         {
             var items = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id));
             itemsNames = items.Select(x => x.Name);

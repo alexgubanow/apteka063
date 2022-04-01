@@ -1,6 +1,6 @@
 using apteka063.Database;
 using apteka063.Extensions;
-using Microsoft.Extensions.Logging;
+using apteka063.Resources;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -13,43 +13,38 @@ public partial class MyOrders
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "myOrders") },
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Pills, "orderType_pills") },
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Humaid, "orderType_humaid") },
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Transport, "orderType_transport") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, "myOrders") },
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Pills, $"orderType_{OrderType.Pills}") },
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Humaid, $"orderType_{OrderType.Humaid}") },
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Transport, $"orderType_{OrderType.Transport}") }
         };
-        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.Choose_order_type, callbackQuery.Message!.Chat.Id, 
+        return await botClient.UpdateOrSendMessageAsync(_logger, Translation.Choose_order_type, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
     public async Task<Message?> ShowCategoriesAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
-        var orderType = callbackQuery.Data!.Split('_', 2).Last();
+        var orderType = (OrderType)Enum.Parse(typeof(OrderType), callbackQuery.Data!.Split('_', 2).Last());
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "OrderTypes") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, "OrderTypes") }
         };
         var categories = _db.ItemsCategories.Where(x => x.OrderType == orderType);
         foreach (var category in categories)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(category.Name, $"category_{category.Id}") });
         }
-        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.PickCategory, callbackQuery.Message!.Chat.Id,
+        return await botClient.UpdateOrSendMessageAsync(_logger, Translation.PickCategory, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
     public async Task<Message?> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, string category = null!, Order? order = null, CancellationToken cts = default)
     {
         category ??= callbackQuery.Data!.Split('_', 2).Last();
-        var orderType = (await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts))?.OrderType;
+        var orderType = (await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts))!.OrderType;
         order ??= await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, orderType, cts);
-        if (order.OrderType == null || order.OrderType == "")
-        {
-            order.OrderType = orderType!;
-            await _db.SaveChangesAsync(cts);
-        }
         var orderItems = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, $"orderType_{orderType}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"orderType_{orderType}") }
         };
         var items = _db.ItemsToOrder.Where(x => x.CategoryId == category);
         foreach (var item in items)
@@ -58,34 +53,35 @@ public partial class MyOrders
                 item.Name + (orderItems != null && orderItems.Contains(item.Id) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
                 $"item_{item.Id}") });
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Order, "order") });
-        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.AvailableNow, callbackQuery.Message!.Chat.Id,
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Order, "order") });
+        return await botClient.UpdateOrSendMessageAsync(_logger, Translation.AvailableNow, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
     public async Task<Message?> OnItemReceivedAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
-        var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, cts: cts);
         var itemId = callbackQuery.Data!.Split('_', 2).Last();
-        var orderPillsList = order.Items?.Split(',').ToList();
-        if (orderPillsList != null)
+        var categoryId = (await _db.ItemsToOrder.FindAsync(new object?[] { itemId }, cancellationToken: cts))!.CategoryId;
+        var itemCategory = await _db.ItemsCategories.FindAsync(new object?[] { categoryId }, cancellationToken: cts);
+        var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, itemCategory!.OrderType, cts: cts);
+        var orderItemsList = order.Items?.Split(',').ToList();
+        if (orderItemsList != null)
         {
-            if (orderPillsList.Contains(itemId))
+            if (orderItemsList.Contains(itemId))
             {
-                orderPillsList.Remove(itemId);
+                orderItemsList.Remove(itemId);
             }
             else
             {
-                orderPillsList.Add(itemId);
+                orderItemsList.Add(itemId);
             }
         }
         else
         {
-            orderPillsList = new() { itemId };
+            orderItemsList = new() { itemId };
         }
-        order.Items = string.Join(',', orderPillsList);
+        order.Items = string.Join(',', orderItemsList);
         _db.Orders.Update(order);
         await _db.SaveChangesAsync(cts);
-        var item = await _db.ItemsToOrder.FindAsync(new object?[] { itemId }, cancellationToken: cts);
-        return await ShowItemsAsync(botClient, callbackQuery, item!.CategoryId, order, cts);
+        return await ShowItemsAsync(botClient, callbackQuery, categoryId, order, cts);
     }
 }

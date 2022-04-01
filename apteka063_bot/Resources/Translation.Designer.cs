@@ -88,11 +88,29 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Canceled.
+        /// </summary>
+        internal static string Canceled {
+            get {
+                return ResourceManager.GetString("Canceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose order type.
         /// </summary>
         internal static string Choose_order_type {
             get {
                 return ResourceManager.GetString("Choose_order_type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed.
+        /// </summary>
+        internal static string Closed {
+            get {
+                return ResourceManager.GetString("Closed", resourceCulture);
             }
         }
         
@@ -115,11 +133,29 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Declined.
+        /// </summary>
+        internal static string Declined {
+            get {
+                return ResourceManager.GetString("Declined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emergency contacts.
         /// </summary>
         internal static string EmergencyContacts {
             get {
                 return ResourceManager.GetString("EmergencyContacts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filling.
+        /// </summary>
+        internal static string Filling {
+            get {
+                return ResourceManager.GetString("Filling", resourceCulture);
             }
         }
         
@@ -169,6 +205,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InProgress.
+        /// </summary>
+        internal static string InProgress {
+            get {
+                return ResourceManager.GetString("InProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main menu:.
         /// </summary>
         internal static string MainMenu {
@@ -178,11 +223,47 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to NeedAdress.
+        /// </summary>
+        internal static string NeedAdress {
+            get {
+                return ResourceManager.GetString("NeedAdress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NeedApprove.
+        /// </summary>
+        internal static string NeedApprove {
+            get {
+                return ResourceManager.GetString("NeedApprove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NeedPhone.
+        /// </summary>
+        internal static string NeedPhone {
+            get {
+                return ResourceManager.GetString("NeedPhone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New order.
         /// </summary>
         internal static string NewOrder {
             get {
                 return ResourceManager.GetString("NewOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No any active orders found.
+        /// </summary>
+        internal static string No_any_active_orders_found {
+            get {
+                return ResourceManager.GetString("No_any_active_orders_found", resourceCulture);
             }
         }
         
@@ -309,6 +390,15 @@ namespace apteka063.Resources {
         internal static string Transport {
             get {
                 return ResourceManager.GetString("Transport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have orders.
+        /// </summary>
+        internal static string You_dont_have_orders {
+            get {
+                return ResourceManager.GetString("You_dont_have_orders", resourceCulture);
             }
         }
     }

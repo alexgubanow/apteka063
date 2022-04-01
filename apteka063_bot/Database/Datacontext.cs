@@ -32,12 +32,13 @@ public class Apteka063Context : DbContext
     c.Log((RelationalEventId.CommandExecuting, LogLevel.Debug),
         (RelationalEventId.CommandExecuted, LogLevel.Debug))).UseSqlite(connString);
     public Apteka063Context(DbContextOptions<Apteka063Context> options) : base(options) { }
-    public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId, string? orderType = null, CancellationToken cts = default)
+    public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId, OrderType orderType, CancellationToken cts = default)
     {
-        var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress), cts);
+        var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && x.OrderType == orderType &&
+            (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedPhone || x.Status == OrderStatus.NeedAdress), cts);
         if (order == null)
         {
-            order = new(userId, orderType!);
+            order = new(userId, orderType);
             await Orders.AddAsync(order, cts);
             await SaveChangesAsync(cts);
         }
@@ -57,7 +58,11 @@ public class Apteka063Context : DbContext
 }
 public enum OrderStatus
 {
-    Filling, NeedPhone, NeedAdress, NeedApprove, InProgress, Declined, Closed
+    Filling, NeedPhone, NeedAdress, Canceled, InProgress, Declined, Closed, N_A
+}
+public enum OrderType
+{
+    Pills, Humaid, Transport, N_A
 }
 public class ItemToOrder
 {
@@ -80,7 +85,7 @@ public class ItemToOrderCategory
     [Key]
     public string Id { get; set; }
     public string Name { get; set; } = "";
-    public string OrderType { get; set; } = "";
+    public OrderType OrderType { get; set; }
 }
 public class Contact : Telegram.Bot.Types.Contact
 {

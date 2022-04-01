@@ -63,7 +63,7 @@ public partial class OrderButton
     public async Task<Message?> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.DeliveryAddress = message.Text ?? "";
-        order.Status = OrderStatus.NeedApprove;
+        order.Status = OrderStatus.InProgress;
         await _db.SaveChangesAsync(cts);
         await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.Order_received_processing_please_wait, message!.Chat.Id, lastMessageSentId, cts: cts);
         return await PublishOrderAsync(botClient, message, lastMessageSentId, order, cts);

@@ -126,8 +126,14 @@
   <data name="Cancel" xml:space="preserve">
     <value>Отменить</value>
   </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Отмененный</value>
+  </data>
   <data name="Choose_order_type" xml:space="preserve">
     <value>Выберите тип заказа</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Закрыт</value>
   </data>
   <data name="DBUpdateFailed" xml:space="preserve">
     <value>Обновление не удалось</value>
@@ -135,8 +141,14 @@
   <data name="DBUpdateFinished" xml:space="preserve">
     <value>База данных обновлена</value>
   </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Отклоненный</value>
+  </data>
   <data name="EmergencyContacts" xml:space="preserve">
     <value>Экстренные контакты</value>
+  </data>
+  <data name="Filling" xml:space="preserve">
+    <value>Заполнение</value>
   </data>
   <data name="Food" xml:space="preserve">
     <value>Еда</value>
@@ -147,11 +159,23 @@
   <data name="GoToMenu" xml:space="preserve">
     <value>Вернуться в Главное меню</value>
   </data>
+  <data name="HasBeenRegistered" xml:space="preserve">
+    <value>был зарегистрирован</value>
+  </data>
   <data name="Humaid" xml:space="preserve">
     <value>Гуманитарка</value>
   </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>В ходе выполнения</value>
+  </data>
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
+  </data>
+  <data name="NeedAdress" xml:space="preserve">
+    <value>Нужен адрес</value>
+  </data>
+  <data name="NeedPhone" xml:space="preserve">
+    <value>Нужен телефон</value>
   </data>
   <data name="NewOrder" xml:space="preserve">
     <value>Новый заказ</value>
@@ -161,6 +185,9 @@
   </data>
   <data name="Order" xml:space="preserve">
     <value>Заказать</value>
+  </data>
+  <data name="OrderNotFound" xml:space="preserve">
+    <value>Активных заказов не найдено</value>
   </data>
   <data name="OrderNumber" xml:space="preserve">
     <value>Заказ №</value>
@@ -200,5 +227,8 @@
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Транспорт</value>
+  </data>
+  <data name="You_dont_have_orders" xml:space="preserve">
+    <value>У вас нет заказов</value>
   </data>
 </root>

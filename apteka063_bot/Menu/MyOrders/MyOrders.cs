@@ -1,5 +1,6 @@
 using apteka063.Database;
 using apteka063.Extensions;
+using apteka063.Resources;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -20,16 +21,22 @@ public partial class MyOrders
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, $"main") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"main") }
         };
         var user = await _db.Users.FindAsync(new object?[] { callbackQuery.From.Id }, cancellationToken: cts);
+        var headerText = Translation.You_dont_have_orders;
         var myOrders = _db.Orders.Where(x => x.UserId == user!.Id);
-        foreach (var order in myOrders)
+        if (myOrders.Any())
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData($"{Resources.Translation.OrderNumber}{order.Id}", $"order_{order.Id}") });
+            foreach (var order in myOrders)
+            {
+                buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
+                $"{Translation.OrderNumber}{order.Id} - {TranslationConverter.ToLocaleString(order.OrderType)} - {TranslationConverter.ToLocaleString(order.Status)}", $"order_{order.Id}") });
+            }
+            headerText = Translation.ActiveOrders;
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.NewOrder, "OrderTypes") });
-        return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ActiveOrders, callbackQuery.Message!.Chat.Id, 
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NewOrder, "OrderTypes") });
+        return await botClient.UpdateOrSendMessageAsync(_logger, headerText, callbackQuery.Message!.Chat.Id, 
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
 }
