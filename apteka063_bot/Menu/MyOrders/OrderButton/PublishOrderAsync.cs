@@ -1,4 +1,5 @@
-﻿using apteka063.Database;
+﻿using apteka063.Constants;
+using apteka063.Database;
 using apteka063.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -41,7 +42,7 @@ public partial class OrderButton
 
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoToMenu, "main") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoToMenu, CallbackDataConstants.MainMenu) }
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, resultTranslatedText, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }

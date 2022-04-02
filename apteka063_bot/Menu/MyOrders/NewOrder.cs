@@ -1,3 +1,4 @@
+using apteka063.Constants;
 using apteka063.Database;
 using apteka063.Extensions;
 using apteka063.Resources;
@@ -35,7 +36,7 @@ public partial class MyOrders
         var orderType = (OrderType)Enum.Parse(typeof(OrderType), callbackQuery.Data!.Split('_', 2).Last());
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, "OrderTypes") }
+            new() { InlineKeyboardButton.WithCallbackData(Translation.GoBack, CallbackDataConstants.OrderTypesConfirmOrderReset) }
         };
         var categories = _db.ItemsCategories.Where(x => x.OrderType == orderType);
         foreach (var category in categories)

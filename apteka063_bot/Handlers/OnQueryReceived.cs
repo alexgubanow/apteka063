@@ -1,3 +1,4 @@
+using apteka063.Constants;
 using apteka063.Database;
 using apteka063.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public partial class UpdateHandlers
 {
     private async Task<Message?> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts = default)
     {
-        if (callbackQuery.Data == "main")
+        if (callbackQuery.Data == CallbackDataConstants.MainMenu)
         {
             return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, callbackQuery.Message!.Chat.Id, callbackQuery.Message!.MessageId, cts);
         }
@@ -22,6 +23,24 @@ public partial class UpdateHandlers
         }
         if (callbackQuery.Data == "OrderTypes")
         {
+            return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
+        }
+        if (callbackQuery.Data == CallbackDataConstants.OrderTypesConfirmOrderReset)
+        {
+            return await _menu.ShowOrderTypesConfirmOrderReset(botClient, callbackQuery, cts);
+        }
+        if (callbackQuery.Data == CallbackDataConstants.OrderTypesWithResetOrder)
+        {
+            var tgUser = callbackQuery.From;
+            
+            // TODO: is only "Filling" considered an active order to delete?
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.UserId == tgUser.Id && x.Status == OrderStatus.Filling, cancellationToken: cts);
+            if (order != null)
+            {
+                _db.Orders.Remove(order);
+                await _db.SaveChangesAsync(cts);
+            }
+
             return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
         }
         else if (callbackQuery.Data!.Contains("orderType_"))
@@ -48,7 +67,7 @@ public partial class UpdateHandlers
         else if (callbackQuery.Data == "emergencyContacts")
         {
             var emergencyContacts = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "emergencyContacts", cts))?.Value ?? "";
-            var buttons = new List<List<InlineKeyboardButton>> { new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "main") } };
+            var buttons = new List<List<InlineKeyboardButton>> { new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, CallbackDataConstants.MainMenu) } };
             return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts, callbackQuery.Message!.Chat.Id,
                 callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
         }

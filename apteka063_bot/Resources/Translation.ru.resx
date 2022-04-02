@@ -189,9 +189,6 @@
   <data name="Order" xml:space="preserve">
     <value>Заказать</value>
   </data>
-  <data name="OrderNotFound" xml:space="preserve">
-    <value>Активных заказов не найдено</value>
-  </data>
   <data name="OrderNumber" xml:space="preserve">
     <value>Заказ №</value>
   </data>
@@ -236,5 +233,17 @@
   </data>
   <data name="You_dont_have_orders" xml:space="preserve">
     <value>У вас нет заказов</value>
+  </data>
+  <data name="OrderTypesConfirmOrderReset" xml:space="preserve">
+    <value>Подтвердите отмену заказа:</value>
+  </data>
+  <data name="OrderTypesWithResetOrder" xml:space="preserve">
+    <value>Отменить заказ</value>
+  </data>
+  <data name="GoBackToMyOrder" xml:space="preserve">
+    <value>Продолжить заказ</value>
+  </data>
+  <data name="No_any_active_orders_found" xml:space="preserve">
+    <value>Активных заказов не найдено</value>
   </data>
 </root>

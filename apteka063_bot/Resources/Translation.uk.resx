@@ -234,4 +234,13 @@
   <data name="You_dont_have_orders" xml:space="preserve">
     <value>Ви не маєте замовлень</value>
   </data>
+  <data name="OrderTypesConfirmOrderReset" xml:space="preserve">
+    <value>Підтвердіть скасування замовлення:</value>
+  </data>
+  <data name="OrderTypesWithResetOrder" xml:space="preserve">
+    <value>Відмінити замовлення</value>
+  </data>
+  <data name="GoBackToMyOrder" xml:space="preserve">
+    <value>Продовжити замовлення</value>
+  </data>
 </root>

@@ -178,6 +178,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Continue order.
+        /// </summary>
+        internal static string GoBackToMyOrder {
+            get {
+                return ResourceManager.GetString("GoBackToMyOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Go to the Main menu.
         /// </summary>
         internal static string GoToMenu {
@@ -318,6 +327,24 @@ namespace apteka063.Resources {
         internal static string Orders {
             get {
                 return ResourceManager.GetString("Orders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm order reset:.
+        /// </summary>
+        internal static string OrderTypesConfirmOrderReset {
+            get {
+                return ResourceManager.GetString("OrderTypesConfirmOrderReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel order.
+        /// </summary>
+        internal static string OrderTypesWithResetOrder {
+            get {
+                return ResourceManager.GetString("OrderTypesWithResetOrder", resourceCulture);
             }
         }
         
