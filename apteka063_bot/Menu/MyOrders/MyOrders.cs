@@ -36,7 +36,7 @@ public partial class MyOrders
             }
             headerText = Translation.ActiveOrders;
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NewOrder, "OrderTypes") });
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NewOrder, CallbackDataConstants.OrderTypes) });
         return await botClient.UpdateOrSendMessageAsync(_logger, headerText, callbackQuery.Message!.Chat.Id, 
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }

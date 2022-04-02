@@ -178,15 +178,6 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Continue order.
-        /// </summary>
-        internal static string GoBackToMyOrder {
-            get {
-                return ResourceManager.GetString("GoBackToMyOrder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Go to the Main menu.
         /// </summary>
         internal static string GoToMenu {

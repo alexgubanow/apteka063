@@ -14,19 +14,19 @@ public partial class MyOrders
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, "myOrders") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, CallbackDataConstants.MyOrders) }
         };
         if (_db.ItemsCategories.Where(x => x.OrderType == OrderType.Pills).Any())
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Pills, $"orderType_{OrderType.Pills}") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Pills, $"{CallbackDataConstants.OrderTypePrefix}{OrderType.Pills}") });
         }
         if (_db.ItemsCategories.Where(x => x.OrderType == OrderType.Humaid).Any())
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Humaid, $"orderType_{OrderType.Humaid}") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Humaid, $"{CallbackDataConstants.OrderTypePrefix}{OrderType.Humaid}") });
         }
         if (_db.ItemsCategories.Where(x => x.OrderType == OrderType.Transport).Any())
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Transport, $"orderType_{OrderType.Transport}") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Transport, $"{CallbackDataConstants.OrderTypePrefix}{OrderType.Transport}") });
         }
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.Choose_order_type, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
@@ -43,7 +43,7 @@ public partial class MyOrders
         {
             if (_db.ItemsToOrder.Where(x => x.CategoryId == category.Id).Any())
             {
-                buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(category.Name, $"category_{category.Id}") });
+                buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(category.Name, $"{CallbackDataConstants.CancelOrderPrefix}{category.Id}") });
             }
         }
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.PickCategory, callbackQuery.Message!.Chat.Id,
@@ -56,16 +56,16 @@ public partial class MyOrders
         var orderItems = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"orderType_{orderType}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"{CallbackDataConstants.OrderTypePrefix}{orderType}") }
         };
         var items = _db.ItemsToOrder.Where(x => x.CategoryId == category);
         foreach (var item in items)
         {
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
                 item.Name + (orderItems != null && orderItems.Contains(item.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
-                $"item_{item.Id}") });
+                $"{CallbackDataConstants.ItemPrefix}{item.Id}") });
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Order, "order") });
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Order, CallbackDataConstants.Order) });
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.AvailableNow, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }

@@ -216,9 +216,6 @@
   <data name="ProvideReceiverName" xml:space="preserve">
     <value>Пожалуйста, напишите имя получателя</value>
   </data>
-  <data name="registered" xml:space="preserve">
-    <value>зарегистрирован</value>
-  </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Сообщить о подозрительной активности</value>
   </data>
@@ -239,9 +236,6 @@
   </data>
   <data name="OrderTypesWithResetOrder" xml:space="preserve">
     <value>Отменить заказ</value>
-  </data>
-  <data name="GoBackToMyOrder" xml:space="preserve">
-    <value>Продолжить заказ</value>
   </data>
   <data name="No_any_active_orders_found" xml:space="preserve">
     <value>Активных заказов не найдено</value>

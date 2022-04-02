@@ -240,7 +240,4 @@
   <data name="OrderTypesWithResetOrder" xml:space="preserve">
     <value>Cancel order</value>
   </data>
-  <data name="GoBackToMyOrder" xml:space="preserve">
-    <value>Continue order</value>
-  </data>
 </root>

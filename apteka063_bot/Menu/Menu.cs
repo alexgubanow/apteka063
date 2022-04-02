@@ -48,17 +48,17 @@ public class Menu
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Orders, "myOrders") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Orders, CallbackDataConstants.MyOrders) }
         };
         if (_reportActivityIsEnabled)
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, "reportActivity") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, CallbackDataConstants.ReportActivity) });
         }
         if (_reportIncidentIsEnabled)
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, "reportActivity") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, CallbackDataConstants.ReportActivity) });
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.EmergencyContacts, "emergencyContacts") });
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.EmergencyContacts, CallbackDataConstants.EmergencyContacts) });
         
         var headerFromDB = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "Шапка главное меню"))?.Value;
         
@@ -75,11 +75,11 @@ public class Menu
             return await MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
         }
 
-        var currentOrderMenuCallback = $"orderType_{order.OrderType}";
+        var currentOrderMenuCallback = $"{CallbackDataConstants.OrderTypePrefix}{order.OrderType}";
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new() { InlineKeyboardButton.WithCallbackData(Resources.Translation.OrderTypesWithResetOrder, CallbackDataConstants.OrderTypesWithResetOrder) },
-            new() { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBackToMyOrder, currentOrderMenuCallback) }
+            new() { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, currentOrderMenuCallback) }
         };
 
         var headerText = Resources.Translation.OrderTypesConfirmOrderReset;

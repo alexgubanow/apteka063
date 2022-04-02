@@ -216,9 +216,6 @@
   <data name="ProvideReceiverName" xml:space="preserve">
     <value>Будь ласка, напишіть ім'я отримувача</value>
   </data>
-  <data name="registered" xml:space="preserve">
-    <value>зареєстрований</value>
-  </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Повідомити про підозрілу активність</value>
   </data>
@@ -240,7 +237,7 @@
   <data name="OrderTypesWithResetOrder" xml:space="preserve">
     <value>Відмінити замовлення</value>
   </data>
-  <data name="GoBackToMyOrder" xml:space="preserve">
-    <value>Продовжити замовлення</value>
+  <data name="GoToMenu" xml:space="preserve">
+    <value>Повернутися до Головного меню</value>
   </data>
 </root>

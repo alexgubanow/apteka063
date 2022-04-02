@@ -17,11 +17,11 @@ public partial class UpdateHandlers
         {
             return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, callbackQuery.Message!.Chat.Id, callbackQuery.Message!.MessageId, cts);
         }
-        if (callbackQuery.Data == "myOrders")
+        if (callbackQuery.Data == CallbackDataConstants.MyOrders)
         {
             return await _menu.MyOrders.ShowMyOrdersAsync(botClient, callbackQuery, cts);
         }
-        if (callbackQuery.Data == "OrderTypes")
+        if (callbackQuery.Data == CallbackDataConstants.OrderTypes)
         {
             return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
         }
@@ -32,7 +32,7 @@ public partial class UpdateHandlers
         if (callbackQuery.Data == CallbackDataConstants.OrderTypesWithResetOrder)
         {
             var tgUser = callbackQuery.From;
-            
+
             // TODO: is only "Filling" considered an active order to delete?
             var order = await _db.Orders.FirstOrDefaultAsync(x => x.UserId == tgUser.Id && x.Status == OrderStatus.Filling, cancellationToken: cts);
             if (order != null)
@@ -43,34 +43,35 @@ public partial class UpdateHandlers
 
             return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data!.Contains("orderType_"))
+        else if (callbackQuery.Data!.Contains(CallbackDataConstants.OrderTypePrefix))
         {
             return await _menu.MyOrders.ShowCategoriesAsync(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data!.Contains("category_") == true)
+        else if (callbackQuery.Data!.Contains(CallbackDataConstants.CategoryPrefx) == true)
         {
             var categoryId = int.Parse(callbackQuery.Data!.Split('_', 2).Last());
             return await _menu.MyOrders.ShowItemsAsync(botClient, callbackQuery, categoryId, cts: cts);
         }
-        else if (callbackQuery.Data!.Contains("item_") == true)
+        else if (callbackQuery.Data!.Contains(CallbackDataConstants.ItemPrefix) == true)
         {
             return await _menu.MyOrders.OnItemReceivedAsync(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data == "order")
+        else if (callbackQuery.Data == CallbackDataConstants.Order)
         {
             return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, user.LastMessageSentId, cts);
         }
-        else if (callbackQuery.Data.Contains("cancelOrder_"))
+        else if (callbackQuery.Data.Contains(CallbackDataConstants.CancelOrderPrefix))
         {
             return await _orderButton.OnCancelOrder(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data == "emergencyContacts")
+        else if (callbackQuery.Data == CallbackDataConstants.EmergencyContacts)
         {
             var emergencyContacts = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "emergencyContacts", cts))?.Value ?? "";
             var buttons = new List<List<InlineKeyboardButton>> { new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, CallbackDataConstants.MainMenu) } };
             return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts, callbackQuery.Message!.Chat.Id,
                 callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
         }
+        // TODO: else if (callbackQuery.Data == CallbackDataConstants.ReportActivity)  { }
         await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, Resources.Translation.NotImplemented, true, cancellationToken: cts);
         return null!;
     }

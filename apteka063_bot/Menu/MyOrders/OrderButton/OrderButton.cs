@@ -1,4 +1,5 @@
-﻿using apteka063.Database;
+﻿using apteka063.Constants;
+using apteka063.Database;
 using apteka063.Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -45,7 +46,7 @@ public partial class OrderButton
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"{CallbackDataConstants.CancelOrderPrefix}{order.Id}") }
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvidePhoneNumber, callbackQuery.Message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
@@ -56,7 +57,7 @@ public partial class OrderButton
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"{CallbackDataConstants.CancelOrderPrefix}{order.Id}") }
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvideReceiverName, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
@@ -67,7 +68,7 @@ public partial class OrderButton
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"cancelOrder_{order.Id}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Cancel, $"{CallbackDataConstants.CancelOrderPrefix}{order.Id}") }
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.ProvideDeliveryAddress, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
     }
