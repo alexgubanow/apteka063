@@ -52,6 +52,7 @@ public partial class OrderButton
     public async Task<Message?> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.ContactPhone = message.Text ?? "";
+        order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.NeedContactName;
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
@@ -63,6 +64,7 @@ public partial class OrderButton
     public async Task<Message?> SaveContactNameAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.ContactName = message.Text ?? "";
+        order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.NeedContactAddress;
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
@@ -74,6 +76,7 @@ public partial class OrderButton
     public async Task<Message?> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.DeliveryAddress = message.Text ?? "";
+        order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.InProgress;
         await _db.SaveChangesAsync(cts);
         await botClient.UpdateOrSendMessageAsync(_logger, Resources.Translation.Order_received_processing_please_wait, message!.Chat.Id, lastMessageSentId, cts: cts);

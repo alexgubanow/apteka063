@@ -91,6 +91,7 @@ public partial class MyOrders
             orderItemsList = new() { itemId };
         }
         order.Items = string.Join(',', orderItemsList);
+        order.LastUpdateDateTime = DateTime.Now;
         _db.Orders.Update(order);
         await _db.SaveChangesAsync(cts);
         return await ShowItemsAsync(botClient, callbackQuery, categoryId, order, cts);
