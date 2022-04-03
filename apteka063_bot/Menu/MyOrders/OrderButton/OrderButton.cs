@@ -98,6 +98,7 @@ public partial class OrderButton
                 message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
         }
         order.DeliveryAddress = message.Text;
+        order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.InProgress;
         await _db.SaveChangesAsync(cts);
         var msg = await botClient.UpdateOrSendMessageAsync(_logger, Translation.Order_received_processing_please_wait, message.Chat.Id, lastMessageSentId, cts: cts);

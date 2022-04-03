@@ -110,7 +110,7 @@ namespace apteka063.Services
                     new List<object>() { order.ContactPhone },
                     new List<object>() { order.DeliveryAddress },
                     new List<object>() { TranslationConverter.ToLocaleString(order.OrderType) },
-                    new List<object>() { DateTime.Now.ToString("MM/dd/yyyy H:mm:ss") },
+                    new List<object>() { order.CreationDateTime.ToString("MM/dd/yyyy H:mm:ss") },
                     new List<object>() { $"=NOW()-J{writePosition}" }, // Format depend on Google sheet
                 };
                 var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:K{writePosition}");

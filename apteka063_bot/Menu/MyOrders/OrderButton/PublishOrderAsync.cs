@@ -28,6 +28,8 @@ public partial class OrderButton
             itemsNames = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString())).Select(x => x.Name);
         }
 
+        order.CreationDateTime = DateTime.Now;
+        await _db.SaveChangesAsync(cts);
         await _gsheet.PostOrder(order, message.From!, string.Join(", ", itemsNames), cts);
 
         // Your order #%d has been posted
