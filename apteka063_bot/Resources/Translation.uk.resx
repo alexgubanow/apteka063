@@ -144,6 +144,9 @@
   <data name="Declined" xml:space="preserve">
     <value>Відхилено</value>
   </data>
+  <data name="EditOrder" xml:space="preserve">
+    <value>Відредагувати замовлення</value>
+  </data>
   <data name="EmergencyContacts" xml:space="preserve">
     <value>Екстренні контакти</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="GoBack" xml:space="preserve">
     <value>Повернутись назад</value>
+  </data>
+  <data name="GoToMenu" xml:space="preserve">
+    <value>Повернутися до Головного меню</value>
   </data>
   <data name="HasBeenRegistered" xml:space="preserve">
     <value>було зареєстровано</value>
@@ -172,7 +178,7 @@
     <value>Потрібна адреса</value>
   </data>
   <data name="NeedContactName" xml:space="preserve">
-    <value>Потрібен телефон</value>
+    <value>Потрібне ім'я контакту</value>
   </data>
   <data name="NeedPhone" xml:space="preserve">
     <value>Потрібен телефон</value>
@@ -210,6 +216,9 @@
   <data name="Pills" xml:space="preserve">
     <value>Медикаменти</value>
   </data>
+  <data name="ProceedOrder" xml:space="preserve">
+    <value>Продовжити оформлення замовлення</value>
+  </data>
   <data name="ProvideDeliveryAddress" xml:space="preserve">
     <value>Будь ласка, напишіть адресу одержувача</value>
   </data>
@@ -218,9 +227,6 @@
   </data>
   <data name="ProvideReceiverName" xml:space="preserve">
     <value>Будь ласка, напишіть ім'я отримувача</value>
-  </data>
-  <data name="registered" xml:space="preserve">
-    <value>зареєстрований</value>
   </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Повідомити про підозрілу активність</value>
@@ -236,6 +242,9 @@
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Транспорт</value>
+  </data>
+  <data name="YourOrderIs" xml:space="preserve">
+    <value>Ваше замовлення</value>
   </data>
   <data name="You_dont_have_orders" xml:space="preserve">
     <value>Ви не маєте замовлень</value>

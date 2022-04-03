@@ -144,6 +144,9 @@
   <data name="Declined" xml:space="preserve">
     <value>Declined</value>
   </data>
+  <data name="EditOrder" xml:space="preserve">
+    <value>Edit the Order</value>
+  </data>
   <data name="EmergencyContacts" xml:space="preserve">
     <value>Emergency contacts</value>
   </data>
@@ -213,6 +216,9 @@
   <data name="Pills" xml:space="preserve">
     <value>Pills</value>
   </data>
+  <data name="ProceedOrder" xml:space="preserve">
+    <value>Proceed the Order</value>
+  </data>
   <data name="ProvideDeliveryAddress" xml:space="preserve">
     <value>Please provide the address where order should be shipped</value>
   </data>
@@ -236,6 +242,9 @@
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Transport</value>
+  </data>
+  <data name="YourOrderIs" xml:space="preserve">
+    <value>Your Order is:</value>
   </data>
   <data name="You_dont_have_orders" xml:space="preserve">
     <value>You don't have orders</value>
