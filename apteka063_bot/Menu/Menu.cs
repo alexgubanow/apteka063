@@ -43,7 +43,7 @@ public class Menu
             ConfigurationManager.RefreshSection("ReportIncidentIsEnabled");
         }
     }
-    public async Task<Message?> ShowMainMenuAsync(ITelegramBotClient botClient, string headerText, long chatId, int? messageId = null, CancellationToken cts = default)
+    public async Task<Message> ShowMainMenuAsync(ITelegramBotClient botClient, string headerText, Message message,int? lastMessageSentId = null, CancellationToken cts = default)
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
@@ -58,7 +58,8 @@ public class Menu
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, "reportActivity") });
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.EmergencyContacts, "emergencyContacts") });
-        var headerFormDB = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "Шапка главное меню"))?.Value;
-        return await botClient.UpdateOrSendMessageAsync(_logger, $"{headerFormDB ?? ""}\n{headerText}", chatId, messageId, new InlineKeyboardMarkup(buttons), cts);
+        var idToUpdate = lastMessageSentId != null ? (int)lastMessageSentId : message.MessageId;
+        var headerFormDB = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "Шапка главное меню", cancellationToken: cts))?.Value;
+        return await botClient.UpdateOrSendMessageAsync(_logger, $"{headerFormDB ?? ""}\n{headerText}", message.Chat.Id, idToUpdate, new InlineKeyboardMarkup(buttons), cts: cts);
     }
 }

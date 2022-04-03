@@ -17,13 +17,12 @@ public partial class MyOrders
         _logger = logger;
         _db = db;
     }
-    public async Task<Message?> ShowMyOrdersAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    public async Task<Message> ShowMyOrdersAsync(ITelegramBotClient botClient, Message message, Database.User user, CancellationToken cts = default)
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"main") }
         };
-        var user = await _db.Users.FindAsync(new object?[] { callbackQuery.From.Id }, cancellationToken: cts);
         var headerText = Translation.You_dont_have_orders;
         var myOrders = _db.Orders.Where(x => x.UserId == user!.Id);
         if (myOrders.Any())
@@ -36,7 +35,6 @@ public partial class MyOrders
             headerText = Translation.ActiveOrders;
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NewOrder, "OrderTypes") });
-        return await botClient.UpdateOrSendMessageAsync(_logger, headerText, callbackQuery.Message!.Chat.Id, 
-            callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, headerText, message, new InlineKeyboardMarkup(buttons), cts: cts);
     }
 }

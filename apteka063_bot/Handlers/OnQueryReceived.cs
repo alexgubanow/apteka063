@@ -10,23 +10,24 @@ namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message?> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts = default)
+    private async Task<Message> OnQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery, User user, CancellationToken cts = default)
     {
         if (callbackQuery.Data == "main")
         {
-            return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, callbackQuery.Message!.Chat.Id, callbackQuery.Message!.MessageId, cts);
+            return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, callbackQuery.Message!, cts: cts);
         }
         if (callbackQuery.Data == "myOrders")
         {
-            return await _menu.MyOrders.ShowMyOrdersAsync(botClient, callbackQuery, cts);
+            return await _menu.MyOrders.ShowMyOrdersAsync(botClient, callbackQuery.Message!, user, cts);
         }
         if (callbackQuery.Data == "OrderTypes")
         {
-            return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
+            return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery.Message!, cts);
         }
         else if (callbackQuery.Data!.Contains("orderType_"))
         {
-            return await _menu.MyOrders.ShowCategoriesAsync(botClient, callbackQuery, cts);
+            var orderType = (OrderType)Enum.Parse(typeof(OrderType), callbackQuery.Data!.Split('_', 2).Last());
+            return await _menu.MyOrders.ShowCategoriesAsync(botClient, callbackQuery.Message!, orderType, cts);
         }
         else if (callbackQuery.Data!.Contains("category_") == true)
         {
@@ -39,7 +40,7 @@ public partial class UpdateHandlers
         }
         else if (callbackQuery.Data == "order")
         {
-            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, user.LastMessageSentId, cts);
+            return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, cts);
         }
         else if (callbackQuery.Data.Contains("cancelOrder_"))
         {
@@ -49,8 +50,7 @@ public partial class UpdateHandlers
         {
             var emergencyContacts = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "emergencyContacts", cts))?.Value ?? "";
             var buttons = new List<List<InlineKeyboardButton>> { new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, "main") } };
-            return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts, callbackQuery.Message!.Chat.Id,
-                callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
+            return await botClient.UpdateOrSendMessageAsync(_logger, emergencyContacts, callbackQuery.Message!, new InlineKeyboardMarkup(buttons), cts: cts);
         }
         await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, Resources.Translation.NotImplemented, true, cancellationToken: cts);
         return null!;

@@ -12,11 +12,11 @@ namespace apteka063.Handlers;
 
 public partial class UpdateHandlers
 {
-    private async Task<Message?> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, User user, CancellationToken cts = default)
+    private async Task<Message> OnMessageReceivedAsync(ITelegramBotClient botClient, Message message, User user, CancellationToken cts = default)
     {
         _logger.LogTrace($"Receive message type: {message.Type}");
         if (message.Type != MessageType.Text)
-            return null;
+            return null!;
         
         var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName || 
             x.Status == OrderStatus.NeedContactAddress)).ToListAsync(cts);
@@ -24,9 +24,8 @@ public partial class UpdateHandlers
         {
             if (order.Count > 1)
             {
-                await botClient.UpdateOrSendMessageAsync(_logger, "MORE THAN ONE ORDER FOUND\nPlease contact admin", message!.Chat.Id, user.LastMessageSentId, cts: cts);
                 _logger.LogError($"MORE THAN ONE ORDER FOUND, FOR USER ID: {user.Id}");
-                return null!;
+                //return await botClient.UpdateOrSendMessageAsync(_logger, "MORE THAN ONE ORDER FOUND\nPlease contact admin", message, cts: cts);
             }
             try
             {
@@ -50,6 +49,6 @@ public partial class UpdateHandlers
                 header += "\n" + Resources.Translation.DBUpdateFailed;
             }
         }
-        return await _menu.ShowMainMenuAsync(botClient, header, message.Chat.Id, user.LastMessageSentId, cts);
+        return await _menu.ShowMainMenuAsync(botClient, header, message, user.LastMessageSentId, cts);
     }
 }

@@ -228,6 +228,9 @@
   <data name="ReportIncident" xml:space="preserve">
     <value>Сообщить об инциденте</value>
   </data>
+  <data name="Something_went_wrong_Please_correct" xml:space="preserve">
+    <value>Что-то пошло не так, пожалуйста проверьте данные которые вы ввели</value>
+  </data>
   <data name="TakeCare" xml:space="preserve">
     <value>Позаботьтесь о себе и о своих близких</value>
   </data>
