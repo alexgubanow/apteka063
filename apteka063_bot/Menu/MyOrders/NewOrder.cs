@@ -45,6 +45,7 @@ public partial class MyOrders
                 buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(category.Name, $"category_{category.Id}") });
             }
         }
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Order, "order") });
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.PickCategory, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
@@ -64,7 +65,6 @@ public partial class MyOrders
                 item.Name + (orderItems != null && orderItems.Contains(item.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
                 $"item_{item.Id}") });
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Order, "order") });
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.AvailableNow, callbackQuery.Message!.Chat.Id,
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
