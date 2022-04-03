@@ -44,7 +44,7 @@ public partial class UpdateHandlers
             return;
         }
         var user = await _db.GetOrCreateUserAsync(tgUser, cts);
-        Task<Message?> handler = update.Type switch
+        Task<Message> handler = update.Type switch
         {
             // UpdateType.Unknown:
             // UpdateType.ChannelPost:
@@ -57,7 +57,7 @@ public partial class UpdateHandlers
             UpdateType.CallbackQuery      => OnQueryReceived(botClient, update.CallbackQuery!, user, cts),
             //UpdateType.InlineQuery        => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
             //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
-            _                             => UnknownUpdateHandlerAsync(botClient, update, user, cts)
+            _                             => null!
         };
         Message? message = null!;
         try
@@ -77,16 +77,16 @@ public partial class UpdateHandlers
         if (userMessageId != -1)
         {
             var chatId = update.Message != null ? update.Message.Chat.Id : update.EditedMessage != null ? update.EditedMessage.Chat.Id : -1;
-            await botClient.DeleteMessageAsync(chatId, userMessageId, cts);
+            try
+            {
+                await botClient.DeleteMessageAsync(chatId, userMessageId, cts);
+            }
+            catch (Exception)
+            {
+                //_logger.LogWarning(ex, $"Chat id:{chatId}, message id:{userMessageId}\noriginal error message:\n{ex.Message}");
+            }
         }
     }
-
-    private async Task<Message?> UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update, Database.User user, CancellationToken cts = default)
-    {
-        _logger.LogWarning($"Unknown update type: {update.Type}");
-        return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, update.Id, user.LastMessageSentId, cts);
-    }
-    
     private static string GetLanguageCodeFromUpdate(Update update)
     {
         switch (update.Type)

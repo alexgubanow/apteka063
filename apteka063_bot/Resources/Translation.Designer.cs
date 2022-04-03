@@ -385,6 +385,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Something went wrong, please correct your input.
+        /// </summary>
+        internal static string Something_went_wrong_Please_correct {
+            get {
+                return ResourceManager.GetString("Something_went_wrong_Please_correct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Take care of yourself and loved ones.
         /// </summary>
         internal static string TakeCare {

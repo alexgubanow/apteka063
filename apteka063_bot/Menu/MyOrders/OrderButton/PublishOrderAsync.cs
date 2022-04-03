@@ -8,7 +8,7 @@ namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<Message?> PublishOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    public async Task<Message> PublishOrderAsync(ITelegramBotClient botClient, Message message, Order order, CancellationToken cts = default)
     {
         var itemsIds = order.Items!.Split(',');
         IQueryable<string> itemsNames = null!;
@@ -45,6 +45,6 @@ public partial class OrderButton
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoToMenu, "main") }
         };
-        return await botClient.UpdateOrSendMessageAsync(_logger, resultTranslatedText, message!.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, resultTranslatedText, message, new InlineKeyboardMarkup(buttons), cts: cts);
     }
 }
