@@ -322,6 +322,24 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirm order reset:.
+        /// </summary>
+        internal static string OrderTypesConfirmOrderReset {
+            get {
+                return ResourceManager.GetString("OrderTypesConfirmOrderReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel order.
+        /// </summary>
+        internal static string OrderTypesWithResetOrder {
+            get {
+                return ResourceManager.GetString("OrderTypesWithResetOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pick category:.
         /// </summary>
         internal static string PickCategory {

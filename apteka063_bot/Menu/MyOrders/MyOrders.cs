@@ -1,3 +1,4 @@
+using apteka063.Constants;
 using apteka063.Database;
 using apteka063.Extensions;
 using apteka063.Resources;
@@ -21,7 +22,7 @@ public partial class MyOrders
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"main") }
+            new() { InlineKeyboardButton.WithCallbackData(Translation.GoBack, CallbackDataConstants.MainMenu) }
         };
         var user = await _db.Users.FindAsync(new object?[] { callbackQuery.From.Id }, cancellationToken: cts);
         var headerText = Translation.You_dont_have_orders;
@@ -35,7 +36,7 @@ public partial class MyOrders
             }
             headerText = Translation.ActiveOrders;
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NewOrder, "OrderTypes") });
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NewOrder, CallbackDataConstants.OrderTypes) });
         return await botClient.UpdateOrSendMessageAsync(_logger, headerText, callbackQuery.Message!.Chat.Id, 
             callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }

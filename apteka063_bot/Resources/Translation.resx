@@ -234,4 +234,10 @@
   <data name="You_dont_have_orders" xml:space="preserve">
     <value>You don't have orders</value>
   </data>
+  <data name="OrderTypesConfirmOrderReset" xml:space="preserve">
+    <value>Confirm order reset:</value>
+  </data>
+  <data name="OrderTypesWithResetOrder" xml:space="preserve">
+    <value>Cancel order</value>
+  </data>
 </root>

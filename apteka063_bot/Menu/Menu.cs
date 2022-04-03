@@ -5,6 +5,7 @@ using apteka063.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
+using apteka063.Constants;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -16,12 +17,12 @@ public class Menu
     private readonly ILogger<Menu> _logger;
     public readonly MyOrders MyOrders;
     private readonly Apteka063Context _db;
-    private readonly bool ReportActivityIsEnabled = false;
-    private readonly bool ReportIncidentIsEnabled = false;
-    public Menu(ILogger<Menu> logger, MyOrders _MyOrders, Apteka063Context db)
+    private readonly bool _reportActivityIsEnabled = false;
+    private readonly bool _reportIncidentIsEnabled = false;
+    public Menu(ILogger<Menu> logger, MyOrders myOrders, Apteka063Context db)
     {
         _logger = logger;
-        MyOrders = _MyOrders;
+        MyOrders = myOrders;
         _db = db;
         var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         if (config == null)
@@ -32,11 +33,11 @@ public class Menu
         {
             if (config.AppSettings.Settings["ReportActivityIsEnabled"] != null)
             {
-                ReportActivityIsEnabled = true;
+                _reportActivityIsEnabled = true;
             }
             if (config.AppSettings.Settings["ReportIncidentIsEnabled"] != null)
             {
-                ReportIncidentIsEnabled = true;
+                _reportIncidentIsEnabled = true;
             }
             config.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection("ReportActivityIsEnabled");
@@ -47,18 +48,42 @@ public class Menu
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Orders, "myOrders") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.Orders, CallbackDataConstants.MyOrders) }
         };
-        if (ReportActivityIsEnabled)
+        if (_reportActivityIsEnabled)
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, "reportActivity") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, CallbackDataConstants.ReportActivity) });
         }
-        if (ReportIncidentIsEnabled)
+        if (_reportIncidentIsEnabled)
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, "reportActivity") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.ReportActivity, CallbackDataConstants.ReportActivity) });
         }
-        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.EmergencyContacts, "emergencyContacts") });
-        var headerFormDB = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "ÿ‡ÔÍ‡ „Î‡‚ÌÓÂ ÏÂÌ˛"))?.Value;
-        return await botClient.UpdateOrSendMessageAsync(_logger, $"{headerFormDB ?? ""}\n{headerText}", chatId, messageId, new InlineKeyboardMarkup(buttons), cts);
+        buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.Translation.EmergencyContacts, CallbackDataConstants.EmergencyContacts) });
+        
+        var headerFromDB = (await _db.UserSettings.FirstOrDefaultAsync(x => x.Name == "–®–∞–ø–∫–∞ –≥–ª–∞–≤–Ω–æ–µ –º–µ–Ω—é"))?.Value;
+        
+        return await botClient.UpdateOrSendMessageAsync(_logger, $"{headerFromDB ?? ""}\n{headerText}", chatId, messageId, new InlineKeyboardMarkup(buttons), cts);
+    }
+
+    public async Task<Message?> ShowOrderTypesConfirmOrderReset(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    {
+        var tgUser = callbackQuery.From;
+        var order = await _db.Orders.FirstOrDefaultAsync(x => x.UserId == tgUser.Id && x.Status == OrderStatus.Filling, cancellationToken: cts);
+
+        if (order == null)
+        {
+            return await MyOrders.ShowOrderTypesAsync(botClient, callbackQuery, cts);
+        }
+
+        var currentOrderMenuCallback = $"{CallbackDataConstants.OrderTypePrefix}{order.OrderType}";
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new() { InlineKeyboardButton.WithCallbackData(Resources.Translation.OrderTypesWithResetOrder, CallbackDataConstants.OrderTypesWithResetOrder) },
+            new() { InlineKeyboardButton.WithCallbackData(Resources.Translation.GoBack, currentOrderMenuCallback) }
+        };
+
+        var headerText = Resources.Translation.OrderTypesConfirmOrderReset;
+        return await botClient.UpdateOrSendMessageAsync(_logger, headerText, callbackQuery.Message!.Chat.Id,
+            callbackQuery.Message.MessageId, new InlineKeyboardMarkup(buttons), cts);
     }
 }
