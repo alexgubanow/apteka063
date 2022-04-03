@@ -13,6 +13,8 @@ public class Order
         ContactName = _ContactName;
         DeliveryAddress = deliveryAddress;
         Status = status;
+        CreationDateTime = DateTime.MinValue;
+        LastUpdateDateTime = DateTime.Now;
     }
     [Key]
     public int Id { get; set; }
@@ -23,4 +25,13 @@ public class Order
     public string ContactName { get; set; } = "";
     public OrderType OrderType { get; set; }
     public string DeliveryAddress { get; set; } = "";
+    /// <summary>
+    /// When the order was finished. So this is Order DateTime.
+    /// Will have `MinValue` until the order is submitted.
+    /// </summary>
+    public DateTime CreationDateTime { get; set; } = DateTime.MinValue;
+    /// <summary>
+    /// DateTime when order was modified last time.
+    /// </summary>
+    public DateTime LastUpdateDateTime { get; set; } = DateTime.MinValue;
 }
