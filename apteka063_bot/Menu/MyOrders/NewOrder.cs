@@ -65,7 +65,7 @@ public partial class MyOrders
             (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedUserPhone || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName ||
              x.Status == OrderStatus.NeedContactAddress || x.Status == OrderStatus.NeedOrderComment || x.Status == OrderStatus.NeedOrderConfirmation), cts);
         List<ItemInCart> orderItems = new();
-        if (order != null)
+        if (order != null && order.Items.Length > 0)
         {
             orderItems = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
         }
