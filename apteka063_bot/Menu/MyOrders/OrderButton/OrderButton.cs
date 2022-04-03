@@ -29,6 +29,7 @@ public partial class OrderButton
         }
         var handler = order.Status switch
         {
+            OrderStatus.NeedOrderConfirmation => ConfirmOrderAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactName => SaveContactNameAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactAddress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order, cts),
@@ -45,6 +46,41 @@ public partial class OrderButton
         return null!;
     }
     public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, Message message, Order order, CancellationToken cts = default)
+    {
+        string translatedText = Translation.YourOrderIs + "\n";
+
+        // Code copied from PublishOrderAsync function
+        var itemsIds = order.Items!.Split(',');
+        IQueryable<string> itemsNames = null!;
+        if (order.OrderType == OrderType.Pills)
+        {
+            var items = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString()));
+            itemsNames = items.Select(x => x.Name);
+            foreach (var pill in items)
+            {
+                pill.FreezedAmout++;
+            }
+            await _db.SaveChangesAsync(cts);
+            await _gsheet.UpdateFreezedValues(cts);
+        }
+        else
+        {
+            itemsNames = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString())).Select(x => x.Name);
+        }
+
+        translatedText += string.Join("\n", itemsNames);
+
+        order.Status = OrderStatus.NeedOrderConfirmation;
+        await _db.SaveChangesAsync(cts);
+
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.EditOrder, $"orderType_{order.OrderType}") },
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.ProceedOrder, $"order") }
+        };
+        return await botClient.UpdateOrSendMessageAsync(_logger, translatedText, message, new InlineKeyboardMarkup(buttons), cts: cts);
+    }
+    public async Task<Message> ConfirmOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         order.Status = OrderStatus.NeedContactPhone;
         await _db.SaveChangesAsync(cts);

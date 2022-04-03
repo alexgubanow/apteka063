@@ -142,6 +142,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit the Order.
+        /// </summary>
+        internal static string EditOrder {
+            get {
+                return ResourceManager.GetString("EditOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emergency contacts.
         /// </summary>
         internal static string EmergencyContacts {
@@ -340,6 +349,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Proceed the Order.
+        /// </summary>
+        internal static string ProceedOrder {
+            get {
+                return ResourceManager.GetString("ProceedOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please provide the address where order should be shipped.
         /// </summary>
         internal static string ProvideDeliveryAddress {
@@ -417,6 +435,15 @@ namespace apteka063.Resources {
         internal static string You_dont_have_orders {
             get {
                 return ResourceManager.GetString("You_dont_have_orders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your Order is:.
+        /// </summary>
+        internal static string YourOrderIs {
+            get {
+                return ResourceManager.GetString("YourOrderIs", resourceCulture);
             }
         }
     }

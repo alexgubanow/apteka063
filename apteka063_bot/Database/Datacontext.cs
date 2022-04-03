@@ -36,12 +36,17 @@ public class Apteka063Context : DbContext
     public async Task<Order> GetOrCreateOrderForUserIdAsync(long userId, OrderType orderType, CancellationToken cts = default)
     {
         var order = await Orders.FirstOrDefaultAsync(x => x.UserId == userId && x.OrderType == orderType &&
-            (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName || x.Status == OrderStatus.NeedContactAddress), cts);
+            (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName ||
+             x.Status == OrderStatus.NeedContactAddress || x.Status == OrderStatus.NeedOrderConfirmation), cts);
         if (order == null)
         {
             order = new(userId, orderType);
             await Orders.AddAsync(order, cts);
             await SaveChangesAsync(cts);
+        } else
+        {
+            // In this case we always just update the order with items, so reset any flag and refresh FSM
+            order.Status = OrderStatus.Filling;
         }
         return order;
     }
@@ -59,7 +64,7 @@ public class Apteka063Context : DbContext
 }
 public enum OrderStatus
 {
-    Filling, NeedContactPhone, NeedContactName, NeedContactAddress, Canceled, InProgress, Declined, Closed, N_A
+    Filling, NeedContactPhone, NeedContactName, NeedContactAddress, Canceled, InProgress, Declined, Closed, NeedOrderConfirmation, N_A, 
 }
 public enum OrderType
 {

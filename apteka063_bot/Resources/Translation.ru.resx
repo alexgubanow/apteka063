@@ -144,6 +144,9 @@
   <data name="Declined" xml:space="preserve">
     <value>Отклоненный</value>
   </data>
+  <data name="EditOrder" xml:space="preserve">
+    <value>Отредактировать заказ</value>
+  </data>
   <data name="EmergencyContacts" xml:space="preserve">
     <value>Экстренные контакты</value>
   </data>
@@ -175,16 +178,19 @@
     <value>Нужен адрес</value>
   </data>
   <data name="NeedContactName" xml:space="preserve">
-    <value>Потрібне ім'я контакту</value>
+    <value>Нужно имя получателя</value>
   </data>
   <data name="NeedPhone" xml:space="preserve">
-    <value>Нужен телефон</value>
+    <value>Нужен телефон получателя</value>
   </data>
   <data name="NewOrder" xml:space="preserve">
     <value>Новый заказ</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
     <value>Данный функционал не реализован</value>
+  </data>
+  <data name="No_any_active_orders_found" xml:space="preserve">
+    <value>Не найдено активных заказов</value>
   </data>
   <data name="Order" xml:space="preserve">
     <value>Заказать</value>
@@ -210,6 +216,9 @@
   <data name="Pills" xml:space="preserve">
     <value>Медикаменты</value>
   </data>
+  <data name="ProceedOrder" xml:space="preserve">
+    <value>Продолжить оформление заказа</value>
+  </data>
   <data name="ProvideDeliveryAddress" xml:space="preserve">
     <value>Пожалуйста, напишите адрес получателя</value>
   </data>
@@ -218,9 +227,6 @@
   </data>
   <data name="ProvideReceiverName" xml:space="preserve">
     <value>Пожалуйста, напишите имя получателя</value>
-  </data>
-  <data name="registered" xml:space="preserve">
-    <value>зарегистрирован</value>
   </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Сообщить о подозрительной активности</value>
@@ -236,6 +242,9 @@
   </data>
   <data name="Transport" xml:space="preserve">
     <value>Транспорт</value>
+  </data>
+  <data name="YourOrderIs" xml:space="preserve">
+    <value>Ваш текущий заказ:</value>
   </data>
   <data name="You_dont_have_orders" xml:space="preserve">
     <value>У вас нет заказов</value>
