@@ -2,6 +2,7 @@
 using apteka063.Extensions;
 using apteka063.Resources;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -47,29 +48,12 @@ public partial class OrderButton
     }
     public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, Message message, Order order, CancellationToken cts = default)
     {
-        string translatedText = Translation.YourOrderIs + "\n";
-
-        // Code copied from PublishOrderAsync function
-        var itemsIds = order.Items!.Split(',');
-        IQueryable<string> itemsNames = null!;
-        if (order.OrderType == OrderType.Pills)
+        string translatedText = $"{Translation.YourOrderIs}\n";
+        var orderItemsList = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
+        foreach (var item in orderItemsList)
         {
-            var items = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString()));
-            itemsNames = items.Select(x => x.Name);
-            foreach (var pill in items)
-            {
-                pill.FreezedAmout++;
-            }
-            await _db.SaveChangesAsync(cts);
-            await _gsheet.UpdateFreezedValues(cts);
+            translatedText += $"{item.Name} - {item.Amount}{Translation.pcs}\n";
         }
-        else
-        {
-            itemsNames = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString())).Select(x => x.Name);
-        }
-
-        translatedText += string.Join("\n", itemsNames);
-
         order.Status = OrderStatus.NeedOrderConfirmation;
         await _db.SaveChangesAsync(cts);
 
