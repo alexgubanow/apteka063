@@ -28,6 +28,7 @@ public partial class OrderButton
         {
             orderDescription += $"{item.Name} - {item.Amount}{Translation.pcs}\n";
         }
+        orderDescription = orderDescription.Remove(orderDescription.Last());
         order.CreationDateTime = DateTime.Now;
         await _db.SaveChangesAsync(cts);
         await _gsheet.PostOrder(order, tgUser, orderDescription, cts);

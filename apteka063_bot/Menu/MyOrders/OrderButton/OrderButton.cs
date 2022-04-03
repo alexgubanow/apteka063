@@ -54,6 +54,7 @@ public partial class OrderButton
         {
             translatedText += $"{item.Name} - {item.Amount}{Translation.pcs}\n";
         }
+        translatedText = translatedText.Remove(translatedText.Last());
         order.Status = OrderStatus.NeedOrderConfirmation;
         await _db.SaveChangesAsync(cts);
 
@@ -130,7 +131,7 @@ public partial class OrderButton
         // <list of contacts>
         string resultTranslatedText =
             $"{Translation.OrderNumber}{order.Id} {Translation.HasBeenRegistered}\n" +
-            $"{orderDescription}" +
+            $"{orderDescription}\n" +
             $"{Translation.TakeCare}";
 
         buttons = new List<List<InlineKeyboardButton>>
