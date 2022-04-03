@@ -1,6 +1,7 @@
 using apteka063.Database;
 using apteka063.Extensions;
 using apteka063.Resources;
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -49,18 +50,18 @@ public partial class MyOrders
     public async Task<Message> ShowItemsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, int category, Order? order = null, CancellationToken cts = default)
     {
         var orderType = (await _db.ItemsCategories.FindAsync(new object?[] { category }, cancellationToken: cts))!.OrderType;
-        order ??= await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, orderType, cts);
-        var orderItems = order.Items?.Split(',');
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"orderType_{orderType}") }
         };
         var items = _db.ItemsToOrder.Where(x => x.CategoryId == category);
+        order ??= await _db.Orders.FirstOrDefaultAsync(x => x.UserId == callbackQuery.From.Id && x.OrderType == orderType &&
+            (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName || x.Status == OrderStatus.NeedContactAddress), cts);
+        var orderItems = order?.Items.Split(',');
         foreach (var item in items)
         {
-            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(
-                item.Name + (orderItems != null && orderItems.Contains(item.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : ""),
-                $"item_{item.Id}") });
+            var checkMark = orderItems != null && orderItems.Contains(item.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : "";
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(item.Name + checkMark, $"item_{item.Id}") });
         }
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.AvailableNow, callbackQuery.Message!, new InlineKeyboardMarkup(buttons), cts: cts);
     }
