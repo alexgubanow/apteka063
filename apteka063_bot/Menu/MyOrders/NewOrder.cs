@@ -10,7 +10,6 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace apteka063.Menu;
 public class ItemInCart
 {
-    public int Id { get; set; }
     public string Name { get; set; } = "";
     public int Amount { get; set; }
 }
@@ -71,7 +70,7 @@ public partial class MyOrders
         }
         foreach (var item in items)
         {
-            var checkMark = orderItems != null && orderItems.Any(x => x.Id == item.Id) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : "";
+            var checkMark = orderItems != null && orderItems.Any(x => x.Name == item.Name) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : "";
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(item.Name + checkMark, $"item_{item.Id}") });
         }
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.AvailableNow, callbackQuery.Message!, new InlineKeyboardMarkup(buttons), cts: cts);
@@ -88,20 +87,20 @@ public partial class MyOrders
             orderItemsList = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
             if (orderItemsList != null)
             {
-                var itemFromOrder = orderItemsList.FirstOrDefault(x => x.Id == item.Id);
+                var itemFromOrder = orderItemsList.FirstOrDefault(x => x.Name == item.Name);
                 if (itemFromOrder != null)
                 {
                     orderItemsList.Remove(itemFromOrder);
                 }
                 else
                 {
-                    orderItemsList.Add(new() { Id = item.Id, Name = item.Name, Amount = 1 });
+                    orderItemsList.Add(new() { Name = item.Name, Amount = 1 });
                 }
             }
         }
         else
         {
-            orderItemsList = new() { new() { Id = item.Id, Name = item.Name, Amount = 1 } };
+            orderItemsList = new() { new() { Name = item.Name, Amount = 1 } };
         }
         if (orderItemsList!.Any())
         {

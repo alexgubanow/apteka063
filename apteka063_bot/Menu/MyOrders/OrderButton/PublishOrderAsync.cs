@@ -12,7 +12,7 @@ public partial class OrderButton
         string orderDescription = "";
         if (order.OrderType == OrderType.Pills)
         {
-            var items = _db.ItemsToOrder!.Where(p => orderItemsList.Select(x => x.Id).Contains(p.Id));
+            var items = _db.ItemsToOrder!.Where(p => orderItemsList.Select(x => x.Name).Contains(p.Name));
             foreach (var pill in items)
             {
                 pill.FreezedAmout++;
