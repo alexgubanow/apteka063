@@ -57,6 +57,22 @@ public partial class MyOrders
             }
             headerText = headerText.Remove(headerText.Length - 1, 1);
         }
+        if (order.ContactPhone != "")
+        {
+            headerText += $"\n{order.ContactPhone}\n";
+        }
+        if (order.ContactName != "")
+        {
+            headerText += $"{order.ContactName}\n";
+        }
+        if (order.DeliveryAddress != "")
+        {
+            headerText += $"{order.DeliveryAddress}\n";
+        }
+        if (order.OrderComment != "")
+        {
+            headerText += $"{order.OrderComment}";
+        }
         if (order.Status == OrderStatus.Filling || order.Status == OrderStatus.NeedOrderConfirmation || order.Status == OrderStatus.NeedUserPhone || 
             order.Status == OrderStatus.NeedContactPhone || order.Status == OrderStatus.NeedContactName || order.Status == OrderStatus.NeedContactAddress ||
             order.Status == OrderStatus.NeedOrderComment)
