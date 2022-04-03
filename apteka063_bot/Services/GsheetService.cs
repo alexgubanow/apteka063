@@ -95,7 +95,7 @@ namespace apteka063.Services
                     writePosition = 2;
                 }
                 writePosition = writePosition > 0 ? writePosition : 2;
-                var userContact = user.Username != "" ? $"https://t.me/{user.Username}" : user.PhoneNumber != "" ? user.PhoneNumber : $"https://t.me/@id{user.Id}";
+                var userContact = (user!.Username ?? "") != "" ? $"https://t.me/{user.Username}" : user.PhoneNumber != "" ? user.PhoneNumber : $"https://t.me/@id{user.Id}";
                 ValueRange valueRange = new() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {
                     new List<object>() { orderID },

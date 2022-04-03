@@ -76,7 +76,7 @@ public partial class OrderButton
         var headerTxt = Translation.ProvidePhoneNumber;
         order.Status = OrderStatus.NeedContactPhone;
         var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == order.UserId, cts);
-        if (user!.Username == "" && user!.PhoneNumber == "")
+        if ((user!.Username ?? "") == "" && user!.PhoneNumber == "")
         {
             headerTxt = Translation.ProvideYourPhoneNumber;
             order.Status = OrderStatus.NeedUserPhone;
