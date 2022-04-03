@@ -5,7 +5,7 @@ namespace apteka063.Database;
 public class Order
 {
     Order() { }
-    public Order(long userId, OrderType orderType, OrderStatus status = OrderStatus.Filling, string contactPhone = "", string _ContactName = "", string deliveryAddress = "")
+    public Order(long userId, OrderType orderType, OrderStatus status = OrderStatus.Filling, string contactPhone = "", string _ContactName = "", string deliveryAddress = "", string orderComment = "")
     {
         UserId = userId;
         OrderType = orderType;
@@ -15,6 +15,7 @@ public class Order
         Status = status;
         CreationDateTime = DateTime.MinValue;
         LastUpdateDateTime = DateTime.Now;
+        OrderComment = orderComment;
     }
     [Key]
     public int Id { get; set; }
@@ -34,4 +35,5 @@ public class Order
     /// DateTime when order was modified last time.
     /// </summary>
     public DateTime LastUpdateDateTime { get; set; } = DateTime.MinValue;
+    public string OrderComment { get; set; } = "";
 }

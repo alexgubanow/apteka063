@@ -19,7 +19,7 @@ public partial class UpdateHandlers
             return null!;
         
         var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName || 
-            x.Status == OrderStatus.NeedContactAddress)).ToListAsync(cts);
+            x.Status == OrderStatus.NeedContactAddress || x.Status == OrderStatus.NeedOrderComment )).ToListAsync(cts);
         if (order.Count > 0)
         {
             if (order.Count > 1)

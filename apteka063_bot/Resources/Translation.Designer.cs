@@ -277,6 +277,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order without comment.
+        /// </summary>
+        internal static string NoComment {
+            get {
+                return ResourceManager.GetString("NoComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not implemented.
         /// </summary>
         internal static string NotImplemented {
@@ -363,6 +372,15 @@ namespace apteka063.Resources {
         internal static string ProvideDeliveryAddress {
             get {
                 return ResourceManager.GetString("ProvideDeliveryAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please provide the comment for your order.
+        /// </summary>
+        internal static string ProvideOrderComment {
+            get {
+                return ResourceManager.GetString("ProvideOrderComment", resourceCulture);
             }
         }
         

@@ -186,6 +186,9 @@
   <data name="NewOrder" xml:space="preserve">
     <value>Новый заказ</value>
   </data>
+  <data name="NoComment" xml:space="preserve">
+    <value>Заказ без комментария</value>
+  </data>
   <data name="NotImplemented" xml:space="preserve">
     <value>Данный функционал не реализован</value>
   </data>
@@ -221,6 +224,9 @@
   </data>
   <data name="ProvideDeliveryAddress" xml:space="preserve">
     <value>Пожалуйста, напишите адрес получателя</value>
+  </data>
+  <data name="ProvideOrderComment" xml:space="preserve">
+    <value>Пожалуйста, добавьте комментарий к заказу если необходимо</value>
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
     <value>Пожалуйста, напишите телефон получателя (или другой контакт)</value>

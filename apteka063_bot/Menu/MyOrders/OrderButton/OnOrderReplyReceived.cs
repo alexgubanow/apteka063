@@ -14,6 +14,7 @@ public partial class OrderButton
              x.Status == OrderStatus.NeedContactPhone ||
              x.Status == OrderStatus.NeedContactName ||
              x.Status == OrderStatus.NeedContactAddress ||
+             x.Status == OrderStatus.NeedOrderComment ||
              x.Status == OrderStatus.NeedOrderConfirmation), cts);
         if (order == null)
         {
@@ -27,7 +28,7 @@ public partial class OrderButton
         }
         else
         {
-            if (order.Status == OrderStatus.NeedOrderConfirmation)
+            if (order.Status == OrderStatus.NeedOrderConfirmation || order.Status == OrderStatus.NeedOrderComment)
             {
                 var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == order!.UserId);
                 return await DispatchStateAsync(botClient, callbackQuery.Message!, user!.LastMessageSentId, order, cts);

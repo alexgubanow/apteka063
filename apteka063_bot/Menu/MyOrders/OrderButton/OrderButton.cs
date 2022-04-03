@@ -27,12 +27,14 @@ public partial class OrderButton
         {
             message.Text = "";
         }
+
         var handler = order.Status switch
         {
             OrderStatus.NeedOrderConfirmation => ConfirmOrderAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactName => SaveContactNameAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactAddress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order, cts),
+            OrderStatus.NeedOrderComment => SaveOrderCommentAsync(botClient, message, lastMessageSentId, order, cts),
             _ => throw new NotImplementedException()
         };
         try
@@ -86,7 +88,7 @@ public partial class OrderButton
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"cancelOrder_{order.Id}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"orderType_{order.OrderType}") },
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.ProvidePhoneNumber, message, new InlineKeyboardMarkup(buttons), cts: cts);
     }
@@ -94,7 +96,7 @@ public partial class OrderButton
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"cancelOrder_{order.Id}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"orderType_{order.OrderType}") },
         };
         if (message.Text == null || message.Text == "")
         {
@@ -102,6 +104,7 @@ public partial class OrderButton
                 message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
         }
         order.ContactPhone = message.Text;
+        order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.NeedContactName;
         await _db.SaveChangesAsync(cts);
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.ProvideReceiverName, message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
@@ -110,7 +113,7 @@ public partial class OrderButton
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"cancelOrder_{order.Id}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"orderType_{order.OrderType}") },
         };
         if (message.Text == null || message.Text == "")
         {
@@ -118,15 +121,17 @@ public partial class OrderButton
                 message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
         }
         order.ContactName = message.Text;
+        order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.NeedContactAddress;
         await _db.SaveChangesAsync(cts);
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.ProvideDeliveryAddress, message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
     }
+
     public async Task<Message> SaveContactAddressAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
         var buttons = new List<List<InlineKeyboardButton>>
         {
-            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"cancelOrder_{order.Id}") }
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NoComment, $"order") }
         };
         if (message.Text == null || message.Text == "")
         {
@@ -135,24 +140,47 @@ public partial class OrderButton
         }
         order.DeliveryAddress = message.Text;
         order.LastUpdateDateTime = DateTime.Now;
+        order.Status = OrderStatus.NeedOrderComment;
+        await _db.SaveChangesAsync(cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, Translation.ProvideOrderComment, message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
+
+    }
+
+    public async Task<Message> SaveOrderCommentAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    {
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"orderType_{order.OrderType}") },
+        };
+        order.OrderComment = message.Text != null ? message.Text : "-";
+        order.OrderComment = order.OrderComment == Translation.ProvideOrderComment ? "-" : order.OrderComment;
+        order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.InProgress;
         await _db.SaveChangesAsync(cts);
+
+        var user = _db.Users.FirstOrDefault(x => x.Id == order!.UserId);
+
         var msgWeJustSent = await botClient.UpdateOrSendMessageAsync(_logger, Translation.Order_received_processing_please_wait, message.Chat.Id, lastMessageSentId, cts: cts);
-        var itemsWePublished = await PublishOrderAsync(message.From!, order, cts);
+        return await FinilizeOrder(botClient, user!, msgWeJustSent, order, cts);
+    }
+
+    public async Task<Message> FinilizeOrder(ITelegramBotClient botClient, Telegram.Bot.Types.User user, Message message, Order order, CancellationToken cts = default)
+    {
+        var itemsWePublished = await PublishOrderAsync(user, order, cts);
 
         // Your order #%d has been posted
         // Details: .....
-        // If nobody contacted you in 4 hours please use the follwing contacts
+        // If nobody contacted you in 4 hours please use the following contacts
         // <list of contacts>
         string resultTranslatedText =
             $"{Translation.OrderNumber}{order.Id} {Translation.HasBeenRegistered}\n" +
             $"{string.Join('\n', itemsWePublished)}\n" +
             $"{Translation.TakeCare}";
 
-        buttons = new List<List<InlineKeyboardButton>>
+        var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoToMenu, "main") }
         };
-        return await botClient.UpdateOrSendMessageAsync(_logger, resultTranslatedText, msgWeJustSent, new InlineKeyboardMarkup(buttons), cts: cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, resultTranslatedText, message, new InlineKeyboardMarkup(buttons), cts: cts);
     }
 }

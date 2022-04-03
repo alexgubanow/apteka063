@@ -112,8 +112,9 @@ namespace apteka063.Services
                     new List<object>() { TranslationConverter.ToLocaleString(order.OrderType) },
                     new List<object>() { order.CreationDateTime.ToString("MM/dd/yyyy H:mm:ss") },
                     new List<object>() { $"=NOW()-J{writePosition}" }, // Format depend on Google sheet
+                    new List<object>() { order.OrderComment },
                 };
-                var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:K{writePosition}");
+                var update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, $"Заказы!A{writePosition}:L{writePosition}");
                 update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
                 UpdateValuesResponse result2 = await update.ExecuteAsync(cts);
             }

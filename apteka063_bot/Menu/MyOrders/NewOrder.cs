@@ -57,7 +57,7 @@ public partial class MyOrders
         var items = _db.ItemsToOrder.Where(x => x.CategoryId == category);
         order ??= await _db.Orders.FirstOrDefaultAsync(x => x.UserId == callbackQuery.From.Id && x.OrderType == orderType &&
             (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName ||
-             x.Status == OrderStatus.NeedContactAddress || x.Status == OrderStatus.NeedOrderConfirmation), cts);
+             x.Status == OrderStatus.NeedContactAddress || x.Status == OrderStatus.NeedOrderComment || x.Status == OrderStatus.NeedOrderConfirmation), cts);
         var orderItems = order?.Items.Split(',');
         foreach (var item in items)
         {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using apteka063.Database;
 
@@ -10,9 +11,10 @@ using apteka063.Database;
 namespace apteka063.Migrations
 {
     [DbContext(typeof(Apteka063Context))]
-    partial class Apteka063ContextModelSnapshot : ModelSnapshot
+    [Migration("20220403185846_AddOrderComment")]
+    partial class AddOrderComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.3");

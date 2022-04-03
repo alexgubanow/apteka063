@@ -186,6 +186,9 @@
   <data name="NewOrder" xml:space="preserve">
     <value>New order</value>
   </data>
+  <data name="NoComment" xml:space="preserve">
+    <value>Order without comment</value>
+  </data>
   <data name="NotImplemented" xml:space="preserve">
     <value>Not implemented</value>
   </data>
@@ -218,6 +221,9 @@
   </data>
   <data name="ProvideDeliveryAddress" xml:space="preserve">
     <value>Please provide the address where order should be shipped</value>
+  </data>
+  <data name="ProvideOrderComment" xml:space="preserve">
+    <value>Please provide the comment for your order</value>
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
     <value>Please provide the phone number of the person who will recieve the help</value>
