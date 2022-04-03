@@ -210,6 +210,9 @@
   <data name="Order_received_processing_please_wait" xml:space="preserve">
     <value>Замовлення отримано, тривае обробка, зачекайте</value>
   </data>
+  <data name="pcs" xml:space="preserve">
+    <value>шт</value>
+  </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Оберіть категорію:</value>
   </data>
@@ -247,7 +250,7 @@
     <value>Транспорт</value>
   </data>
   <data name="YourOrderIs" xml:space="preserve">
-    <value>Ваше замовлення</value>
+    <value>Ваше замовлення:</value>
   </data>
   <data name="You_dont_have_orders" xml:space="preserve">
     <value>Ви не маєте замовлень</value>

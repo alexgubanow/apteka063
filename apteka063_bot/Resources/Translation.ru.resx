@@ -213,6 +213,9 @@
   <data name="Order_received_processing_please_wait" xml:space="preserve">
     <value>Заказ получен, происходит обработка, подождите</value>
   </data>
+  <data name="pcs" xml:space="preserve">
+    <value>шт</value>
+  </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Выбери категорию:</value>
   </data>
