@@ -11,6 +11,7 @@ public partial class OrderButton
     {
         var order = await _db.Orders.FirstOrDefaultAsync(x => x.UserId == callbackQuery.From.Id &&
             (x.Status == OrderStatus.Filling ||
+             x.Status == OrderStatus.NeedUserPhone||
              x.Status == OrderStatus.NeedContactPhone ||
              x.Status == OrderStatus.NeedContactName ||
              x.Status == OrderStatus.NeedContactAddress ||

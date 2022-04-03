@@ -232,10 +232,13 @@
     <value>Пожалуйста, добавьте комментарий к заказу если необходимо</value>
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
-    <value>Пожалуйста, напишите телефон получателя (или другой контакт)</value>
+    <value>Пожалуйста, напишите номер телефона получателя (или другой контакт)</value>
   </data>
   <data name="ProvideReceiverName" xml:space="preserve">
     <value>Пожалуйста, напишите имя получателя</value>
+  </data>
+  <data name="ProvideYourPhoneNumber" xml:space="preserve">
+    <value>Пожалуйста, напишите Ваш номер телефона (или другой контакт)</value>
   </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Сообщить о подозрительной активности</value>

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
 using System.Globalization;
-using Telegram.Bot.Types;
+using User = apteka063.Database.User;
 
 namespace apteka063.Services
 {
@@ -74,15 +74,11 @@ namespace apteka063.Services
             }
             return false;
         }
-        public async Task PostOrder(Order order, Telegram.Bot.Types.User user, string pills, CancellationToken cts = default)
+        public async Task PostOrder(Order order, User user, string pills, CancellationToken cts = default)
         {
             var currentLocale = Thread.CurrentThread.CurrentUICulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("ru");
             string orderID = order.Id.ToString();
-
-            var person = user.FirstName + ' ' + user.LastName;
-            var personID = user.Username;
-
             var service = GetSheetsSevice();
             try
             {
@@ -99,12 +95,13 @@ namespace apteka063.Services
                     writePosition = 2;
                 }
                 writePosition = writePosition > 0 ? writePosition : 2;
+                var userContact = user.Username != "" ? $"https://t.me/{user.Username}" : user.PhoneNumber != "" ? user.PhoneNumber : $"https://t.me/@id{user.Id}";
                 ValueRange valueRange = new() { MajorDimension = "COLUMNS" };
                 valueRange.Values = new List<IList<object>> {
                     new List<object>() { orderID },
                     new List<object>() { TranslationConverter.ToLocaleString(order.Status) },
-                    new List<object>() { person },
-                    new List<object>() { personID != null ? $"https://t.me/{personID}" : $"https://t.me/@id{user.Id}"},
+                    new List<object>() { user.FirstName + ' ' + user.LastName },
+                    new List<object>() { userContact },
                     new List<object>() { pills },
                     new List<object>() { order.ContactName },
                     new List<object>() { order.ContactPhone },
@@ -199,7 +196,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new(response.Values[i][0].ToString()!, OrderType.Pills ), cts);
+                        await _db.ItemsCategories.AddAsync(new(response.Values[i][0].ToString()!, OrderType.Pills), cts);
                     }
                 }
                 request = service.Spreadsheets.Values.Get(spreadsheetId, "Гуманитарка!N2:N");
@@ -208,7 +205,7 @@ namespace apteka063.Services
                 {
                     for (int i = 0; i < response.Values.Count; i++)
                     {
-                        await _db.ItemsCategories.AddAsync(new(response.Values[i][0].ToString()!, OrderType.Humaid ), cts);
+                        await _db.ItemsCategories.AddAsync(new(response.Values[i][0].ToString()!, OrderType.Humaid), cts);
                     }
                 }
                 await _db.SaveChangesAsync(cts);

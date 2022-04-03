@@ -412,6 +412,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please provide the Your phone number.
+        /// </summary>
+        internal static string ProvideYourPhoneNumber {
+            get {
+                return ResourceManager.GetString("ProvideYourPhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Report suspicious activity.
         /// </summary>
         internal static string ReportActivity {

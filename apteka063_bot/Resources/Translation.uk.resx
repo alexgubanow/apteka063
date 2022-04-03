@@ -229,10 +229,13 @@
     <value>Будь ласка, додайте коментар до замовлення, якщо необхідно</value>
   </data>
   <data name="ProvidePhoneNumber" xml:space="preserve">
-    <value>Будь ласка, напишіть телефон одержувача (або інший контакт)</value>
+    <value>Будь ласка, напишіть номер телефона одержувача (або інший контакт)</value>
   </data>
   <data name="ProvideReceiverName" xml:space="preserve">
     <value>Будь ласка, напишіть ім'я отримувача</value>
+  </data>
+  <data name="ProvideYourPhoneNumber" xml:space="preserve">
+    <value>Будь ласка, напишіть Ваш номер телефона (або інший контакт)</value>
   </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Повідомити про підозрілу активність</value>

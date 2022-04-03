@@ -1,16 +1,12 @@
 ﻿using apteka063.Database;
-using apteka063.Extensions;
 using apteka063.Resources;
 using System.Text.Json;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<string> PublishOrderAsync(Telegram.Bot.Types.User tgUser, Order order, CancellationToken cts = default)
+    public async Task<string> PublishOrderAsync(User user, Order order, CancellationToken cts = default)
     {
         var orderItemsList = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
         string orderDescription = "";
@@ -31,7 +27,7 @@ public partial class OrderButton
         orderDescription = orderDescription.Remove(orderDescription.Length - 1, 1);
         order.CreationDateTime = DateTime.Now;
         await _db.SaveChangesAsync(cts);
-        await _gsheet.PostOrder(order, tgUser, orderDescription, cts);
+        await _gsheet.PostOrder(order, user, orderDescription, cts);
         return orderDescription;
     }
 }

@@ -1,11 +1,13 @@
 ﻿using apteka063.Database;
 using apteka063.Extensions;
 using apteka063.Resources;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using User = apteka063.Database.User;
 
 namespace apteka063.Menu.OrderButton;
 
@@ -32,6 +34,7 @@ public partial class OrderButton
         var handler = order.Status switch
         {
             OrderStatus.NeedOrderConfirmation => ConfirmOrderAsync(botClient, message, lastMessageSentId, order, cts),
+            OrderStatus.NeedUserPhone => SaveUserPhoneAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactName => SaveContactNameAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactAddress => SaveContactAddressAsync(botClient, message, lastMessageSentId, order, cts),
@@ -58,6 +61,7 @@ public partial class OrderButton
         }
         translatedText = translatedText.Remove(translatedText.Length - 1, 1);
         order.Status = OrderStatus.NeedOrderConfirmation;
+        order.LastUpdateDateTime = DateTime.Now;
         await _db.SaveChangesAsync(cts);
 
         var buttons = new List<List<InlineKeyboardButton>>
@@ -69,13 +73,39 @@ public partial class OrderButton
     }
     public async Task<Message> ConfirmOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
+        var headerTxt = Translation.ProvidePhoneNumber;
         order.Status = OrderStatus.NeedContactPhone;
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == order.UserId, cts);
+        if (user!.Username == "" && user!.PhoneNumber == "")
+        {
+            headerTxt = Translation.ProvideYourPhoneNumber;
+            order.Status = OrderStatus.NeedUserPhone;
+        }
+        order.LastUpdateDateTime = DateTime.Now;
         await _db.SaveChangesAsync(cts);
         var buttons = new List<List<InlineKeyboardButton>>
         {
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"orderType_{order.OrderType}") },
         };
-        return await botClient.UpdateOrSendMessageAsync(_logger, Translation.ProvidePhoneNumber, message, new InlineKeyboardMarkup(buttons), cts: cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, headerTxt, message, new InlineKeyboardMarkup(buttons), cts: cts);
+    }
+    public async Task<Message> SaveUserPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    {
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.Cancel, $"orderType_{order.OrderType}") },
+        };
+        if (message.Text == null || message.Text == "")
+        {
+            return await botClient.UpdateOrSendMessageAsync(_logger, $"{Translation.Something_went_wrong_Please_correct}\n{Translation.ProvideYourPhoneNumber}",
+                message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
+        }
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == order.UserId, cts);
+        user!.PhoneNumber = message.Text;
+        order.LastUpdateDateTime = DateTime.Now;
+        order.Status = OrderStatus.NeedContactName;
+        await _db.SaveChangesAsync(cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, Translation.ProvidePhoneNumber, message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
     }
     public async Task<Message> SaveContactPhoneAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {
@@ -85,7 +115,7 @@ public partial class OrderButton
         };
         if (message.Text == null || message.Text == "")
         {
-            return await botClient.UpdateOrSendMessageAsync(_logger, $"{Translation.Something_went_wrong_Please_correct}\n{Translation.ProvidePhoneNumber}", 
+            return await botClient.UpdateOrSendMessageAsync(_logger, $"{Translation.Something_went_wrong_Please_correct}\n{Translation.ProvidePhoneNumber}",
                 message.Chat.Id, lastMessageSentId, new InlineKeyboardMarkup(buttons), cts: cts);
         }
         order.ContactPhone = message.Text;
@@ -149,7 +179,7 @@ public partial class OrderButton
         return await FinilizeOrder(botClient, user!, msgWeJustSent, order, cts);
     }
 
-    public async Task<Message> FinilizeOrder(ITelegramBotClient botClient, Telegram.Bot.Types.User user, Message message, Order order, CancellationToken cts = default)
+    public async Task<Message> FinilizeOrder(ITelegramBotClient botClient, User user, Message message, Order order, CancellationToken cts = default)
     {
         var orderDescription = await PublishOrderAsync(user, order, cts);
 

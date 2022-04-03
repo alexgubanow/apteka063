@@ -234,6 +234,9 @@
   <data name="ProvideReceiverName" xml:space="preserve">
     <value>Please provide the contact name</value>
   </data>
+  <data name="ProvideYourPhoneNumber" xml:space="preserve">
+    <value>Please provide the Your phone number</value>
+  </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Report suspicious activity</value>
   </data>
