@@ -1,5 +1,7 @@
 ﻿using apteka063.Database;
 using apteka063.Extensions;
+using apteka063.Resources;
+using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -8,14 +10,13 @@ namespace apteka063.Menu.OrderButton;
 
 public partial class OrderButton
 {
-    public async Task<IQueryable<string>> PublishOrderAsync(Telegram.Bot.Types.User tgUser, Order order, CancellationToken cts = default)
+    public async Task<string> PublishOrderAsync(Telegram.Bot.Types.User tgUser, Order order, CancellationToken cts = default)
     {
-        var itemsIds = order.Items!.Split(',');
-        IQueryable<string> itemsNames = null!;
+        var orderItemsList = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
+        string orderDescription = "";
         if (order.OrderType == OrderType.Pills)
         {
-            var items = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString()));
-            itemsNames = items.Select(x => x.Name);
+            var items = _db.ItemsToOrder!.Where(p => orderItemsList.Select(x => x.Id).Contains(p.Id));
             foreach (var pill in items)
             {
                 pill.FreezedAmout++;
@@ -23,14 +24,13 @@ public partial class OrderButton
             await _db.SaveChangesAsync(cts);
             await _gsheet.UpdateFreezedValues(cts);
         }
-        else
+        foreach (var item in orderItemsList)
         {
-            itemsNames = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString())).Select(x => x.Name);
+            orderDescription += $"{item.Name} - {item.Amount}{Translation.pcs}\n";
         }
-
         order.CreationDateTime = DateTime.Now;
         await _db.SaveChangesAsync(cts);
-        await _gsheet.PostOrder(order, tgUser, string.Join(", ", itemsNames), cts);
-        return itemsNames;
+        await _gsheet.PostOrder(order, tgUser, orderDescription, cts);
+        return orderDescription;
     }
 }

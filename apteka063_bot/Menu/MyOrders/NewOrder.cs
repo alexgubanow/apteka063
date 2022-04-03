@@ -2,12 +2,18 @@ using apteka063.Database;
 using apteka063.Extensions;
 using apteka063.Resources;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace apteka063.Menu;
-
+public class ItemInCart
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+    public int Amount { get; set; }
+}
 public partial class MyOrders
 {
     public async Task<Message> ShowOrderTypesAsync(ITelegramBotClient botClient, Message message, CancellationToken cts = default)
@@ -57,10 +63,14 @@ public partial class MyOrders
         var items = _db.ItemsToOrder.Where(x => x.CategoryId == category);
         order ??= await _db.Orders.FirstOrDefaultAsync(x => x.UserId == callbackQuery.From.Id && x.OrderType == orderType &&
             (x.Status == OrderStatus.Filling || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName || x.Status == OrderStatus.NeedContactAddress), cts);
-        var orderItems = order?.Items.Split(',');
+        List<ItemInCart> orderItems = new();
+        if (order != null)
+        {
+            orderItems = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
+        }
         foreach (var item in items)
         {
-            var checkMark = orderItems != null && orderItems.Contains(item.Id.ToString()) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : "";
+            var checkMark = orderItems != null && orderItems.Any(x => x.Id == item.Id) ? GEmojiSharp.Emoji.Emojify(" :ballot_box_with_check:") : "";
             buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(item.Name + checkMark, $"item_{item.Id}") });
         }
         return await botClient.UpdateOrSendMessageAsync(_logger, Translation.AvailableNow, callbackQuery.Message!, new InlineKeyboardMarkup(buttons), cts: cts);
@@ -68,29 +78,41 @@ public partial class MyOrders
     public async Task<Message> OnItemReceivedAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
     {
         var itemId = callbackQuery.Data!.Split('_', 2).Last();
-        var categoryId = (await _db.ItemsToOrder.FindAsync(new object?[] { int.Parse(itemId) }, cancellationToken: cts))!.CategoryId;
-        var itemCategory = await _db.ItemsCategories.FindAsync(new object?[] { categoryId }, cancellationToken: cts);
+        var item = (await _db.ItemsToOrder.FindAsync(new object?[] { int.Parse(itemId) }, cancellationToken: cts));
+        var itemCategory = await _db.ItemsCategories.FindAsync(new object?[] { item!.CategoryId }, cancellationToken: cts);
         var order = await _db.GetOrCreateOrderForUserIdAsync(callbackQuery.From.Id, itemCategory!.OrderType, cts: cts);
-        var orderItemsList = order.Items?.Split(',').ToList();
-        if (orderItemsList != null)
+        List<ItemInCart> orderItemsList = new();
+        if (order.Items.Length > 0)
         {
-            if (orderItemsList.Contains(itemId))
+            orderItemsList = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
+            if (orderItemsList != null)
             {
-                orderItemsList.Remove(itemId);
-            }
-            else
-            {
-                orderItemsList.Add(itemId);
+                var itemFromOrder = orderItemsList.FirstOrDefault(x => x.Id == item.Id);
+                if (itemFromOrder != null)
+                {
+                    orderItemsList.Remove(itemFromOrder);
+                }
+                else
+                {
+                    orderItemsList.Add(new() { Id = item.Id, Name = item.Name, Amount = 1 });
+                }
             }
         }
         else
         {
-            orderItemsList = new() { itemId };
+            orderItemsList = new() { new() { Id = item.Id, Name = item.Name, Amount = 1 } };
         }
-        order.Items = string.Join(',', orderItemsList);
+        if (orderItemsList!.Any())
+        {
+            order.Items = JsonSerializer.Serialize(orderItemsList!);
+        }
+        else
+        {
+            order.Items = "";
+        }
         order.LastUpdateDateTime = DateTime.Now;
         _db.Orders.Update(order);
         await _db.SaveChangesAsync(cts);
-        return await ShowItemsAsync(botClient, callbackQuery, categoryId, order, cts);
+        return await ShowItemsAsync(botClient, callbackQuery, item!.CategoryId, order, cts);
     }
 }

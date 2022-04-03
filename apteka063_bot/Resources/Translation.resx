@@ -204,6 +204,9 @@
   <data name="Order_received_processing_please_wait" xml:space="preserve">
     <value>Order received, processing, please wait</value>
   </data>
+  <data name="pcs" xml:space="preserve">
+    <value>pcs</value>
+  </data>
   <data name="PickCategory" xml:space="preserve">
     <value>Pick category:</value>
   </data>

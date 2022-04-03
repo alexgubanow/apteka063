@@ -102,7 +102,7 @@ public partial class OrderButton
         order.Status = OrderStatus.InProgress;
         await _db.SaveChangesAsync(cts);
         var msgWeJustSent = await botClient.UpdateOrSendMessageAsync(_logger, Translation.Order_received_processing_please_wait, message.Chat.Id, lastMessageSentId, cts: cts);
-        var itemsWePublished = await PublishOrderAsync(message.From!, order, cts);
+        var orderDescription = await PublishOrderAsync(message.From!, order, cts);
 
         // Your order #%d has been posted
         // Details: .....
@@ -110,7 +110,7 @@ public partial class OrderButton
         // <list of contacts>
         string resultTranslatedText =
             $"{Translation.OrderNumber}{order.Id} {Translation.HasBeenRegistered}\n" +
-            $"{string.Join('\n', itemsWePublished)}\n" +
+            $"{orderDescription}" +
             $"{Translation.TakeCare}";
 
         buttons = new List<List<InlineKeyboardButton>>

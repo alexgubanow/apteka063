@@ -322,6 +322,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to pcs.
+        /// </summary>
+        internal static string pcs {
+            get {
+                return ResourceManager.GetString("pcs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pick category:.
         /// </summary>
         internal static string PickCategory {
