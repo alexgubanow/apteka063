@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
 using System.Globalization;
+using Telegram.Bot.Types;
 
 namespace apteka063.Services
 {
@@ -73,11 +74,14 @@ namespace apteka063.Services
             }
             return false;
         }
-        public async Task PostOrder(Order order, string person, string personID, string pills, CancellationToken cts = default)
+        public async Task PostOrder(Order order, Telegram.Bot.Types.User user, string pills, CancellationToken cts = default)
         {
             var currentLocale = Thread.CurrentThread.CurrentUICulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("ru");
             string orderID = order.Id.ToString();
+
+            var person = user.FirstName + ' ' + user.LastName;
+            var personID = user.Username;
 
             var service = GetSheetsSevice();
             try
@@ -100,7 +104,7 @@ namespace apteka063.Services
                     new List<object>() { orderID },
                     new List<object>() { TranslationConverter.ToLocaleString(order.Status) },
                     new List<object>() { person },
-                    new List<object>() { personID != null ? $"https://t.me/{personID}" : "не найдено" },
+                    new List<object>() { personID != null ? $"https://t.me/{personID}" : $"https://t.me/@id{user.Id}"},
                     new List<object>() { pills },
                     new List<object>() { order.ContactName },
                     new List<object>() { order.ContactPhone },

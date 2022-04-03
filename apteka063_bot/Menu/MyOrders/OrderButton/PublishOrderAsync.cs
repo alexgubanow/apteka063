@@ -28,7 +28,7 @@ public partial class OrderButton
             itemsNames = _db.ItemsToOrder!.Where(p => itemsIds.Contains(p.Id.ToString())).Select(x => x.Name);
         }
 
-        await _gsheet.PostOrder(order, message.From!.FirstName + ' ' + message.From.LastName, message.From.Username!, string.Join(", ", itemsNames), cts);
+        await _gsheet.PostOrder(order, message.From!, string.Join(", ", itemsNames), cts);
 
         // Your order #%d has been posted
         // Details: .....
