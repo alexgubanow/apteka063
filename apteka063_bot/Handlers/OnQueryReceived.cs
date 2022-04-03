@@ -16,11 +16,11 @@ public partial class UpdateHandlers
         {
             return await _menu.ShowMainMenuAsync(botClient, Resources.Translation.MainMenu, callbackQuery.Message!, cts: cts);
         }
-        if (callbackQuery.Data == "myOrders")
+        else if (callbackQuery.Data == "myOrders")
         {
             return await _menu.MyOrders.ShowMyOrdersAsync(botClient, callbackQuery.Message!, user, cts);
         }
-        if (callbackQuery.Data == "OrderTypes")
+        else if (callbackQuery.Data == "OrderTypes")
         {
             return await _menu.MyOrders.ShowOrderTypesAsync(botClient, callbackQuery.Message!, cts);
         }
@@ -42,9 +42,13 @@ public partial class UpdateHandlers
         {
             return await _orderButton.OnOrderReplyReceived(botClient, callbackQuery, cts);
         }
-        else if (callbackQuery.Data.Contains("cancelOrder_"))
+        else if (callbackQuery.Data!.Contains("order_") == true)
         {
-            return await _orderButton.OnCancelOrder(botClient, callbackQuery, cts);
+            return await _menu.MyOrders.ShowOrderDetailsAsync(botClient, callbackQuery, cts);
+        }
+        else if (callbackQuery.Data!.Contains("orderDelete_") == true)
+        {
+            return await _orderButton.DeleteOrder(botClient, callbackQuery, cts);
         }
         else if (callbackQuery.Data == "emergencyContacts")
         {

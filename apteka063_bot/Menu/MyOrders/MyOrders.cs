@@ -1,7 +1,9 @@
 using apteka063.Database;
 using apteka063.Extensions;
 using apteka063.Resources;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -36,5 +38,32 @@ public partial class MyOrders
         }
         buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.NewOrder, "OrderTypes") });
         return await botClient.UpdateOrSendMessageAsync(_logger, headerText, message, new InlineKeyboardMarkup(buttons), cts: cts);
+    }
+    public async Task<Message> ShowOrderDetailsAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cts = default)
+    {
+        var orderId = int.Parse(callbackQuery.Data!.Split('_', 2).Last());
+        var buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoBack, $"myOrders") }
+        };
+        var order = await _db.Orders.FirstOrDefaultAsync(x => x.Id == orderId, cancellationToken: cts);
+        string headerText = $"{Translation.OrderNumber}{orderId}\n";
+        if (order!.Items != "")
+        {
+            var orderItemsList = JsonSerializer.Deserialize<List<ItemInCart>>(order!.Items)!;
+            foreach (var item in orderItemsList)
+            {
+                headerText += $"{item.Name} - {item.Amount}{Translation.pcs}\n";
+            }
+            headerText = headerText.Remove(headerText.Length - 1, 1);
+        }
+        if (order.Status == OrderStatus.Filling || order.Status == OrderStatus.NeedOrderConfirmation || order.Status == OrderStatus.NeedUserPhone || 
+            order.Status == OrderStatus.NeedContactPhone || order.Status == OrderStatus.NeedContactName || order.Status == OrderStatus.NeedContactAddress ||
+            order.Status == OrderStatus.NeedOrderComment)
+        {
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.RemoveThisOrder, $"orderDelete_{order.Id}") });
+            buttons.Add(new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.EditOrder, $"orderType_{order.OrderType}") });
+        }
+        return await botClient.UpdateOrSendMessageAsync(_logger, headerText, callbackQuery.Message!, new InlineKeyboardMarkup(buttons), cts: cts);
     }
 }

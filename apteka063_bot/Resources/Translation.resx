@@ -144,6 +144,9 @@
   <data name="Declined" xml:space="preserve">
     <value>Declined</value>
   </data>
+  <data name="deleted" xml:space="preserve">
+    <value>deleted</value>
+  </data>
   <data name="EditOrder" xml:space="preserve">
     <value>Edit the Order</value>
   </data>
@@ -236,6 +239,9 @@
   </data>
   <data name="ProvideYourPhoneNumber" xml:space="preserve">
     <value>Please provide the Your phone number</value>
+  </data>
+  <data name="RemoveThisOrder" xml:space="preserve">
+    <value>Remove this order</value>
   </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Report suspicious activity</value>

@@ -53,13 +53,13 @@ public partial class OrderButton
     }
     public async Task<Message> InitiateOrderAsync(ITelegramBotClient botClient, Message message, Order order, CancellationToken cts = default)
     {
-        string translatedText = $"{Translation.YourOrderIs}\n";
+        string headerTxt = $"{Translation.OrderNumber}{order.Id}\n";
         var orderItemsList = JsonSerializer.Deserialize<List<ItemInCart>>(order.Items)!;
         foreach (var item in orderItemsList)
         {
-            translatedText += $"{item.Name} - {item.Amount}{Translation.pcs}\n";
+            headerTxt += $"{item.Name} - {item.Amount}{Translation.pcs}\n";
         }
-        translatedText = translatedText.Remove(translatedText.Length - 1, 1);
+        headerTxt = headerTxt.Remove(headerTxt.Length - 1, 1);
         order.Status = OrderStatus.NeedOrderConfirmation;
         order.LastUpdateDateTime = DateTime.Now;
         await _db.SaveChangesAsync(cts);
@@ -69,7 +69,7 @@ public partial class OrderButton
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.EditOrder, $"orderType_{order.OrderType}") },
             new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.ProceedOrder, $"order") }
         };
-        return await botClient.UpdateOrSendMessageAsync(_logger, translatedText, message, new InlineKeyboardMarkup(buttons), cts: cts);
+        return await botClient.UpdateOrSendMessageAsync(_logger, headerTxt, message, new InlineKeyboardMarkup(buttons), cts: cts);
     }
     public async Task<Message> ConfirmOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
     {

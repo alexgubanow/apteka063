@@ -142,6 +142,15 @@ namespace apteka063.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to deleted.
+        /// </summary>
+        internal static string deleted {
+            get {
+                return ResourceManager.GetString("deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit the Order.
         /// </summary>
         internal static string EditOrder {
@@ -417,6 +426,15 @@ namespace apteka063.Resources {
         internal static string ProvideYourPhoneNumber {
             get {
                 return ResourceManager.GetString("ProvideYourPhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove this order.
+        /// </summary>
+        internal static string RemoveThisOrder {
+            get {
+                return ResourceManager.GetString("RemoveThisOrder", resourceCulture);
             }
         }
         

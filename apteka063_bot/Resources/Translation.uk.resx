@@ -144,6 +144,9 @@
   <data name="Declined" xml:space="preserve">
     <value>Відхилено</value>
   </data>
+  <data name="deleted" xml:space="preserve">
+    <value>видалено</value>
+  </data>
   <data name="EditOrder" xml:space="preserve">
     <value>Відредагувати замовлення</value>
   </data>
@@ -236,6 +239,9 @@
   </data>
   <data name="ProvideYourPhoneNumber" xml:space="preserve">
     <value>Будь ласка, напишіть Ваш номер телефона (або інший контакт)</value>
+  </data>
+  <data name="RemoveThisOrder" xml:space="preserve">
+    <value>Видалити це замовлення</value>
   </data>
   <data name="ReportActivity" xml:space="preserve">
     <value>Повідомити про підозрілу активність</value>
