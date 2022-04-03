@@ -137,7 +137,22 @@ public partial class OrderButton
         order.LastUpdateDateTime = DateTime.Now;
         order.Status = OrderStatus.InProgress;
         await _db.SaveChangesAsync(cts);
-        var msg = await botClient.UpdateOrSendMessageAsync(_logger, Translation.Order_received_processing_please_wait, message.Chat.Id, lastMessageSentId, cts: cts);
-        return await PublishOrderAsync(botClient, msg, order, cts);
+        var msgWeJustSent = await botClient.UpdateOrSendMessageAsync(_logger, Translation.Order_received_processing_please_wait, message.Chat.Id, lastMessageSentId, cts: cts);
+        var itemsWePublished = await PublishOrderAsync(message.From!, order, cts);
+
+        // Your order #%d has been posted
+        // Details: .....
+        // If nobody contacted you in 4 hours please use the follwing contacts
+        // <list of contacts>
+        string resultTranslatedText =
+            $"{Translation.OrderNumber}{order.Id} {Translation.HasBeenRegistered}\n" +
+            $"{string.Join('\n', itemsWePublished)}\n" +
+            $"{Translation.TakeCare}";
+
+        buttons = new List<List<InlineKeyboardButton>>
+        {
+            new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Translation.GoToMenu, "main") }
+        };
+        return await botClient.UpdateOrSendMessageAsync(_logger, resultTranslatedText, msgWeJustSent, new InlineKeyboardMarkup(buttons), cts: cts);
     }
 }
