@@ -33,7 +33,7 @@ public partial class OrderButton
 
         var handler = order.Status switch
         {
-            OrderStatus.NeedOrderConfirmation => ConfirmOrderAsync(botClient, message, lastMessageSentId, order, cts),
+            OrderStatus.NeedOrderConfirmation => ConfirmOrderAsync(botClient, message, order, cts),
             OrderStatus.NeedUserPhone => SaveUserPhoneAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactPhone => SaveContactPhoneAsync(botClient, message, lastMessageSentId, order, cts),
             OrderStatus.NeedContactName => SaveContactNameAsync(botClient, message, lastMessageSentId, order, cts),
@@ -71,7 +71,7 @@ public partial class OrderButton
         };
         return await botClient.UpdateOrSendMessageAsync(_logger, headerTxt, message, new InlineKeyboardMarkup(buttons), cts: cts);
     }
-    public async Task<Message> ConfirmOrderAsync(ITelegramBotClient botClient, Message message, int lastMessageSentId, Order order, CancellationToken cts = default)
+    public async Task<Message> ConfirmOrderAsync(ITelegramBotClient botClient, Message message, Order order, CancellationToken cts = default)
     {
         var headerTxt = Translation.ProvidePhoneNumber;
         order.Status = OrderStatus.NeedContactPhone;

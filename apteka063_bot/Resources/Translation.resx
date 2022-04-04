@@ -177,14 +177,23 @@
   <data name="MainMenu" xml:space="preserve">
     <value>Main menu:</value>
   </data>
-  <data name="NeedAdress" xml:space="preserve">
+  <data name="NeedAddress" xml:space="preserve">
     <value>Need contact address</value>
   </data>
   <data name="NeedContactName" xml:space="preserve">
     <value>Need contact name</value>
   </data>
+  <data name="NeedOrderComment" xml:space="preserve">
+    <value>Need order comment</value>
+  </data>
+  <data name="NeedOrderConfirmation" xml:space="preserve">
+    <value>Need order confirmation</value>
+  </data>
   <data name="NeedPhone" xml:space="preserve">
     <value>Need contact phone</value>
+  </data>
+  <data name="NeedUserPhone" xml:space="preserve">
+    <value>Need  your phone number</value>
   </data>
   <data name="NewOrder" xml:space="preserve">
     <value>New order</value>

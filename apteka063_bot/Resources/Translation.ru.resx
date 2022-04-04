@@ -177,14 +177,23 @@
   <data name="MainMenu" xml:space="preserve">
     <value>Главное меню:</value>
   </data>
-  <data name="NeedAdress" xml:space="preserve">
+  <data name="NeedAddress" xml:space="preserve">
     <value>Нужен адрес</value>
   </data>
   <data name="NeedContactName" xml:space="preserve">
     <value>Нужно имя получателя</value>
   </data>
+  <data name="NeedOrderComment" xml:space="preserve">
+    <value>Нужен комментарий к заказу</value>
+  </data>
+  <data name="NeedOrderConfirmation" xml:space="preserve">
+    <value>Нужно подтверждение заказа</value>
+  </data>
   <data name="NeedPhone" xml:space="preserve">
     <value>Нужен телефон получателя</value>
+  </data>
+  <data name="NeedUserPhone" xml:space="preserve">
+    <value>Нужен ваш номер телефона</value>
   </data>
   <data name="NewOrder" xml:space="preserve">
     <value>Новый заказ</value>

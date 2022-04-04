@@ -27,6 +27,13 @@ public partial class UpdateHandlers
         else if (callbackQuery.Data!.Contains("orderType_"))
         {
             var orderType = (OrderType)Enum.Parse(typeof(OrderType), callbackQuery.Data!.Split('_', 2).Last());
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderType == orderType && x.UserId == user.Id && x.Status == OrderStatus.NeedOrderConfirmation, cts);
+            if (order != null)
+            {
+                order.Status = OrderStatus.Filling;
+                order.LastUpdateDateTime = DateTime.Now;
+                await _db.SaveChangesAsync(cts);
+            }
             return await _menu.MyOrders.ShowCategoriesAsync(botClient, callbackQuery.Message!, orderType, cts);
         }
         else if (callbackQuery.Data!.Contains("category_") == true)

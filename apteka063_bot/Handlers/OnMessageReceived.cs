@@ -18,18 +18,20 @@ public partial class UpdateHandlers
         if (message.Type != MessageType.Text)
             return null!;
 
-        var order = await _db.Orders.Where(x => x.UserId == user.Id && (x.Status == OrderStatus.NeedUserPhone || x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName ||
-            x.Status == OrderStatus.NeedContactAddress || x.Status == OrderStatus.NeedOrderComment)).ToListAsync(cts);
-        if (order.Count > 0)
+        var order = await _db.Orders.FirstOrDefaultAsync(x => x.UserId == user.Id && (
+            x.Status == OrderStatus.NeedUserPhone ||
+            x.Status == OrderStatus.NeedContactPhone || x.Status == OrderStatus.NeedContactName ||
+            x.Status == OrderStatus.NeedContactAddress || x.Status == OrderStatus.NeedOrderComment), cts);
+        if (order != null)
         {
-            if (order.Count > 1)
-            {
-                _logger.LogError($"MORE THAN ONE ORDER FOUND, FOR USER ID: {user.Id}");
-                //return await botClient.UpdateOrSendMessageAsync(_logger, "MORE THAN ONE ORDER FOUND\nPlease contact admin", message, cts: cts);
-            }
+            //if (order.Count > 1)
+            //{
+            //    _logger.LogError($"MORE THAN ONE ORDER FOUND, FOR USER ID: {user.Id}");
+            //    //return await botClient.UpdateOrSendMessageAsync(_logger, "MORE THAN ONE ORDER FOUND\nPlease contact admin", message, cts: cts);
+            //}
             try
             {
-                return await _orderButton.DispatchStateAsync(botClient, message, user.LastMessageSentId, order.First(), cts);
+                return await _orderButton.DispatchStateAsync(botClient, message, user.LastMessageSentId, order, cts);
             }
             catch (Exception exception)
             {

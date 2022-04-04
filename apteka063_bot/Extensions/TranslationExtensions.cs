@@ -11,14 +11,17 @@ namespace apteka063.Extensions
             return status switch
             {
                 OrderStatus.Filling => Resources.Translation.Filling,
+                OrderStatus.NeedOrderConfirmation => Resources.Translation.NeedOrderConfirmation,
+                OrderStatus.NeedUserPhone => Resources.Translation.NeedUserPhone,
                 OrderStatus.NeedContactPhone => Resources.Translation.NeedPhone,
                 OrderStatus.NeedContactName => Resources.Translation.NeedContactName,
-                OrderStatus.NeedContactAddress => Resources.Translation.NeedAdress,
+                OrderStatus.NeedContactAddress => Resources.Translation.NeedAddress,
+                OrderStatus.NeedOrderComment => Resources.Translation.NeedOrderComment,
                 OrderStatus.Canceled => Resources.Translation.Canceled,
                 OrderStatus.InProgress => Resources.Translation.InProgress,
                 OrderStatus.Declined => Resources.Translation.Declined,
                 OrderStatus.Closed => Resources.Translation.Closed,
-                _ => "N/A",
+                _ => "LocaleString N/A",
             };
         }
         internal static string ToLocaleString(OrderType status)
@@ -29,7 +32,7 @@ namespace apteka063.Extensions
                 OrderType.Humaid => Resources.Translation.Humaid,
                 OrderType.Transport => Resources.Translation.Transport,
                 OrderType.N_A => "N/A",
-                _ => "N/A",
+                _ => "LocaleString N/A",
             };
         }
         internal static OrderType ToOrderType(string type)
